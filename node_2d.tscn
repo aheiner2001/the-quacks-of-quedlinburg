@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://btaqoc1jijga4"]
+
+[ext_resource type="Script" uid="uid://bi36sxsahatk" path="res://node_2d.gd" id="1_epypp"]
+[ext_resource type="Texture2D" uid="uid://b84rawi5du406" path="res://shelf.png" id="2_epypp"]
+[ext_resource type="Texture2D" uid="uid://byeavwlhy2ps0" path="res://refill.png" id="4_0hol4"]
+[ext_resource type="Texture2D" uid="uid://fgj5shf8a5hi" path="res://edited-photo.png" id="4_d21ai"]
+[ext_resource type="Texture2D" uid="uid://dit0qxj3ha7r6" path="res://refill dark.png" id="4_q6r6c"]
+[ext_resource type="Texture2D" uid="uid://dmujr4qyracwt" path="res://Gemini_Generated_Image_zandapzandapzand (1).png" id="5_rj586"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_13qdw"]
+
+[node name="Node2D" type="Node2D" unique_id=2127043720]
+script = ExtResource("1_epypp")
+
+[node name="backgorund" type="Sprite2D" parent="." unique_id=384659669]
+scale = Vector2(1.1298828, 1.1413238)
+texture = ExtResource("2_epypp")
+centered = false
+
+[node name="RevealImage" type="Sprite2D" parent="." unique_id=796930385]
+visible = false
+position = Vector2(702, 344.00003)
+scale = Vector2(0.58439714, 0.5984042)
+texture = ExtResource("5_rj586")
+
+[node name="RevealButton" type="Button" parent="." unique_id=122576526]
+offset_left = 163.0
+offset_top = 404.0
+offset_right = 324.0
+offset_bottom = 520.0
+text = "INfo"
+
+[node name="TextureButton2" type="TextureButton" parent="." unique_id=272905618]
+material = SubResource("ShaderMaterial_13qdw")
+offset_left = 556.0
+offset_top = -528.0
+offset_right = 2375.0225
+offset_bottom = 1029.4476
+scale = Vector2(0.47553018, 0.39487684)
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture_normal = ExtResource("4_d21ai")
+texture_hover = ExtResource("5_rj586")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="TextureButton" type="TextureButton" parent="." unique_id=1313845903]
+offset_left = -211.0
+offset_top = 164.0
+offset_right = 1040.2351
+offset_bottom = 832.56287
+scale = Vector2(0.47553018, 0.39487684)
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture_normal = ExtResource("4_q6r6c")
+texture_hover = ExtResource("4_0hol4")
+ignore_texture_size = true
+stretch_mode = 5
+
+[connection signal="pressed" from="RevealButton" to="." method="_on_reveal_button_pressed"]
