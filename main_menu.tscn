@@ -1,14 +1,10 @@
 [gd_scene format=3 uid="uid://dglv3ltnvmrhf"]
 
 [ext_resource type="Script" uid="uid://ccfdgjb34u3oa" path="res://main_menu.gd" id="1_06t4h"]
+[ext_resource type="Texture2D" uid="uid://bn0l5peawudba" path="res://assets/boards/homepage.png" id="2_7vrkn"]
 
 [node name="Node2D" type="Node2D" unique_id=1559598785]
 script = ExtResource("1_06t4h")
-
-[node name="Label" type="Label" parent="." unique_id=274932455]
-offset_right = 40.0
-offset_bottom = 23.0
-text = "This is the main menu"
 
 [node name="CheckButton" type="Button" parent="." unique_id=364015244]
 offset_left = 254.0
@@ -17,10 +13,9 @@ offset_right = 390.0
 offset_bottom = 215.0
 text = "Start Game"
 
-[node name="MenuBar" type="MenuBar" parent="." unique_id=2379529]
-offset_left = 200.0
-offset_top = 66.0
-offset_right = 240.0
-offset_bottom = 106.0
+[node name="Homepage" type="Sprite2D" parent="." unique_id=750251600]
+position = Vector2(577, 320.5)
+scale = Vector2(0.74609375, 0.63183594)
+texture = ExtResource("2_7vrkn")
 
 [connection signal="pressed" from="CheckButton" to="." method="_on_check_button_pressed"]
