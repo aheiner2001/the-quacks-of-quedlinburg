@@ -19,4 +19,8 @@ func _process(delta: float) -> void:
 	pass
 
 func _on_reveal_button_pressed() -> void:
-	$RevealImage.visible = !$RevealImage.visible
+	$Gary.visible = true
+
+
+func _on_garyexit_pressed() -> void:
+	$Gary.visible = false

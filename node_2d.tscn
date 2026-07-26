@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://byeavwlhy2ps0" path="res://refill.png" id="4_0hol4"]
 [ext_resource type="Texture2D" uid="uid://fgj5shf8a5hi" path="res://edited-photo.png" id="4_d21ai"]
 [ext_resource type="Texture2D" uid="uid://dit0qxj3ha7r6" path="res://refill dark.png" id="4_q6r6c"]
+[ext_resource type="Texture2D" uid="uid://do7t71plslbuq" path="res://assets/remove.png" id="4_rj586"]
 [ext_resource type="Texture2D" uid="uid://dmujr4qyracwt" path="res://Gemini_Generated_Image_zandapzandapzand (1).png" id="5_rj586"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_13qdw"]
@@ -17,18 +18,28 @@ scale = Vector2(1.1298828, 1.1413238)
 texture = ExtResource("2_epypp")
 centered = false
 
-[node name="RevealImage" type="Sprite2D" parent="." unique_id=796930385]
+[node name="GaryInfo" type="Button" parent="." unique_id=122576526]
+offset_left = 163.0
+offset_top = 403.99994
+offset_right = 324.0
+offset_bottom = 519.99994
+scale = Vector2(1.891396, 1.7422581)
+text = "INfo"
+
+[node name="Gary" type="Sprite2D" parent="." unique_id=796930385]
 visible = false
 position = Vector2(702, 344.00003)
 scale = Vector2(0.58439714, 0.5984042)
 texture = ExtResource("5_rj586")
 
-[node name="RevealButton" type="Button" parent="." unique_id=122576526]
-offset_left = 163.0
-offset_top = 404.0
-offset_right = 324.0
-offset_bottom = 520.0
-text = "INfo"
+[node name="garyexit" type="TextureButton" parent="Gary" unique_id=377445108]
+offset_left = 338.81067
+offset_top = -396.0534
+offset_right = 569.8178
+offset_bottom = -284.089
+texture_normal = ExtResource("4_rj586")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="TextureButton2" type="TextureButton" parent="." unique_id=272905618]
 material = SubResource("ShaderMaterial_13qdw")
@@ -57,4 +68,28 @@ texture_hover = ExtResource("4_0hol4")
 ignore_texture_size = true
 stretch_mode = 5
 
-[connection signal="pressed" from="RevealButton" to="." method="_on_reveal_button_pressed"]
+[node name="GaryInfo2" type="Button" parent="." unique_id=1118342333]
+offset_left = 144.0
+offset_top = 87.00003
+offset_right = 305.0
+offset_bottom = 203.00003
+scale = Vector2(1.891396, 1.7422581)
+text = "INfo"
+
+[node name="Gary2" type="Sprite2D" parent="." unique_id=2000731167]
+visible = false
+position = Vector2(702, 344.00003)
+scale = Vector2(0.58439714, 0.5984042)
+texture = ExtResource("5_rj586")
+
+[node name="garyexit" type="TextureButton" parent="Gary2" unique_id=1082986255]
+offset_left = 338.81067
+offset_top = -396.0534
+offset_right = 569.8178
+offset_bottom = -284.089
+texture_normal = ExtResource("4_rj586")
+ignore_texture_size = true
+stretch_mode = 5
+
+[connection signal="pressed" from="GaryInfo" to="." method="_on_reveal_button_pressed"]
+[connection signal="pressed" from="Gary/garyexit" to="." method="_on_garyexit_pressed"]
