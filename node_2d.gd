@@ -5,6 +5,8 @@ func _ready() -> void:
 	# Automatically apply the mask to all your bottle buttons here
 	setup_bottle_mask($TextureButton)
 	setup_bottle_mask($TextureButton2)
+	setup_bottle_mask($GaryInfo)
+	setup_bottle_mask($garyexit)
 
 # Reusable helper function to keep your code clean
 func setup_bottle_mask(btn: TextureButton) -> void:
