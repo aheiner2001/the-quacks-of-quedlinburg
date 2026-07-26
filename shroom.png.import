@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dh1rka4p10383"
-path="res://.godot/imported/Gemini_Generated_Image_4onkjr4onkjr4onk (1).png-5ffce112c6ae6b0a2d88ce33b64c63a7.ctex"
+path="res://.godot/imported/shroom.png-d55ca8c414dfce0e5e977dca9f39f853.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Gemini_Generated_Image_4onkjr4onkjr4onk (1).png"
-dest_files=["res://.godot/imported/Gemini_Generated_Image_4onkjr4onkjr4onk (1).png-5ffce112c6ae6b0a2d88ce33b64c63a7.ctex"]
+source_file="res://shroom.png"
+dest_files=["res://.godot/imported/shroom.png-d55ca8c414dfce0e5e977dca9f39f853.ctex"]
 
 [params]
 
