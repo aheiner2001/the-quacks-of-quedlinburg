@@ -4,7 +4,6 @@
 [ext_resource type="Texture2D" uid="uid://b84rawi5du406" path="res://shelf.png" id="2_epypp"]
 [ext_resource type="Texture2D" uid="uid://brq7rvpyke0uo" path="res://scary gary/Untitled - July 25, 2026 at 20.04.20.png" id="3_rj586"]
 [ext_resource type="Texture2D" uid="uid://byeavwlhy2ps0" path="res://refill.png" id="4_0hol4"]
-[ext_resource type="Texture2D" uid="uid://fgj5shf8a5hi" path="res://edited-photo.png" id="4_d21ai"]
 [ext_resource type="Texture2D" uid="uid://dhmjbrfqfdbei" path="res://scary gary/Untitled - July 25, 2026 at 20.04.20 (2).png" id="4_ir8iy"]
 [ext_resource type="Texture2D" uid="uid://dit0qxj3ha7r6" path="res://refill dark.png" id="4_q6r6c"]
 [ext_resource type="Texture2D" uid="uid://do7t71plslbuq" path="res://assets/remove.png" id="4_rj586"]
@@ -12,10 +11,108 @@
 [ext_resource type="Texture2D" uid="uid://dmujr4qyracwt" path="res://Gemini_Generated_Image_zandapzandapzand (1).png" id="5_rj586"]
 [ext_resource type="Texture2D" uid="uid://b6p4866lr8c0i" path="res://exit/edited-photo (1).png" id="8_x0ka3"]
 [ext_resource type="Texture2D" uid="uid://b3utavox6lbsc" path="res://exit/edited-photo.png" id="9_0h7mo"]
+[ext_resource type="Texture2D" uid="uid://c4ewo1yukd5gl" path="res://assets/new/Untitled - July 25, 2026 at 20.25.18.png" id="10_flf07"]
+[ext_resource type="Texture2D" uid="uid://64baw2g5gxu1" path="res://assets/new/Untitled - July 25, 2026 at 20.25.18 (1).png" id="11_k73cj"]
+[ext_resource type="Texture2D" uid="uid://dekmxn66wwi0b" path="res://assets/new/Untitled - July 25, 2026 at 20.35.32.png" id="12_rjqkl"]
+[ext_resource type="Texture2D" uid="uid://bxxu8jc2wfu6v" path="res://assets/new/Untitled - July 25, 2026 at 20.35.32 (1).png" id="13_fs4d3"]
+[ext_resource type="Texture2D" uid="uid://ysx61n85sefq" path="res://assets/new/Untitled - July 25, 2026 at 20.37.34.png" id="13_nr8wp"]
+[ext_resource type="Texture2D" uid="uid://b8t404bqlce25" path="res://assets/new/Untitled - July 25, 2026 at 20.37.34 (1).png" id="14_d2bti"]
+[ext_resource type="Texture2D" uid="uid://dfd8auyqpwws7" path="res://assets/new/Untitled - July 25, 2026 at 20.27.49.png" id="14_e8dv2"]
+[ext_resource type="Texture2D" uid="uid://c4lr8moxo0g7i" path="res://assets/Gemini_Generated_Image_vkp4hpvkp4hpvkp4.png" id="14_nr8wp"]
+[ext_resource type="Texture2D" uid="uid://de6ighasbehkj" path="res://assets/new/Untitled - July 25, 2026 at 20.27.49 (1).png" id="15_2nhjh"]
+[ext_resource type="Texture2D" uid="uid://cefu6bddheu8m" path="res://assets/new/Untitled - July 25, 2026 at 20.30.55.png" id="16_gt76g"]
+[ext_resource type="Texture2D" uid="uid://bcp7yvwnmn0rw" path="res://assets/new/Untitled - July 25, 2026 at 20.30.55 (1).png" id="17_1fr6y"]
+[ext_resource type="Texture2D" uid="uid://dh1rka4p10383" path="res://shroom.png" id="17_rjqkl"]
+[ext_resource type="Texture2D" uid="uid://dvd6gmeed4tss" path="res://assets/new/Untitled - July 25, 2026 at 20.34.05.png" id="18_2hxjc"]
+[ext_resource type="Texture2D" uid="uid://bbb1slhswfmbf" path="res://assets/new/Untitled - July 25, 2026 at 20.34.05 (1).png" id="19_ebxd8"]
+[ext_resource type="Texture2D" uid="uid://crbjt81jh00mw" path="res://Gemini_Generated_Image_51n3t151n3t151n3 (1).png" id="20_fs4d3"]
+[ext_resource type="Texture2D" uid="uid://bn18lj8fkvb6e" path="res://Gemini_Generated_Image_yrwaelyrwaelyrwa (1).png" id="23_bjha6"]
+[ext_resource type="Texture2D" uid="uid://tmogd33bkh2w" path="res://Gemini_Generated_Image_ljlp7pljlp7pljlp (1).png" id="26_2hxjc"]
+[ext_resource type="Texture2D" uid="uid://b3t8hln8patlq" path="res://Gemini_Generated_Image_an6myzan6myzan6m (1).png" id="28_ebxd8"]
+[ext_resource type="Texture2D" uid="uid://q2k1huj0x88o" path="res://scary gary/Untitled - July 25, 2026 at 20.21.27.png" id="30_24dk6"]
+[ext_resource type="Texture2D" uid="uid://cab7fhj15y2lk" path="res://scary gary/Untitled - July 25, 2026 at 20.21.27 (2).png" id="31_mryly"]
+[ext_resource type="Texture2D" uid="uid://cgv2cfek68bvi" path="res://scary gary/Untitled - July 25, 2026 at 21.56.47 (1).png" id="32_mryly"]
+[ext_resource type="Texture2D" uid="uid://dl0gvp8etrj8s" path="res://assets/settingicon.png" id="33_kq1c5"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_13qdw"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_kq1c5"]
+atlas = ExtResource("32_mryly")
+region = Rect2(0, 0, 256, 256)
 
-[node name="Node2D" type="Node2D" unique_id=2127043720]
+[sub_resource type="AtlasTexture" id="AtlasTexture_ornx7"]
+atlas = ExtResource("32_mryly")
+region = Rect2(0, 768, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cnnru"]
+atlas = ExtResource("32_mryly")
+region = Rect2(512, 512, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_540hr"]
+atlas = ExtResource("32_mryly")
+region = Rect2(256, 512, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6ip5v"]
+atlas = ExtResource("32_mryly")
+region = Rect2(0, 512, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q5dlx"]
+atlas = ExtResource("32_mryly")
+region = Rect2(512, 256, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c4wnb"]
+atlas = ExtResource("32_mryly")
+region = Rect2(256, 256, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7plk7"]
+atlas = ExtResource("32_mryly")
+region = Rect2(0, 256, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fbwgr"]
+atlas = ExtResource("32_mryly")
+region = Rect2(512, 0, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7mj2a"]
+atlas = ExtResource("32_mryly")
+region = Rect2(256, 0, 256, 256)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xrivr"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kq1c5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ornx7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cnnru")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_540hr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6ip5v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q5dlx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c4wnb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7plk7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fbwgr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7mj2a")
+}],
+"loop": 1,
+"name": &"flame",
+"speed": 5.0
+}]
+
+[node name="Shop" type="Node2D" unique_id=2127043720]
 script = ExtResource("1_epypp")
 
 [node name="backgorund" type="Sprite2D" parent="." unique_id=384659669]
@@ -24,45 +121,14 @@ texture = ExtResource("2_epypp")
 centered = false
 
 [node name="GaryInfo" type="TextureButton" parent="." unique_id=1790616970]
-offset_left = 465.00003
-offset_top = 164.00002
-offset_right = 514.6987
-offset_bottom = 295.4386
+offset_left = 453.0
+offset_top = 174.00002
+offset_right = 502.69873
+offset_bottom = 305.4386
 scale = Vector2(1.891396, 1.7422581)
 texture_normal = ExtResource("3_rj586")
 texture_pressed = ExtResource("4_ir8iy")
 texture_hover = ExtResource("5_hqns4")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="Gary" type="Sprite2D" parent="." unique_id=796930385]
-visible = false
-position = Vector2(702, 344.00003)
-scale = Vector2(0.58439714, 0.5984042)
-texture = ExtResource("5_rj586")
-
-[node name="garyexit" type="TextureButton" parent="Gary" unique_id=377445108]
-offset_left = 338.81067
-offset_top = -396.0534
-offset_right = 569.8178
-offset_bottom = -284.089
-texture_normal = ExtResource("4_rj586")
-texture_pressed = ExtResource("8_x0ka3")
-texture_hover = ExtResource("9_0h7mo")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="TextureButton2" type="TextureButton" parent="." unique_id=272905618]
-material = SubResource("ShaderMaterial_13qdw")
-offset_left = 556.0
-offset_top = -528.0
-offset_right = 2375.0225
-offset_bottom = 1029.4476
-scale = Vector2(0.47553018, 0.39487684)
-size_flags_horizontal = 0
-size_flags_vertical = 0
-texture_normal = ExtResource("4_d21ai")
-texture_hover = ExtResource("5_rj586")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -79,5 +145,227 @@ texture_hover = ExtResource("4_0hol4")
 ignore_texture_size = true
 stretch_mode = 5
 
+[node name="PumpkinShelf" type="TextureButton" parent="." unique_id=1653819952]
+offset_left = 323.00003
+offset_top = 232.0
+offset_right = 382.2155
+offset_bottom = 291.11874
+scale = Vector2(1.891396, 1.7422581)
+texture_normal = ExtResource("13_nr8wp")
+texture_hover = ExtResource("14_d2bti")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="ShroomInfo" type="TextureButton" parent="." unique_id=1830602179]
+offset_left = 572.0
+offset_top = 245.0
+offset_right = 620.6413
+offset_bottom = 292.6394
+scale = Vector2(1.891396, 1.7422581)
+texture_normal = ExtResource("10_flf07")
+texture_hover = ExtResource("11_k73cj")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="SpiderShelf" type="TextureButton" parent="." unique_id=1594515852]
+offset_left = 676.0
+offset_top = 245.0
+offset_right = 740.5026
+offset_bottom = 300.101
+scale = Vector2(1.891396, 1.7422581)
+texture_normal = ExtResource("12_rjqkl")
+texture_hover = ExtResource("13_fs4d3")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Pootsshelf" type="TextureButton" parent="." unique_id=1886532352]
+offset_left = 453.00003
+offset_top = 349.0
+offset_right = 510.62936
+offset_bottom = 400.6571
+scale = Vector2(1.891396, 1.7422581)
+texture_normal = ExtResource("14_e8dv2")
+texture_hover = ExtResource("15_2nhjh")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="MothShelf" type="TextureButton" parent="." unique_id=332072509]
+offset_left = 815.0
+offset_top = 245.0
+offset_right = 872.6294
+offset_bottom = 296.6571
+scale = Vector2(1.891396, 1.7422581)
+texture_normal = ExtResource("16_gt76g")
+texture_hover = ExtResource("17_1fr6y")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="MandrakeShelf" type="TextureButton" parent="." unique_id=309461198]
+offset_left = 618.0
+offset_top = 341.0
+offset_right = 676.6868
+offset_bottom = 404.71036
+scale = Vector2(1.891396, 1.7422581)
+texture_normal = ExtResource("18_2hxjc")
+texture_hover = ExtResource("19_ebxd8")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Shopsign" type="TextureButton" parent="." unique_id=242233762]
+offset_left = 410.0
+offset_right = 1603.0
+offset_bottom = 403.0
+texture_normal = ExtResource("30_24dk6")
+texture_hover = ExtResource("31_mryly")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Pumpkin" type="Sprite2D" parent="." unique_id=853445973]
+visible = false
+position = Vector2(702, 344.00003)
+scale = Vector2(0.58439714, 0.5984042)
+texture = ExtResource("14_nr8wp")
+
+[node name="pumpkinexit" type="TextureButton" parent="Pumpkin" unique_id=1203274011]
+offset_left = 338.81067
+offset_top = -396.0534
+offset_right = 569.8178
+offset_bottom = -284.089
+texture_normal = ExtResource("4_rj586")
+texture_pressed = ExtResource("8_x0ka3")
+texture_hover = ExtResource("9_0h7mo")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Gary" type="Sprite2D" parent="." unique_id=796930385]
+visible = false
+position = Vector2(710, 337.00006)
+scale = Vector2(0.5489361, 0.5797872)
+texture = ExtResource("5_rj586")
+
+[node name="garyexit" type="TextureButton" parent="Gary" unique_id=377445108]
+offset_left = 338.81067
+offset_top = -396.0534
+offset_right = 569.8178
+offset_bottom = -284.089
+texture_normal = ExtResource("4_rj586")
+texture_pressed = ExtResource("8_x0ka3")
+texture_hover = ExtResource("9_0h7mo")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="shroom" type="Sprite2D" parent="." unique_id=158915857]
+visible = false
+position = Vector2(702, 344.00003)
+scale = Vector2(0.5843971, 0.59840417)
+texture = ExtResource("17_rjqkl")
+
+[node name="shroomexit" type="TextureButton" parent="shroom" unique_id=1455931142]
+offset_left = 338.81067
+offset_top = -396.0534
+offset_right = 569.8178
+offset_bottom = -284.089
+texture_normal = ExtResource("4_rj586")
+texture_pressed = ExtResource("8_x0ka3")
+texture_hover = ExtResource("9_0h7mo")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="spider" type="Sprite2D" parent="." unique_id=637875817]
+visible = false
+position = Vector2(705.00006, 341.00003)
+scale = Vector2(0.48907602, 0.5410229)
+texture = ExtResource("20_fs4d3")
+
+[node name="spiderexit" type="TextureButton" parent="spider" unique_id=1289850107]
+offset_left = 194.24373
+offset_top = -432.5141
+offset_right = 881.2536
+offset_bottom = -286.48752
+texture_normal = ExtResource("4_rj586")
+texture_pressed = ExtResource("8_x0ka3")
+texture_hover = ExtResource("9_0h7mo")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Poots" type="Sprite2D" parent="." unique_id=1966690903]
+visible = false
+position = Vector2(701.5342, 341)
+scale = Vector2(0.49827176, 0.53867126)
+texture = ExtResource("23_bjha6")
+
+[node name="pootsexit" type="TextureButton" parent="Poots" unique_id=1103356715]
+offset_left = 194.24373
+offset_top = -432.5141
+offset_right = 881.2536
+offset_bottom = -286.48752
+texture_normal = ExtResource("4_rj586")
+texture_pressed = ExtResource("8_x0ka3")
+texture_hover = ExtResource("9_0h7mo")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Mandrake" type="Sprite2D" parent="." unique_id=1783510682]
+visible = false
+position = Vector2(692.8364, 344.37595)
+scale = Vector2(0.61046606, 0.6982857)
+texture = ExtResource("28_ebxd8")
+
+[node name="mandrakexit" type="TextureButton" parent="Mandrake" unique_id=961982434]
+offset_left = 98.55348
+offset_top = -339.94104
+offset_right = 785.56335
+offset_bottom = -193.91446
+texture_normal = ExtResource("4_rj586")
+texture_pressed = ExtResource("8_x0ka3")
+texture_hover = ExtResource("9_0h7mo")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Moth" type="Sprite2D" parent="." unique_id=1130623288]
+visible = false
+position = Vector2(690.56226, 344.63498)
+scale = Vector2(0.4992233, 0.58434725)
+texture = ExtResource("26_2hxjc")
+
+[node name="Moth exit" type="TextureButton" parent="Moth" unique_id=1349516091]
+offset_left = 194.24373
+offset_top = -432.5141
+offset_right = 881.2536
+offset_bottom = -286.48752
+texture_normal = ExtResource("4_rj586")
+texture_pressed = ExtResource("8_x0ka3")
+texture_hover = ExtResource("9_0h7mo")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Flame" type="AnimatedSprite2D" parent="." unique_id=1233013784]
+position = Vector2(1124, 398)
+scale = Vector2(0.114257544, 0.10449205)
+sprite_frames = SubResource("SpriteFrames_xrivr")
+animation = &"flame"
+frame_progress = 0.36372885
+
+[node name="Settingicon" type="TextureButton" parent="." unique_id=635803236]
+offset_left = 1063.0
+offset_top = 545.0
+offset_right = 1063.0
+offset_bottom = 545.0
+scale = Vector2(0.4765625, 0.4609375)
+texture_normal = ExtResource("33_kq1c5")
+
 [connection signal="pressed" from="GaryInfo" to="." method="_on_reveal_button_pressed"]
+[connection signal="pressed" from="PumpkinShelf" to="." method="_on_pumpkin_shelf_pressed"]
+[connection signal="pressed" from="ShroomInfo" to="." method="_on_shroom_info_pressed"]
+[connection signal="pressed" from="SpiderShelf" to="." method="_on_spider_shelf_pressed"]
+[connection signal="pressed" from="Pootsshelf" to="." method="_on_pootsshelf_pressed"]
+[connection signal="pressed" from="MothShelf" to="." method="_on_moth_shelf_pressed"]
+[connection signal="pressed" from="MandrakeShelf" to="." method="_on_mandrake_shelf_pressed"]
+[connection signal="pressed" from="Pumpkin/pumpkinexit" to="." method="_on_pumpkinexit_pressed"]
 [connection signal="pressed" from="Gary/garyexit" to="." method="_on_garyexit_pressed"]
+[connection signal="pressed" from="shroom/shroomexit" to="." method="_on_shroomexit_pressed"]
+[connection signal="pressed" from="spider/spiderexit" to="." method="_on_spiderexit_pressed"]
+[connection signal="pressed" from="Poots/pootsexit" to="." method="_on_pootsexit_pressed"]
+[connection signal="pressed" from="Mandrake/mandrakexit" to="." method="_on_mandrakexit_pressed"]
+[connection signal="pressed" from="Moth/Moth exit" to="." method="_on_moth_exit_pressed"]
+[connection signal="pressed" from="Settingicon" to="." method="_on_settingicon_pressed"]
