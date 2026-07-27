@@ -3,6 +3,7 @@ extends SceneTree
 func _init() -> void:
 	var failures := 0
 	failures += TestChip.run()
+	failures += TestBag.run()
 	if failures == 0:
 		print("ALL TESTS PASSED")
 	else:
