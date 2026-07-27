@@ -7,6 +7,8 @@ extends Node2D
 			auto_number_stones()
 
 var _pending_explosion_player: int = -1
+var _anim_gen: int = 0
+var _draw_tween: Tween
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
@@ -45,6 +47,8 @@ func _on_active(player_index: int) -> void:
 
 func _on_drawn(player_index: int, result: Dictionary) -> void:
 	$WhiteSumLabel.text = "White: %s" % str(result["white_sum"])
+	_update_explosion_risk(int(result["white_sum"]), bool(result.get("exploded", false)))
+	_animate_chip_flight()
 	_show_placement(player_index, result)
 	_refresh()
 
@@ -68,6 +72,70 @@ func _refresh() -> void:
 	$FlaskLabel.text = "Flask: %s" % ("Full" if player.flask_full else "Empty")
 	$WhiteSumLabel.text = "White: %d" % player.pot.white_sum()
 	$ActivePlayerLabel.text = "P%d" % (pc.state.active_player + 1)
+	_update_explosion_risk(player.pot.white_sum(), player.exploded)
+	_refresh_rewards_bar(player)
+
+func _update_explosion_risk(white_sum: int, exploded: bool) -> void:
+	$ExplosionRiskBar.value = mini(white_sum, 8)
+	$ExplosionRiskBar.modulate = Color.RED if exploded else Color.WHITE
+
+func _refresh_rewards_bar(player: PlayerState) -> void:
+	var space := player.pot.scoring_space()
+	var ruby_text := ", Ruby" if PotTrack.has_ruby(space) else ""
+	var lines: Array[String] = [
+		"Stop now — Space %d: Money %d, VP %d%s" % [
+			space,
+			PotTrack.coins_for_space(space),
+			PotTrack.vp_for_space(space),
+			ruby_text,
+		]
+	]
+	for milestone: Dictionary in PotTrack.upcoming_milestones(space, 3):
+		var milestone_ruby := ", Ruby" if bool(milestone["ruby"]) else ""
+		lines.append(
+			"Next %d — Money %d, VP %d%s" % [
+				int(milestone["space"]),
+				int(milestone["money"]),
+				int(milestone["vp"]),
+				milestone_ruby,
+			]
+		)
+	$RewardsBar.text = "\n".join(lines)
+
+func _animate_chip_flight() -> void:
+	_anim_gen += 1
+	var generation := _anim_gen
+	if _draw_tween != null and _draw_tween.is_valid():
+		_draw_tween.kill()
+	var chip_flight := $DrawStage/ChipFlight as ColorRect
+	var bag := $DrawStage/BagPlaceholder as ColorRect
+	var cauldron := $DrawStage/CauldronPlaceholder as ColorRect
+	chip_flight.position = bag.position + (bag.size - chip_flight.size) / 2.0
+	chip_flight.scale = Vector2.ONE
+	chip_flight.visible = true
+	_draw_tween = create_tween()
+	_draw_tween.set_parallel(true)
+	_draw_tween.tween_property(
+		chip_flight,
+		"position",
+		cauldron.position + (cauldron.size - chip_flight.size) / 2.0,
+		0.25
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_draw_tween.tween_property(
+		chip_flight,
+		"scale",
+		Vector2(1.35, 1.35),
+		0.125
+	).set_trans(Tween.TRANS_SINE)
+	_draw_tween.chain().tween_property(
+		chip_flight,
+		"scale",
+		Vector2.ONE,
+		0.125
+	).set_trans(Tween.TRANS_SINE)
+	await _draw_tween.finished
+	if generation == _anim_gen:
+		chip_flight.visible = false
 
 func _show_placement(player_index: int, result: Dictionary) -> void:
 	var index := int(result["index"])
