@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://2fl8k5jsf1ef"
+
+[deps]
+
+files=["res://reference/levels.Money.translation", "res://reference/levels.victory poitns.translation", "res://reference/levels.ruby?.translation"]
+
+source_file="res://reference/levels.csv"
+dest_files=["res://reference/levels.Money.translation", "res://reference/levels.victory poitns.translation", "res://reference/levels.ruby?.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true
