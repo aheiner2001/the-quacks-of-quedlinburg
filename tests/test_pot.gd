@@ -3,11 +3,19 @@ extends RefCounted
 
 static func run() -> int:
 	var f := 0
-	f += AssertUtil.eq(PotTrack.coins_for_space(15), 15, "coins=space")
-	f += AssertUtil.eq(PotTrack.coins_for_space(33), 35, "coins at 33")
-	f += AssertUtil.eq(PotTrack.vp_for_space(19), 5, "vp 19")
-	f += AssertUtil.eq(PotTrack.vp_for_space(23), 7, "vp 23")
-	f += AssertUtil.eq(PotTrack.vp_for_space(33), 15, "vp 33")
+	PotTrack.ensure_loaded()
+	f += AssertUtil.eq(PotTrack.max_space(), 54, "max space 54")
+	f += AssertUtil.eq(PotTrack.coins_for_space(0), 0, "space 0 coins")
+	f += AssertUtil.eq(PotTrack.coins_for_space(6), 5, "node 6 money")
+	f += AssertUtil.eq(PotTrack.vp_for_space(6), 0, "node 6 vp")
+	f += AssertUtil.truthy(PotTrack.has_ruby(6), "node 6 ruby")
+	f += AssertUtil.eq(PotTrack.coins_for_space(23), 18, "node 23 money")
+	f += AssertUtil.eq(PotTrack.vp_for_space(23), 5, "node 23 vp")
+	f += AssertUtil.eq(PotTrack.coins_for_space(54), 35, "node 54 money")
+	f += AssertUtil.eq(PotTrack.vp_for_space(54), 15, "node 54 vp")
+	f += AssertUtil.eq(PotTrack.has_ruby(54), false, "node 54 no ruby")
+	f += AssertUtil.eq(PotTrack.coins_for_space(33), 23, "node 33 money from CSV")
+	f += AssertUtil.eq(PotTrack.vp_for_space(33), 8, "node 33 vp from CSV")
 
 	var pot := Pot.new()
 	var r1 := pot.place(Chip.make(Chip.ChipColor.ORANGE, 1))
