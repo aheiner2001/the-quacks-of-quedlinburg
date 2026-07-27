@@ -20,3 +20,66 @@ scale = Vector2(0.8061224, 0.7902097)
 [node name="stone_edge2" parent="." unique_id=1656217809 instance=ExtResource("3_8l818")]
 position = Vector2(68.00001, 441.00006)
 scale = Vector2(0.8061224, 0.7902097)
+
+[node name="ActivePlayerLabel" type="Label" parent="."]
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 84.0
+offset_bottom = 52.0
+theme_override_font_sizes/font_size = 24
+text = "P1"
+
+[node name="WhiteSumLabel" type="Label" parent="."]
+offset_left = 24.0
+offset_top = 58.0
+offset_right = 144.0
+offset_bottom = 88.0
+theme_override_font_sizes/font_size = 20
+text = "White: 0"
+
+[node name="FlaskLabel" type="Label" parent="."]
+offset_left = 24.0
+offset_top = 92.0
+offset_right = 144.0
+offset_bottom = 122.0
+theme_override_font_sizes/font_size = 20
+text = "Flask: Full"
+
+[node name="DrawButton" type="Button" parent="."]
+offset_left = 24.0
+offset_top = 140.0
+offset_right = 144.0
+offset_bottom = 184.0
+text = "Draw"
+
+[node name="StopButton" type="Button" parent="."]
+offset_left = 24.0
+offset_top = 194.0
+offset_right = 144.0
+offset_bottom = 238.0
+text = "Stop"
+
+[node name="FlaskButton" type="Button" parent="."]
+offset_left = 24.0
+offset_top = 248.0
+offset_right = 144.0
+offset_bottom = 292.0
+text = "Use Flask"
+
+[node name="HandoffLabel" type="Label" parent="."]
+offset_left = 180.0
+offset_top = 20.0
+offset_right = 500.0
+offset_bottom = 54.0
+theme_override_font_sizes/font_size = 22
+text = "Player 1 — draw or stop"
+
+[node name="PlacementsList" type="ItemList" parent="."]
+offset_left = 930.0
+offset_top = 24.0
+offset_right = 1210.0
+offset_bottom = 300.0
+
+[connection signal="pressed" from="DrawButton" to="." method="_on_draw_pressed"]
+[connection signal="pressed" from="StopButton" to="." method="_on_stop_pressed"]
+[connection signal="pressed" from="FlaskButton" to="." method="_on_flask_pressed"]

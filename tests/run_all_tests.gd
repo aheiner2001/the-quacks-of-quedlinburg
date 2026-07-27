@@ -1,5 +1,7 @@
 extends SceneTree
 
+const TestBoardUI = preload("res://tests/test_board_ui.gd")
+
 func _init() -> void:
 	var failures := 0
 	failures += TestChip.run()
@@ -9,6 +11,7 @@ func _init() -> void:
 	failures += TestMarket.run()
 	failures += TestGameState.run()
 	failures += TestPhaseController.run()
+	failures += TestBoardUI.run()
 	if failures == 0:
 		print("ALL TESTS PASSED")
 	else:
