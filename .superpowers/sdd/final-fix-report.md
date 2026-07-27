@@ -1,26 +1,30 @@
-# Core Loop Final Fix Report
+# CSV Shop/Cauldron Final Fix Report
 
-## 2026-07-27 whole-branch review fixes
+## 2026-07-27 final review fixes
 
-- Non-exploded players now receive pot-track VP automatically when evaluation begins; exploded players retain the VP-versus-shop choice.
-- Ingredient shelves are information-only. Explicit purchases use the evaluation ItemList, while the flask TextureButton remains the flask-refill purchase control.
-- Rejected/empty draws no longer emit `chip_drawn`.
-- Flask use is blocked after a voluntary stop, while a mid-draw flask undo still permits continued drawing.
-- Flask UI refresh rebuilds pot placements, and explosion handoff text preserves both the explosion and next-player message.
-- The starting player rotates when a non-final round ends.
-- Board and evaluation scenes guard missing controllers and show a start-game message instead of dereferencing null.
-- Godot-generated `.uid` files for `test_board_ui.gd`, `test_shop_ui.gd`, and `test_full_loop.gd` are included.
-- Regression coverage was added for all corrected gameplay and UI behaviors.
+- Buy-row rebuilds detach old buttons and defer deletion, preventing a pressed button from being freed while its signal is emitting.
+- Both source CSV files use Godot's `keep` importer so `FileAccess` can read them in exported builds.
+- `MarketCatalog` parses its CSV once, caches a stock template, and deep-copies that template for each game.
+- `GameState.can_buy()` owns shared purchase validation; both `buy()` and shop UI availability use it.
+- Flask refills are available during evaluation and shop phases when the active evaluation player has two rubies and an empty flask.
+- Pot clamping now explicitly tests raw index 56 clamping to space 54.
+- Evaluation VP coverage lands on space 23 and asserts five VP; market coverage restores the Poots round-three unlock assertion.
 
-## Reproducible local/CI verification
+## Additional quick fixes
 
-Run from the project root, in this order:
+- Flask confirmation now includes a Cancel button.
+- Draw animation cleanup uses a completion callback, so killed tweens are not awaited.
+- Round nine skips the unspent-coin warning.
+
+## Regression evidence
+
+The pre-fix regression run reproduced the missing `can_buy()` API, potions-phase flask refill, evaluation flask gating, and locked-object error from freeing a pressed buy-row button.
+
+Final verification from the feature worktree:
 
 ```bash
 /opt/homebrew/bin/godot --headless --path . --import
 /opt/homebrew/bin/godot --headless --path . -s res://tests/run_all_tests.gd
 ```
 
-`tests/run.sh` runs the same two commands and accepts a `GODOT` environment override.
-
-Final verification completed with Godot 4.7.1: `ALL TESTS PASSED`, exit code 0.
+Both commands exited 0 with Godot 4.7.1. The test runner printed `ALL TESTS PASSED`; CSV-backed PotTrack and MarketCatalog assertions passed after import.
