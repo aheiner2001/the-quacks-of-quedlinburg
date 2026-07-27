@@ -57,7 +57,7 @@ static func _test_evaluation_hotseat() -> int:
 	)
 	controller.state.players[0].coins = 10
 	failures += AssertUtil.truthy(controller.go_shop_active(), "active eval player enters shop")
-	failures += AssertUtil.truthy(controller.buy_active("pumpkin"), "active eval player buys")
+	failures += AssertUtil.truthy(controller.buy_active("pumpkin_1"), "active eval player buys")
 	failures += AssertUtil.eq(
 		controller.finish_eval_player(),
 		false,

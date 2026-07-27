@@ -8,19 +8,7 @@ const INFO_SHELVES := [
 	"MandrakeShelf",
 	"Pootsshelf",
 ]
-const CHIP_BUY_SKUS := [
-	"pumpkin",
-	"shroom",
-	"spider",
-	"moth",
-	"mandrake",
-	"poots",
-	"white_1",
-	"white_2",
-	"white_3",
-]
 const FLASK_BUY_BUTTON := "TextureButton"
-const FLASK_SKU := "flask_refill"
 
 func _ready() -> void:
 	for button_path in [
@@ -49,14 +37,12 @@ func setup_bottle_mask(btn: TextureButton) -> void:
 		btn.texture_click_mask = bm
 
 func _wire_shop_buttons() -> void:
-	var button := get_node(FLASK_BUY_BUTTON) as BaseButton
-	var callback := Callable(self, "_on_shop_item_pressed").bind(FLASK_SKU)
-	if not button.pressed.is_connected(callback):
-		button.pressed.connect(callback)
+	# Task 4 replaces the removed coin flask SKU with a ruby refill action.
+	get_node(FLASK_BUY_BUTTON).visible = false
 
 func _populate_white_shop() -> void:
 	$EvaluationPanel/WhiteShop.clear()
-	for sku: String in CHIP_BUY_SKUS:
+	for sku: String in _controller().state.market:
 		var entry: Dictionary = _controller().state.market[sku]
 		$EvaluationPanel/WhiteShop.add_item(
 			"%s — %d coins" % [entry["label"], entry["cost"]]
@@ -116,15 +102,7 @@ func _refresh_shop_controls(player: PlayerState) -> void:
 		button.visible = state.round != 9
 		button.disabled = false
 	var flask_button := get_node(FLASK_BUY_BUTTON) as BaseButton
-	var flask_entry: Dictionary = state.market[FLASK_SKU]
-	flask_button.visible = state.round != 9
-	flask_button.disabled = (
-		not shop_available
-		or not MarketCatalog.is_unlocked(flask_entry, state.round)
-		or int(flask_entry["stock"]) < 1
-		or int(flask_entry["cost"]) > player.coins
-		or player.purchases.size() >= 2
-	)
+	flask_button.visible = false
 	$EvaluationPanel/WhiteShop.visible = state.round != 9
 	for index in $EvaluationPanel/WhiteShop.item_count:
 		var sku: String = $EvaluationPanel/WhiteShop.get_item_metadata(index)

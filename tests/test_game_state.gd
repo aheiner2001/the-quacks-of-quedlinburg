@@ -56,13 +56,13 @@ static func _test_evaluation_fork_and_shop() -> int:
 	f += AssertUtil.eq(gs.take_vp(1), false, "exploded cannot take vp after shop")
 
 	gs.players[0].coins = 30
-	f += AssertUtil.eq(gs.buy(0, "mandrake"), false, "mandrake locked r1")
+	f += AssertUtil.eq(gs.buy(0, "mandrake_1"), false, "mandrake locked r1")
 	gs.round = 2
-	f += AssertUtil.truthy(gs.buy(0, "mandrake"), "mandrake r2")
+	f += AssertUtil.truthy(gs.buy(0, "mandrake_1"), "mandrake r2")
 	f += AssertUtil.eq(gs.players[0].pending_bag_chips.size(), 1, "chip queued for bag")
-	f += AssertUtil.eq(gs.buy(0, "mandrake"), false, "cannot buy same chip color twice")
-	f += AssertUtil.truthy(gs.buy(0, "pumpkin"), "second distinct chip")
-	f += AssertUtil.eq(gs.buy(0, "shroom"), false, "maximum two purchases")
+	f += AssertUtil.eq(gs.buy(0, "mandrake_2"), false, "cannot buy same chip color twice")
+	f += AssertUtil.truthy(gs.buy(0, "pumpkin_1"), "second distinct chip")
+	f += AssertUtil.eq(gs.buy(0, "shroom_1"), false, "maximum two purchases")
 
 	var g2 := GameState.new_game(1, 3)
 	g2.begin_round()
@@ -76,15 +76,12 @@ static func _test_evaluation_fork_and_shop() -> int:
 	g3.begin_round()
 	g3.players[0].stopped = true
 	g3.begin_evaluation()
-	f += AssertUtil.truthy(g3.go_to_shop(0), "shop for flask")
+	f += AssertUtil.truthy(g3.go_to_shop(0), "shop can be finished without buying")
 	f += AssertUtil.eq(g3.take_vp(0), false, "automatic vp is not awarded twice")
-	g3.players[0].flask_full = false
-	g3.players[0].coins = 20
-	f += AssertUtil.truthy(g3.buy(0, "flask_refill"), "buy flask")
-	f += AssertUtil.truthy(g3.players[0].flask_full, "flask refilled")
+	# Flask refills move to the ruby-based refill_flask API in Task 4.
 	g3.finish_shop(0)
 	f += AssertUtil.truthy(g3.players[0].evaluation_done, "shop finish completes evaluation")
-	f += AssertUtil.eq(g3.buy(0, "pumpkin"), false, "cannot buy after finishing shop")
+	f += AssertUtil.eq(g3.buy(0, "pumpkin_1"), false, "cannot buy after finishing shop")
 	return f
 
 static func _test_turn_nine_and_winners() -> int:
@@ -105,7 +102,7 @@ static func _test_turn_nine_and_winners() -> int:
 	f += AssertUtil.eq(gs.players[0].coins, 5, "coin conversion leaves remainder")
 	f += AssertUtil.truthy(gs.convert_rubies_to_vp(0), "convert 2 rubies")
 	f += AssertUtil.eq(gs.players[0].rubies, 2, "ruby conversion leaves remainder")
-	f += AssertUtil.eq(gs.buy(0, "pumpkin"), false, "no buying round 9")
+	f += AssertUtil.eq(gs.buy(0, "pumpkin_1"), false, "no buying round 9")
 
 	var exploded_convert_first := GameState.new_game(1, 7)
 	exploded_convert_first.round = 9

@@ -40,7 +40,7 @@ static func run() -> int:
 	)
 	failures += AssertUtil.eq(
 		shop.get_node("EvaluationPanel/WhiteShop").item_count,
-		9,
+		16,
 		"shop list provides explicit purchase controls for every chip"
 	)
 	failures += AssertUtil.truthy(
@@ -66,11 +66,11 @@ static func run() -> int:
 	var poots_index := -1
 	for index in shop.get_node("EvaluationPanel/WhiteShop").item_count:
 		var sku: String = shop.get_node("EvaluationPanel/WhiteShop").get_item_metadata(index)
-		if sku == "pumpkin":
+		if sku == "pumpkin_1":
 			pumpkin_index = index
-		elif sku == "mandrake":
+		elif sku == "mandrake_1":
 			mandrake_index = index
-		elif sku == "poots":
+		elif sku == "poots_1":
 			poots_index = index
 	failures += AssertUtil.truthy(pumpkin_index >= 0, "pumpkin has explicit buy entry")
 	if pumpkin_index >= 0:
@@ -82,7 +82,7 @@ static func run() -> int:
 		shop.call("_on_white_shop_item_clicked", pumpkin_index, Vector2.ZERO, MOUSE_BUTTON_LEFT)
 		failures += AssertUtil.eq(
 			controller.state.players[0].purchases,
-			["pumpkin"],
+			["pumpkin_1"],
 			"explicit list click purchases pumpkin"
 		)
 	failures += AssertUtil.truthy(mandrake_index >= 0, "mandrake has explicit buy entry")
@@ -97,12 +97,7 @@ static func run() -> int:
 			shop.get_node("EvaluationPanel/WhiteShop").is_item_disabled(poots_index),
 			"round 3 buy entry locked"
 		)
-	controller.state.players[0].flask_full = false
-	shop.get_node("TextureButton").pressed.emit()
-	failures += AssertUtil.truthy(
-		controller.state.players[0].flask_full,
-		"flask texture button remains an explicit purchase"
-	)
+	# Flask purchasing is intentionally absent until Task 4 adds refill_flask.
 
 	controller.state.round = 9
 	controller.state.begin_evaluation()
