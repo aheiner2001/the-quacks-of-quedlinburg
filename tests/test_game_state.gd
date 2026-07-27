@@ -41,13 +41,16 @@ static func _test_evaluation_fork_and_shop() -> int:
 	var f := 0
 	var gs := GameState.new_game(2, 2)
 	gs.begin_round()
-	gs.players[0].pot.place(Chip.make(Chip.ChipColor.ORANGE, 1))
+	gs.players[0].pot.place(Chip.make(Chip.ChipColor.ORANGE, 3))
 	gs.players[0].stopped = true
 	gs.players[1].exploded = true
 	gs.players[1].stopped = true
 	gs.begin_evaluation()
-	f += AssertUtil.eq(gs.players[0].coins, 2, "evaluation awards coins")
-	f += AssertUtil.truthy(gs.take_vp(0), "non-exploded takes vp")
+	f += AssertUtil.eq(gs.players[0].coins, 4, "evaluation awards coins")
+	f += AssertUtil.eq(gs.players[0].vp, 1, "non-exploded automatically gains vp")
+	f += AssertUtil.truthy(gs.players[0].chose_vp, "mandatory vp is recorded")
+	f += AssertUtil.eq(gs.take_vp(0), false, "mandatory vp cannot be taken twice")
+	f += AssertUtil.eq(gs.players[1].chose_vp, false, "exploded player still chooses reward")
 	f += AssertUtil.truthy(gs.go_to_shop(0), "non-exploded also shops")
 	f += AssertUtil.truthy(gs.go_to_shop(1), "exploded chooses shop")
 	f += AssertUtil.eq(gs.take_vp(1), false, "exploded cannot take vp after shop")
@@ -74,7 +77,7 @@ static func _test_evaluation_fork_and_shop() -> int:
 	g3.players[0].stopped = true
 	g3.begin_evaluation()
 	f += AssertUtil.truthy(g3.go_to_shop(0), "shop for flask")
-	f += AssertUtil.truthy(g3.take_vp(0), "non-exploded takes vp after choosing shop")
+	f += AssertUtil.eq(g3.take_vp(0), false, "automatic vp is not awarded twice")
 	g3.players[0].flask_full = false
 	g3.players[0].coins = 20
 	f += AssertUtil.truthy(g3.buy(0, "flask_refill"), "buy flask")
@@ -144,6 +147,7 @@ static func _test_potion_helpers_and_end_turn() -> int:
 	gs.begin_round()
 	gs.players[0].bag = Bag.new()
 	gs.players[0].bag.add(Chip.make(Chip.ChipColor.WHITE, 1))
+	gs.players[0].bag.add(Chip.make(Chip.ChipColor.WHITE, 1))
 	f += AssertUtil.eq(gs.draw()["index"], 1, "draw alias draws for active player")
 	f += AssertUtil.truthy(gs.use_flask(), "use flask alias acts for active player")
 	f += AssertUtil.eq(gs.draw_active()["index"], 1, "active player draws")
@@ -159,6 +163,7 @@ static func _test_potion_helpers_and_end_turn() -> int:
 	f += AssertUtil.eq(gs.players[0].bag.size(), bag_before + 2, "pot and purchases return to bag")
 	f += AssertUtil.eq(gs.players[0].pot.placements.size(), 0, "pot cleared")
 	f += AssertUtil.eq(gs.round, 2, "round advances")
+	f += AssertUtil.eq(gs.start_player, 1, "start player rotates each round")
 	f += AssertUtil.eq(gs.phase, "end_of_turn", "normal turn ends")
 
 	gs.round = 9

@@ -40,15 +40,69 @@ static func run() -> int:
 	)
 	failures += AssertUtil.eq(
 		shop.get_node("EvaluationPanel/WhiteShop").item_count,
-		3,
-		"white shop lists three chips"
+		9,
+		"shop list provides explicit purchase controls for every chip"
+	)
+	failures += AssertUtil.truthy(
+		controller.state.players[0].chose_vp,
+		"non-exploded evaluation cannot skip automatic vp"
+	)
+	failures += AssertUtil.eq(
+		shop.get_node("EvaluationPanel/DoneButton").disabled,
+		false,
+		"done is available after mandatory vp is granted"
 	)
 	controller.state.players[0].coins = 30
 	controller.go_shop_active()
 	shop.call("_refresh_evaluation")
-	failures += AssertUtil.eq(shop.get_node("PumpkinShelf").disabled, false, "round 1 shelf enabled")
-	failures += AssertUtil.truthy(shop.get_node("MandrakeShelf").disabled, "round 2 shelf locked")
-	failures += AssertUtil.truthy(shop.get_node("Pootsshelf").disabled, "round 3 shelf locked")
+	shop.get_node("PumpkinShelf").pressed.emit()
+	failures += AssertUtil.eq(
+		controller.state.players[0].purchases.size(),
+		0,
+		"browsing a shelf does not purchase"
+	)
+	var pumpkin_index := -1
+	var mandrake_index := -1
+	var poots_index := -1
+	for index in shop.get_node("EvaluationPanel/WhiteShop").item_count:
+		var sku: String = shop.get_node("EvaluationPanel/WhiteShop").get_item_metadata(index)
+		if sku == "pumpkin":
+			pumpkin_index = index
+		elif sku == "mandrake":
+			mandrake_index = index
+		elif sku == "poots":
+			poots_index = index
+	failures += AssertUtil.truthy(pumpkin_index >= 0, "pumpkin has explicit buy entry")
+	if pumpkin_index >= 0:
+		failures += AssertUtil.eq(
+			shop.get_node("EvaluationPanel/WhiteShop").is_item_disabled(pumpkin_index),
+			false,
+			"round 1 pumpkin buy entry enabled"
+		)
+		shop.call("_on_white_shop_item_clicked", pumpkin_index, Vector2.ZERO, MOUSE_BUTTON_LEFT)
+		failures += AssertUtil.eq(
+			controller.state.players[0].purchases,
+			["pumpkin"],
+			"explicit list click purchases pumpkin"
+		)
+	failures += AssertUtil.truthy(mandrake_index >= 0, "mandrake has explicit buy entry")
+	if mandrake_index >= 0:
+		failures += AssertUtil.truthy(
+			shop.get_node("EvaluationPanel/WhiteShop").is_item_disabled(mandrake_index),
+			"round 2 buy entry locked"
+		)
+	failures += AssertUtil.truthy(poots_index >= 0, "poots has explicit buy entry")
+	if poots_index >= 0:
+		failures += AssertUtil.truthy(
+			shop.get_node("EvaluationPanel/WhiteShop").is_item_disabled(poots_index),
+			"round 3 buy entry locked"
+		)
+	controller.state.players[0].flask_full = false
+	shop.get_node("TextureButton").pressed.emit()
+	failures += AssertUtil.truthy(
+		controller.state.players[0].flask_full,
+		"flask texture button remains an explicit purchase"
+	)
 
 	controller.state.round = 9
 	controller.state.begin_evaluation()

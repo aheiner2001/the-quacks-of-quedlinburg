@@ -6,10 +6,18 @@ extends Node2D
 		if Engine.is_editor_hint():
 			auto_number_stones()
 
+var _pending_explosion_player: int = -1
+
 func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 	var pc := _controller()
+	if pc == null or pc.state == null:
+		$HandoffLabel.text = "Start a game from the main menu."
+		$DrawButton.disabled = true
+		$StopButton.disabled = true
+		$FlaskButton.disabled = true
+		return
 	pc.phase_changed.connect(_on_phase)
 	pc.active_player_changed.connect(_on_active)
 	pc.chip_drawn.connect(_on_drawn)
@@ -25,7 +33,14 @@ func _on_phase(phase: String) -> void:
 	_refresh()
 
 func _on_active(player_index: int) -> void:
-	$HandoffLabel.text = "Player %d — draw or stop" % (player_index + 1)
+	if _pending_explosion_player >= 0:
+		$HandoffLabel.text = "Player %d exploded — now Player %d" % [
+			_pending_explosion_player + 1,
+			player_index + 1,
+		]
+		_pending_explosion_player = -1
+	else:
+		$HandoffLabel.text = "Player %d — draw or stop" % (player_index + 1)
 	_refresh()
 
 func _on_drawn(player_index: int, result: Dictionary) -> void:
@@ -34,14 +49,18 @@ func _on_drawn(player_index: int, result: Dictionary) -> void:
 	_refresh()
 
 func _on_exploded(player_index: int) -> void:
+	_pending_explosion_player = player_index
 	$HandoffLabel.text = "Player %d exploded!" % (player_index + 1)
 	_refresh()
 
 func _on_flask_used(_player_index: int) -> void:
+	_rebuild_placements()
 	_refresh()
 
 func _refresh() -> void:
 	var pc := _controller()
+	if pc == null or pc.state == null or pc.state.players.is_empty():
+		return
 	var player: PlayerState = pc.state.players[pc.state.active_player]
 	$DrawButton.disabled = not player.can_draw()
 	$StopButton.disabled = player.stopped
@@ -58,6 +77,7 @@ func _show_placement(player_index: int, result: Dictionary) -> void:
 			var chip: Dictionary = result["chip"]
 			marker.text = "%s %s" % [str(chip["color"]), str(chip["value"])]
 			marker.position = Vector2(-20, -24)
+			marker.set_meta("pot_chip_marker", true)
 			child.add_child(marker)
 			return
 	var fallback_chip: Dictionary = result["chip"]
@@ -70,6 +90,20 @@ func _show_placement(player_index: int, result: Dictionary) -> void:
 		]
 	)
 
+func _rebuild_placements() -> void:
+	$PlacementsList.clear()
+	for child in get_children():
+		for marker in child.get_children():
+			if marker.has_meta("pot_chip_marker"):
+				child.remove_child(marker)
+				marker.free()
+	var pc := _controller()
+	if pc == null or pc.state == null:
+		return
+	for player_index in pc.state.players.size():
+		for placement: Dictionary in pc.state.players[player_index].pot.placements:
+			_show_placement(player_index, placement)
+
 func _on_draw_pressed() -> void:
 	_controller().draw_active()
 
@@ -81,7 +115,10 @@ func _on_flask_pressed() -> void:
 	_refresh()
 
 func _controller() -> PhaseController:
-	return get_node("/root/GameSession").get("controller") as PhaseController
+	var session := get_node_or_null("/root/GameSession")
+	if session == null:
+		return null
+	return session.get("controller") as PhaseController
 
 func auto_number_stones() -> void:
 	var current_number = 1

@@ -1,3 +1,6 @@
+# Reproducible local/CI run:
+# /opt/homebrew/bin/godot --headless --path . --import
+# /opt/homebrew/bin/godot --headless --path . -s res://tests/run_all_tests.gd
 extends SceneTree
 
 const TestBoardUI = preload("res://tests/test_board_ui.gd")

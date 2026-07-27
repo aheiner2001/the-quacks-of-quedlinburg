@@ -18,6 +18,7 @@ static func run() -> int:
 		"StopButton": Button,
 		"FlaskButton": Button,
 		"HandoffLabel": Label,
+		"PlacementsList": ItemList,
 	}
 	for node_name: String in expected_nodes:
 		var node := board.get_node_or_null(node_name)
@@ -48,5 +49,29 @@ static func run() -> int:
 			"flask button wired"
 		)
 
+	var root: Window = Engine.get_main_loop().root
+	var session: Node = root.get_node("GameSession")
+	session.call("start_local", 2)
+	var controller := session.get("controller") as PhaseController
+	controller.state.players[0].bag = Bag.new()
+	controller.state.players[0].bag.add(Chip.make(Chip.ChipColor.WHITE, 1))
+	controller.state.players[0].bag.add(Chip.make(Chip.ChipColor.WHITE, 1))
+	root.add_child(board)
+	board.get_node("PlacementsList").add_item("stale placement")
+	controller.draw_active()
+	controller.use_flask_active()
+	failures += AssertUtil.eq(
+		board.get_node("PlacementsList").item_count,
+		0,
+		"flask use clears stale placement list entry"
+	)
+	board.call("_on_exploded", 0)
+	board.call("_on_active", 1)
+	failures += AssertUtil.eq(
+		board.get_node("HandoffLabel").text,
+		"Player 1 exploded — now Player 2",
+		"explosion survives handoff update"
+	)
+	root.remove_child(board)
 	board.free()
 	return failures

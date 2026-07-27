@@ -4,6 +4,7 @@ extends RefCounted
 static func run() -> int:
 	var failures := 0
 	failures += _test_potions_transition()
+	failures += _test_rejected_draw_emits_nothing()
 	failures += _test_evaluation_hotseat()
 	failures += _test_end_turn_and_continue()
 	return failures
@@ -23,6 +24,22 @@ static func _test_potions_transition() -> int:
 	controller.free()
 	return failures
 
+static func _test_rejected_draw_emits_nothing() -> int:
+	var failures := 0
+	var controller := PhaseController.new()
+	controller.setup(1, 102)
+	controller.begin_round()
+	controller.state.players[0].stopped = true
+	var draw_events: Array = []
+	controller.chip_drawn.connect(
+		func(player_index: int, result: Dictionary):
+			draw_events.append([player_index, result])
+	)
+	controller.draw_active()
+	failures += AssertUtil.eq(draw_events.size(), 0, "rejected draw emits no chip event")
+	controller.free()
+	return failures
+
 static func _test_evaluation_hotseat() -> int:
 	var failures := 0
 	var controller := PhaseController.new()
@@ -34,7 +51,10 @@ static func _test_evaluation_hotseat() -> int:
 	controller.state.players[1].stopped = true
 	controller.state.begin_evaluation()
 	failures += AssertUtil.eq(controller.state.eval_player, 0, "evaluation starts at player 0")
-	failures += AssertUtil.truthy(controller.take_vp_active(), "active eval player takes vp")
+	failures += AssertUtil.truthy(
+		controller.state.players[0].chose_vp,
+		"active eval player automatically receives vp"
+	)
 	controller.state.players[0].coins = 10
 	failures += AssertUtil.truthy(controller.go_shop_active(), "active eval player enters shop")
 	failures += AssertUtil.truthy(controller.buy_active("pumpkin"), "active eval player buys")
@@ -44,7 +64,10 @@ static func _test_evaluation_hotseat() -> int:
 		"first evaluation completion has another player"
 	)
 	failures += AssertUtil.eq(controller.state.eval_player, 1, "evaluation advances to player 1")
-	failures += AssertUtil.truthy(controller.take_vp_active(), "second player takes vp")
+	failures += AssertUtil.truthy(
+		controller.state.players[1].chose_vp,
+		"second player automatically receives vp"
+	)
 	failures += AssertUtil.truthy(
 		controller.finish_eval_player(),
 		"last evaluation completion reports all done"

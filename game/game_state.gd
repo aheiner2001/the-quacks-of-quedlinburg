@@ -98,6 +98,9 @@ func begin_evaluation() -> void:
 	for player in players:
 		var space := player.pot.scoring_space()
 		player.coins = PotTrack.coins_for_space(space)
+		if not player.exploded and not player.chose_vp:
+			player.vp += PotTrack.vp_for_space(space)
+			player.chose_vp = true
 		if round == 9:
 			player.final_pot_furthest = player.pot.furthest_index()
 
@@ -211,6 +214,8 @@ func end_turn() -> void:
 	if round == 9:
 		phase = "game_over"
 	else:
+		if not players.is_empty():
+			start_player = (start_player + 1) % players.size()
 		round += 1
 		phase = "end_of_turn"
 

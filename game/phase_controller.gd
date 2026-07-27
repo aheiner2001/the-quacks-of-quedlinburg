@@ -22,6 +22,8 @@ func begin_round() -> void:
 func draw_active() -> void:
 	var player_index := state.active_player
 	var result := state.draw_active()
+	if result.is_empty():
+		return
 	chip_drawn.emit(player_index, result)
 	if result.get("exploded", false):
 		exploded.emit(player_index)

@@ -27,7 +27,7 @@ func can_draw() -> bool:
 	return not stopped and not exploded and not bag.is_empty()
 
 func can_use_flask() -> bool:
-	if not flask_full or exploded or pot.placements.is_empty():
+	if stopped or not flask_full or exploded or pot.placements.is_empty():
 		return false
 	var last: Dictionary = pot.last_chip()
 	return Chip.is_white(last)
@@ -52,7 +52,4 @@ func use_flask() -> bool:
 	var chip := pot.undo_last()
 	bag.put_back(chip)
 	flask_full = false
-	stopped = false
-	if bag.is_empty():
-		stopped = true
 	return true

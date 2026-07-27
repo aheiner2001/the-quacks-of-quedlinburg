@@ -1,15 +1,26 @@
 extends Node2D
 
-const SHELF_SKU := {
-	"PumpkinShelf": "pumpkin",
-	"ShroomInfo": "shroom",
-	"SpiderShelf": "spider",
-	"MothShelf": "moth",
-	"MandrakeShelf": "mandrake",
-	"Pootsshelf": "poots",
-	"TextureButton": "flask_refill",
-}
-const WHITE_SKUS := ["white_1", "white_2", "white_3"]
+const INFO_SHELVES := [
+	"PumpkinShelf",
+	"ShroomInfo",
+	"SpiderShelf",
+	"MothShelf",
+	"MandrakeShelf",
+	"Pootsshelf",
+]
+const CHIP_BUY_SKUS := [
+	"pumpkin",
+	"shroom",
+	"spider",
+	"moth",
+	"mandrake",
+	"poots",
+	"white_1",
+	"white_2",
+	"white_3",
+]
+const FLASK_BUY_BUTTON := "TextureButton"
+const FLASK_SKU := "flask_refill"
 
 func _ready() -> void:
 	for button_path in [
@@ -22,6 +33,11 @@ func _ready() -> void:
 		setup_bottle_mask(get_node_or_null(button_path) as TextureButton)
 	$Flame.play("flame")
 	_wire_shop_buttons()
+	var pc := _controller()
+	if pc == null or pc.state == null:
+		$EvaluationPanel.visible = true
+		$EvaluationPanel/StatusLabel.text = "Start a game from the main menu."
+		return
 	_populate_white_shop()
 	_refresh_evaluation()
 
@@ -33,15 +49,14 @@ func setup_bottle_mask(btn: TextureButton) -> void:
 		btn.texture_click_mask = bm
 
 func _wire_shop_buttons() -> void:
-	for node_name: String in SHELF_SKU:
-		var button := get_node(node_name) as BaseButton
-		var callback := Callable(self, "_on_shop_item_pressed").bind(SHELF_SKU[node_name])
-		if not button.pressed.is_connected(callback):
-			button.pressed.connect(callback)
+	var button := get_node(FLASK_BUY_BUTTON) as BaseButton
+	var callback := Callable(self, "_on_shop_item_pressed").bind(FLASK_SKU)
+	if not button.pressed.is_connected(callback):
+		button.pressed.connect(callback)
 
 func _populate_white_shop() -> void:
 	$EvaluationPanel/WhiteShop.clear()
-	for sku: String in WHITE_SKUS:
+	for sku: String in CHIP_BUY_SKUS:
 		var entry: Dictionary = _controller().state.market[sku]
 		$EvaluationPanel/WhiteShop.add_item(
 			"%s — %d coins" % [entry["label"], entry["cost"]]
@@ -96,17 +111,20 @@ func _refresh_shop_controls(player: PlayerState) -> void:
 		and player.chose_shop
 		and not player.evaluation_done
 	)
-	for node_name: String in SHELF_SKU:
+	for node_name: String in INFO_SHELVES:
 		var button := get_node(node_name) as BaseButton
-		var entry: Dictionary = state.market[SHELF_SKU[node_name]]
 		button.visible = state.round != 9
-		button.disabled = (
-			not shop_available
-			or not MarketCatalog.is_unlocked(entry, state.round)
-			or int(entry["stock"]) < 1
-			or int(entry["cost"]) > player.coins
-			or player.purchases.size() >= 2
-		)
+		button.disabled = false
+	var flask_button := get_node(FLASK_BUY_BUTTON) as BaseButton
+	var flask_entry: Dictionary = state.market[FLASK_SKU]
+	flask_button.visible = state.round != 9
+	flask_button.disabled = (
+		not shop_available
+		or not MarketCatalog.is_unlocked(flask_entry, state.round)
+		or int(flask_entry["stock"]) < 1
+		or int(flask_entry["cost"]) > player.coins
+		or player.purchases.size() >= 2
+	)
 	$EvaluationPanel/WhiteShop.visible = state.round != 9
 	for index in $EvaluationPanel/WhiteShop.item_count:
 		var sku: String = $EvaluationPanel/WhiteShop.get_item_metadata(index)
@@ -174,11 +192,15 @@ func _show_winners() -> void:
 	for child in $EvaluationPanel.get_children():
 		if child is BaseButton or child is ItemList:
 			child.visible = false
-	for node_name: String in SHELF_SKU:
+	for node_name: String in INFO_SHELVES:
 		get_node(node_name).visible = false
+	get_node(FLASK_BUY_BUTTON).visible = false
 
 func _controller() -> PhaseController:
-	return get_node("/root/GameSession").get("controller") as PhaseController
+	var session := get_node_or_null("/root/GameSession")
+	if session == null:
+		return null
+	return session.get("controller") as PhaseController
 
 # --- Existing reveal/hide functions ---
 
