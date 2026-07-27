@@ -1,21 +1,78 @@
 [gd_scene format=3 uid="uid://dglv3ltnvmrhf"]
 
 [ext_resource type="Script" uid="uid://ccfdgjb34u3oa" path="res://main_menu.gd" id="1_06t4h"]
-[ext_resource type="Texture2D" uid="uid://bn0l5peawudba" path="res://assets/boards/homepage.png" id="2_7vrkn"]
+[ext_resource type="Texture2D" uid="uid://cugj4kys8gfr1" path="res://assets/boards/Untitled - July 26, 2026 at 16.02.33.png" id="2_fu7sn"]
+[ext_resource type="Texture2D" uid="uid://ysx61n85sefq" path="res://assets/new/Untitled - July 25, 2026 at 20.37.34.png" id="3_jix8l"]
+[ext_resource type="Texture2D" uid="uid://b8t404bqlce25" path="res://assets/new/Untitled - July 25, 2026 at 20.37.34 (1).png" id="4_glbon"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_psm7c"]
+texture = ExtResource("3_jix8l")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jix8l"]
+texture = ExtResource("3_jix8l")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_8l818"]
+texture = ExtResource("4_glbon")
 
 [node name="Node2D" type="Node2D" unique_id=1559598785]
 script = ExtResource("1_06t4h")
 
-[node name="CheckButton" type="Button" parent="." unique_id=364015244]
-offset_left = 254.0
-offset_top = 184.0
-offset_right = 390.0
-offset_bottom = 215.0
+[node name="background" type="ColorRect" parent="." unique_id=1780408556]
+offset_right = 1191.0
+offset_bottom = 677.0
+
+[node name="UntitledJuly26,2026At16_02_33" type="Sprite2D" parent="background" unique_id=407915034]
+position = Vector2(572, 280)
+texture = ExtResource("2_fu7sn")
+
+[node name="Label" type="Label" parent="background" unique_id=831669416]
+layout_mode = 0
+offset_left = 187.0
+offset_top = 500.0
+offset_right = 307.0
+offset_bottom = 567.0
+theme_override_colors/font_color = Color(0.22352941, 0.28235295, 0.34117648, 1)
+theme_override_font_sizes/font_size = 23
+text = "Join Room
+"
+
+[node name="LineEdit" type="LineEdit" parent="background/Label" unique_id=1256751708]
+layout_mode = 0
+offset_left = -71.0
+offset_top = 52.0
+offset_right = 187.0
+offset_bottom = 106.0
+
+[node name="Label2" type="Label" parent="background" unique_id=849645451]
+layout_mode = 0
+offset_left = 811.0
+offset_top = 500.0
+offset_right = 955.0
+offset_bottom = 567.0
+theme_override_colors/font_color = Color(0.22352941, 0.28235295, 0.34117648, 1)
+theme_override_font_sizes/font_size = 23
+text = "Create Room
+"
+
+[node name="LineEdit" type="LineEdit" parent="background/Label2" unique_id=1111668133]
+layout_mode = 0
+offset_left = -71.0
+offset_top = 52.0
+offset_right = 187.0
+offset_bottom = 106.0
+
+[node name="CheckButton" type="Button" parent="background" unique_id=364015244]
+layout_mode = 0
+offset_left = 509.0
+offset_top = 534.0
+offset_right = 669.0
+offset_bottom = 627.0
+theme_override_colors/font_color = Color(0.13725491, 0.15294118, 0.19607843, 1)
+theme_override_colors/font_pressed_color = Color(0.13725491, 0.15294118, 0.19607843, 1)
+theme_override_colors/font_hover_color = Color(0.13725491, 0.15294118, 0.19607843, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_psm7c")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_jix8l")
+theme_override_styles/hover = SubResource("StyleBoxTexture_8l818")
 text = "Start Game"
 
-[node name="Homepage" type="Sprite2D" parent="." unique_id=750251600]
-position = Vector2(577, 320.5)
-scale = Vector2(0.74609375, 0.63183594)
-texture = ExtResource("2_7vrkn")
-
-[connection signal="pressed" from="CheckButton" to="." method="_on_check_button_pressed"]
+[connection signal="pressed" from="background/CheckButton" to="." method="_on_check_button_pressed"]

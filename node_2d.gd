@@ -15,6 +15,7 @@ var shop_items = {
 
 var cart: Array = []
 const MAX_CART_ITEMS = 2
+const stone = preload("res://stone.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -26,6 +27,18 @@ func _ready() -> void:
 	setup_bottle_mask($PumpkinShelf)
 	setup_bottle_mask($Shopsign)
 	$Flame.play("flame")
+	for i in range(1, 51): # Loops from 1 to 50
+		# 1. Instance the scene
+		var new_stone = stone.instantiate()
+		
+		# 2. Set its unique number property
+		new_stone.stone_value = i
+		
+		# 3. Position it somewhere (e.g., in a grid or random spread)
+		new_stone.position = Vector2((i - 1) % 10 * 60, floor((i - 1) / 10) * 60)
+		
+		# 4. Add it to the active scene tree
+		add_child(new_stone)
 
 # Reusable helper function to keep your code clean
 func setup_bottle_mask(btn: TextureButton) -> void:
@@ -122,3 +135,7 @@ func _on_mandrakexit_pressed() -> void:
 
 func _on_settingicon_pressed() -> void:
 	get_tree().change_scene_to_file("res://main_menu.tscn")
+
+
+func _on_button_pressed() -> void:
+	get_tree().change_scene_to_file("res://board.tscn")

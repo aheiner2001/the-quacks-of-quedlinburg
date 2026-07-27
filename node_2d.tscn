@@ -114,6 +114,8 @@ animations = [{
 
 [node name="Shop" type="Node2D" unique_id=2127043720]
 script = ExtResource("1_epypp")
+player_money = null
+player_rubies = null
 
 [node name="backgorund" type="Sprite2D" parent="." unique_id=384659669]
 scale = Vector2(1.1298828, 1.1413238)
@@ -346,6 +348,14 @@ sprite_frames = SubResource("SpriteFrames_xrivr")
 animation = &"flame"
 frame_progress = 0.36372885
 
+[node name="Button" type="Button" parent="." unique_id=1893781590]
+offset_left = 510.0
+offset_top = 462.0
+offset_right = 885.6067
+offset_bottom = 650.7457
+text = "CONTINUE
+"
+
 [node name="Settingicon" type="TextureButton" parent="." unique_id=635803236]
 offset_left = 1063.0
 offset_top = 545.0
@@ -368,4 +378,5 @@ texture_normal = ExtResource("33_kq1c5")
 [connection signal="pressed" from="Poots/pootsexit" to="." method="_on_pootsexit_pressed"]
 [connection signal="pressed" from="Mandrake/mandrakexit" to="." method="_on_mandrakexit_pressed"]
 [connection signal="pressed" from="Moth/Moth exit" to="." method="_on_moth_exit_pressed"]
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="Settingicon" to="." method="_on_settingicon_pressed"]

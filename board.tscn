@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://dtrjbct54ch54"]
+
+[ext_resource type="Texture2D" uid="uid://dyn1lvuh44u0i" path="res://assets/boards/gameboard.png" id="1_p0ybc"]
+[ext_resource type="Script" uid="uid://dgok2bl0fmk87" path="res://board.gd" id="1_psm7c"]
+[ext_resource type="PackedScene" uid="uid://b7hmpjitxkp3" path="res://stone.tscn" id="3_8l818"]
+
+[node name="Node2D" type="Node2D" unique_id=1050217479]
+script = ExtResource("1_psm7c")
+
+[node name="Gameboard" type="Sprite2D" parent="." unique_id=2045807126]
+position = Vector2(166, 99)
+scale = Vector2(0.8061224, 0.7902097)
+texture = ExtResource("1_p0ybc")
+centered = false
+
+[node name="stone_edge" parent="." unique_id=583259958 instance=ExtResource("3_8l818")]
+position = Vector2(55.998573, 348.5206)
+scale = Vector2(0.8061224, 0.7902097)
+
+[node name="stone_edge2" parent="." unique_id=1656217809 instance=ExtResource("3_8l818")]
+position = Vector2(68.00001, 441.00006)
+scale = Vector2(0.8061224, 0.7902097)

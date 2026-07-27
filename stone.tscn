@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://b7hmpjitxkp3"]
+
+[ext_resource type="Script" uid="uid://ds6evmmq1fyi0" path="res://area_2d.gd" id="1_6s6ed"]
+[ext_resource type="Texture2D" uid="uid://soxgcyuwx3p4" path="res://assets/boards/Untitled - July 26, 2026 at 16.25.14.png" id="2_rq0vd"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xrivr"]
+
+[node name="stone_edge" type="StaticBody2D" unique_id=583259958]
+script = ExtResource("1_6s6ed")
+
+[node name="Sprite2D" type="TextureRect" parent="." unique_id=1262370141]
+offset_left = -44.0
+offset_top = -105.0
+offset_right = 121.0
+offset_bottom = 179.0
+texture = ExtResource("2_rq0vd")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="." unique_id=1705969207]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=225527162]
+shape = SubResource("RectangleShape2D_xrivr")
