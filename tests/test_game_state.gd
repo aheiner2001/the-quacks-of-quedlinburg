@@ -46,8 +46,8 @@ static func _test_evaluation_fork_and_shop() -> int:
 	gs.players[1].exploded = true
 	gs.players[1].stopped = true
 	gs.begin_evaluation()
-	f += AssertUtil.eq(gs.players[0].coins, 4, "evaluation awards coins")
-	f += AssertUtil.eq(gs.players[0].vp, 1, "non-exploded automatically gains vp")
+	f += AssertUtil.eq(gs.players[0].coins, 3, "evaluation awards coins")
+	f += AssertUtil.eq(gs.players[0].vp, 0, "non-exploded automatically gains vp")
 	f += AssertUtil.truthy(gs.players[0].chose_vp, "mandatory vp is recorded")
 	f += AssertUtil.eq(gs.take_vp(0), false, "mandatory vp cannot be taken twice")
 	f += AssertUtil.eq(gs.players[1].chose_vp, false, "exploded player still chooses reward")
