@@ -53,6 +53,26 @@ static func run() -> int:
 		false,
 		"done is available after mandatory vp is granted"
 	)
+	var player: PlayerState = controller.state.players[0]
+	player.flask_full = false
+	player.rubies = 2
+	shop.call("_refresh_evaluation")
+	failures += AssertUtil.eq(
+		shop.get_node("TextureButton").disabled,
+		false,
+		"flask refill is enabled during evaluation"
+	)
+	shop.get_node("TextureButton").pressed.emit()
+	var flask_dialog := shop.get_node_or_null("FlaskConfirmDialog")
+	failures += AssertUtil.truthy(
+		flask_dialog != null and flask_dialog.visible,
+		"evaluation flask refill opens ruby confirmation"
+	)
+	if flask_dialog:
+		flask_dialog.confirmed.emit()
+	failures += AssertUtil.truthy(player.flask_full, "evaluation refill fills flask")
+	failures += AssertUtil.eq(player.rubies, 0, "evaluation refill spends two rubies")
+
 	controller.state.players[0].coins = 30
 	controller.go_shop_active()
 	shop.call("_refresh_evaluation")
@@ -76,13 +96,29 @@ static func run() -> int:
 		"pumpkin_6" in pumpkin_skus,
 		"pumpkin panel offers pumpkin 6"
 	)
+	if pumpkin_buy_row:
+		var pumpkin_button: Button = pumpkin_buy_row.get_child(0)
+		pumpkin_button.pressed.emit()
+		failures += AssertUtil.eq(
+			player.purchases,
+			["pumpkin_1"],
+			"pumpkin buy row press purchases chip"
+		)
+		failures += AssertUtil.eq(
+			pumpkin_buy_row.get_child_count(),
+			2,
+			"pumpkin buy row rebuilds after its button emits"
+		)
 	var pumpkin_index := -1
+	var gary_index := -1
 	var mandrake_index := -1
 	var poots_index := -1
 	for index in shop.get_node("EvaluationPanel/WhiteShop").item_count:
 		var sku: String = shop.get_node("EvaluationPanel/WhiteShop").get_item_metadata(index)
 		if sku == "pumpkin_1":
 			pumpkin_index = index
+		elif sku == "gary_1":
+			gary_index = index
 		elif sku == "mandrake_1":
 			mandrake_index = index
 		elif sku == "poots_1":
@@ -91,14 +127,16 @@ static func run() -> int:
 	if pumpkin_index >= 0:
 		failures += AssertUtil.eq(
 			shop.get_node("EvaluationPanel/WhiteShop").is_item_disabled(pumpkin_index),
-			false,
-			"round 1 pumpkin buy entry enabled"
+			true,
+			"purchased pumpkin color is disabled"
 		)
-		shop.call("_on_white_shop_item_clicked", pumpkin_index, Vector2.ZERO, MOUSE_BUTTON_LEFT)
+	failures += AssertUtil.truthy(gary_index >= 0, "gary has explicit buy entry")
+	if gary_index >= 0:
+		shop.call("_on_white_shop_item_clicked", gary_index, Vector2.ZERO, MOUSE_BUTTON_LEFT)
 		failures += AssertUtil.eq(
 			controller.state.players[0].purchases,
-			["pumpkin_1"],
-			"explicit list click purchases pumpkin"
+			["pumpkin_1", "gary_1"],
+			"explicit list click purchases gary"
 		)
 	failures += AssertUtil.truthy(mandrake_index >= 0, "mandrake has explicit buy entry")
 	if mandrake_index >= 0:
@@ -112,13 +150,11 @@ static func run() -> int:
 			shop.get_node("EvaluationPanel/WhiteShop").is_item_disabled(poots_index),
 			"round 3 buy entry locked"
 		)
-	var player: PlayerState = controller.state.players[0]
 	player.flask_full = false
 	player.rubies = 2
 	var purchases_before_flask := player.purchases.duplicate()
 	shop.call("_refresh_evaluation")
 	shop.get_node("TextureButton").pressed.emit()
-	var flask_dialog := shop.get_node_or_null("FlaskConfirmDialog")
 	failures += AssertUtil.truthy(flask_dialog != null, "shop has flask confirmation")
 	failures += AssertUtil.truthy(
 		flask_dialog != null and flask_dialog.visible,

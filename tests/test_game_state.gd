@@ -42,13 +42,15 @@ static func _test_evaluation_fork_and_shop() -> int:
 	var f := 0
 	var gs := GameState.new_game(2, 2)
 	gs.begin_round()
-	gs.players[0].pot.place(Chip.make(Chip.ChipColor.ORANGE, 3))
+	gs.players[0].pot.placements = [
+		{"chip": Chip.make(Chip.ChipColor.ORANGE, 3), "index": 22}
+	]
 	gs.players[0].stopped = true
 	gs.players[1].exploded = true
 	gs.players[1].stopped = true
 	gs.begin_evaluation()
-	f += AssertUtil.eq(gs.players[0].coins, 3, "evaluation awards coins")
-	f += AssertUtil.eq(gs.players[0].vp, 0, "non-exploded automatically gains vp")
+	f += AssertUtil.eq(gs.players[0].coins, 18, "evaluation awards coins")
+	f += AssertUtil.eq(gs.players[0].vp, 5, "non-exploded automatically gains non-zero vp")
 	f += AssertUtil.truthy(gs.players[0].chose_vp, "mandatory vp is recorded")
 	f += AssertUtil.eq(gs.take_vp(0), false, "mandatory vp cannot be taken twice")
 	f += AssertUtil.eq(gs.players[1].chose_vp, false, "exploded player still chooses reward")
@@ -57,10 +59,16 @@ static func _test_evaluation_fork_and_shop() -> int:
 	f += AssertUtil.eq(gs.take_vp(1), false, "exploded cannot take vp after shop")
 
 	gs.players[0].coins = 30
+	f += AssertUtil.truthy(gs.can_buy(0, "pumpkin_1"), "can_buy allows valid purchase")
 	f += AssertUtil.eq(gs.buy(0, "mandrake_1"), false, "mandrake locked r1")
 	gs.round = 2
 	f += AssertUtil.truthy(gs.buy(0, "mandrake_1"), "mandrake r2")
 	f += AssertUtil.eq(gs.players[0].pending_bag_chips.size(), 1, "chip queued for bag")
+	f += AssertUtil.eq(
+		gs.can_buy(0, "mandrake_2"),
+		false,
+		"can_buy rejects a second chip of the same color"
+	)
 	f += AssertUtil.eq(gs.buy(0, "mandrake_2"), false, "cannot buy same chip color twice")
 	f += AssertUtil.truthy(gs.buy(0, "pumpkin_1"), "second distinct chip")
 	f += AssertUtil.eq(gs.buy(0, "shroom_1"), false, "maximum two purchases")
@@ -110,8 +118,15 @@ static func _test_ruby_grant_and_flask_refill() -> int:
 
 	var controller := PhaseController.new()
 	controller.setup(1, 10)
+	controller.begin_round()
 	controller.state.players[0].flask_full = false
 	controller.state.players[0].rubies = 2
+	f += AssertUtil.eq(
+		controller.refill_flask_active(),
+		false,
+		"flask cannot be refilled during potions"
+	)
+	controller.stop_active()
 	f += AssertUtil.truthy(controller.refill_flask_active(), "controller refills active flask")
 	controller.free()
 	return f

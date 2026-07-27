@@ -133,8 +133,11 @@ func _animate_chip_flight() -> void:
 		Vector2.ONE,
 		0.125
 	).set_trans(Tween.TRANS_SINE)
-	await _draw_tween.finished
-	if generation == _anim_gen:
+	_draw_tween.finished.connect(_on_draw_tween_finished.bind(generation, chip_flight))
+
+
+func _on_draw_tween_finished(generation: int, chip_flight: ColorRect) -> void:
+	if generation == _anim_gen and is_instance_valid(chip_flight):
 		chip_flight.visible = false
 
 func _show_placement(player_index: int, result: Dictionary) -> void:

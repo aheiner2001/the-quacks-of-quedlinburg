@@ -132,7 +132,7 @@ func go_to_shop(player_index: int) -> bool:
 	phase = "shop"
 	return true
 
-func buy(player_index: int, sku_id: String) -> bool:
+func can_buy(player_index: int, sku_id: String) -> bool:
 	if round == 9 or not _valid_player(player_index) or phase != "shop":
 		return false
 	var player := players[player_index]
@@ -150,7 +150,14 @@ func buy(player_index: int, sku_id: String) -> bool:
 		return false
 	if entry["kind"] == "chip" and _already_bought_color(player, int(entry["color"])):
 		return false
+	return true
 
+
+func buy(player_index: int, sku_id: String) -> bool:
+	if not can_buy(player_index, sku_id):
+		return false
+	var player := players[player_index]
+	var entry: Dictionary = market[sku_id]
 	player.coins -= int(entry["cost"])
 	entry["stock"] = int(entry["stock"]) - 1
 	player.purchases.append(sku_id)
@@ -160,6 +167,8 @@ func buy(player_index: int, sku_id: String) -> bool:
 
 func refill_flask(player_index: int) -> bool:
 	if not _valid_player(player_index):
+		return false
+	if phase != "evaluation" and phase != "shop":
 		return false
 	var player := players[player_index]
 	if player.flask_full or player.rubies < 2:

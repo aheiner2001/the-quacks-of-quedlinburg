@@ -102,12 +102,6 @@ func _refresh_evaluation(message: String = "") -> void:
 
 func _refresh_shop_controls(player: PlayerState) -> void:
 	var state := _controller().state
-	var shop_available := (
-		state.round != 9
-		and state.phase == "shop"
-		and player.chose_shop
-		and not player.evaluation_done
-	)
 	for node_name: String in INFO_SHELVES:
 		var button := get_node(node_name) as BaseButton
 		button.visible = state.round != 9
@@ -115,21 +109,16 @@ func _refresh_shop_controls(player: PlayerState) -> void:
 	var flask_button := get_node(FLASK_BUY_BUTTON) as BaseButton
 	flask_button.visible = state.round != 9
 	flask_button.disabled = (
-		not shop_available
+		not _can_refill_flask()
 		or player.flask_full
 		or player.rubies < 2
 	)
 	$EvaluationPanel/WhiteShop.visible = state.round != 9
 	for index in $EvaluationPanel/WhiteShop.item_count:
 		var sku: String = $EvaluationPanel/WhiteShop.get_item_metadata(index)
-		var entry: Dictionary = state.market[sku]
 		$EvaluationPanel/WhiteShop.set_item_disabled(
 			index,
-			not shop_available
-			or not MarketCatalog.is_unlocked(entry, state.round)
-			or int(entry["stock"]) < 1
-			or int(entry["cost"]) > player.coins
-			or player.purchases.size() >= 2
+			not state.can_buy(state.eval_player, sku)
 		)
 
 func _on_shop_item_pressed(sku: String) -> void:
@@ -153,18 +142,19 @@ func _is_shopping() -> bool:
 	)
 
 func _can_buy(sku: String) -> bool:
-	if not _is_shopping():
+	var pc := _controller()
+	return pc != null and pc.state != null and pc.state.can_buy(pc.state.eval_player, sku)
+
+
+func _can_refill_flask() -> bool:
+	var pc := _controller()
+	if pc == null or pc.state == null:
 		return false
-	var state := _controller().state
+	var state := pc.state
+	if state.phase != "evaluation" and state.phase != "shop":
+		return false
 	var player: PlayerState = state.players[state.eval_player]
-	var entry: Dictionary = state.market[sku]
-	return (
-		MarketCatalog.is_unlocked(entry, state.round)
-		and int(entry["stock"]) > 0
-		and int(entry["cost"]) <= player.coins
-		and player.purchases.size() < 2
-		and not state._already_bought_color(player, int(entry["color"]))
-	)
+	return not player.evaluation_done and not player.flask_full and player.rubies >= 2
 
 func _open_ingredient(shelf_node: String, popup: Node) -> void:
 	popup.visible = true
@@ -173,7 +163,8 @@ func _open_ingredient(shelf_node: String, popup: Node) -> void:
 func _rebuild_buy_buttons(shelf_node: String, popup: Node) -> void:
 	var row := popup.get_node("BuyRow") as HBoxContainer
 	for child in row.get_children():
-		child.free()
+		row.remove_child(child)
+		child.queue_free()
 	for sku: String in MarketCatalog.skus_for_shelf(shelf_node):
 		var entry: Dictionary = _controller().state.market[sku]
 		var button := Button.new()
@@ -214,7 +205,8 @@ func _on_done_pressed() -> void:
 	var previous_player := pc.state.eval_player
 	var player: PlayerState = pc.state.players[previous_player]
 	if (
-		player.coins > 0
+		pc.state.round != 9
+		and player.coins > 0
 		and player.chose_shop
 		and _unspent_coin_warning_player != previous_player
 	):
@@ -287,7 +279,7 @@ func _on_mandrakexit_pressed() -> void:
 	$Mandrake.visible = false
 
 func _on_flask_pressed() -> void:
-	if _is_shopping():
+	if _can_refill_flask():
 		$FlaskConfirmDialog.popup_centered()
 
 func _on_flask_confirmed() -> void:

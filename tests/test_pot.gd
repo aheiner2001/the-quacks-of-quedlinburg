@@ -36,8 +36,8 @@ static func run() -> int:
 	f += AssertUtil.eq(p2.scoring_space(), 9, "scoring after boom")
 
 	var p3 := Pot.new()
-	# Force far placement: droplet 50 + white 4 → clamp 54
-	p3.droplet = 50
+	# Force raw placement 56: droplet 52 + white 4 → clamp 54
+	p3.droplet = 52
 	var far := p3.place(Chip.make(Chip.ChipColor.WHITE, 4))
 	f += AssertUtil.eq(far["index"], 54, "clamp to max space")
 	f += AssertUtil.eq(p3.scoring_space(), 54, "scoring at cap")

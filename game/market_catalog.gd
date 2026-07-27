@@ -3,6 +3,8 @@ extends RefCounted
 
 const _CHIP_STOCK := 10
 const _CSV_PATH := "res://reference/token_shop_prices.csv"
+static var _stock_template: Dictionary = {}
+static var _loaded := false
 
 const CHAR_META := {
 	"Scary Gary": {
@@ -60,8 +62,10 @@ const SHELF_SLUGS := {
 }
 
 
-static func default_stock() -> Dictionary:
-	var stock := {}
+static func ensure_loaded() -> void:
+	if _loaded:
+		return
+	_stock_template.clear()
 	for row: Dictionary in CsvUtil.parse_file(_CSV_PATH):
 		var character := str(row["character"])
 		if not CHAR_META.has(character):
@@ -70,7 +74,7 @@ static func default_stock() -> Dictionary:
 		var meta: Dictionary = CHAR_META[character]
 		var value := int(str(row["token_type"]).split(" ")[0])
 		var sku_id := "%s_%d" % [meta["slug"], value]
-		stock[sku_id] = {
+		_stock_template[sku_id] = {
 			"id": sku_id,
 			"kind": "chip",
 			"color": meta["color"],
@@ -82,14 +86,19 @@ static func default_stock() -> Dictionary:
 			"character_slug": meta["slug"],
 			"shelf_node": meta["shelf"],
 		}
-	return stock
+	_loaded = true
+
+
+static func default_stock() -> Dictionary:
+	ensure_loaded()
+	return _stock_template.duplicate(true)
 
 
 static func skus_for_shelf(shelf_node: String) -> Array:
+	ensure_loaded()
 	var skus: Array = []
-	var stock := default_stock()
-	for sku_id: String in stock:
-		var entry: Dictionary = stock[sku_id]
+	for sku_id: String in _stock_template:
+		var entry: Dictionary = _stock_template[sku_id]
 		if entry["shelf_node"] == shelf_node:
 			skus.append(sku_id)
 	return skus

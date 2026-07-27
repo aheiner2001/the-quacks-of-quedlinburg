@@ -1,0 +1,12 @@
+[remap]
+
+importer="keep"
+type=""
+uid="uid://noyaynw214vb"
+
+[deps]
+
+source_file="res://reference/levels.csv"
+dest_files=[]
+
+[params]

@@ -462,10 +462,11 @@ offset_right = 374.0
 offset_bottom = 312.0
 text = "Done / Pass"
 
-[node name="FlaskConfirmDialog" type="AcceptDialog" parent="."]
+[node name="FlaskConfirmDialog" type="ConfirmationDialog" parent="."]
 title = "Refill Flask"
 dialog_text = "Spend 2 rubies to refill your flask?"
 ok_button_text = "Refill"
+cancel_button_text = "Cancel"
 
 [node name="Settingicon" type="TextureButton" parent="." unique_id=635803236]
 offset_left = 1063.0
