@@ -1,0 +1,17 @@
+character,token_type,cost
+Scary Gary,1 token,5
+Scary Gary,2 token,10
+Scary Gary,4 token,19
+Pumpkin,1 token,3
+Pumpkin,6 token,22
+Spider,1 token,4
+Spider,2 token,8
+Spider,4 token,14
+Mushroom,1 token,6
+Mushroom,2 token,10
+Mushroom,4 token,16
+Ghost (Puts),1 token,9
+Mandrake (Toby Turnip),1 token,8
+Mandrake (Toby Turnip),2 token,12
+Mandrake (Toby Turnip),4 token,18
+Moth,1 token,10
