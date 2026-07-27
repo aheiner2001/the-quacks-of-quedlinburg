@@ -13,6 +13,8 @@ var purchases: Array = []
 var chose_vp: bool = false
 var chose_shop: bool = false
 var evaluation_done: bool = false
+var pending_bag_chips: Array = []
+var final_pot_furthest: int = 0
 
 static func create_fresh() -> PlayerState:
 	var p := PlayerState.new()

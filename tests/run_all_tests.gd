@@ -7,6 +7,7 @@ func _init() -> void:
 	failures += TestPot.run()
 	failures += TestPotions.run()
 	failures += TestMarket.run()
+	failures += TestGameState.run()
 	if failures == 0:
 		print("ALL TESTS PASSED")
 	else:
