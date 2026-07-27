@@ -8,6 +8,7 @@ var active_player: int = 0
 var market: Dictionary = {}
 var rng: RandomNumberGenerator
 var start_player: int = 0
+var round_6_white_granted: bool = false
 
 static func new_game(player_count: int, seed: int) -> GameState:
 	var game := GameState.new()
@@ -19,9 +20,10 @@ static func new_game(player_count: int, seed: int) -> GameState:
 	return game
 
 func begin_round() -> void:
-	if round == 6:
+	if round == 6 and not round_6_white_granted:
 		for player in players:
 			player.bag.add(Chip.make(Chip.ChipColor.WHITE, 1))
+		round_6_white_granted = true
 	for player in players:
 		player.pot = Pot.new()
 		player.exploded = false
@@ -43,14 +45,23 @@ func draw_active() -> Dictionary:
 		return {}
 	return player.draw(rng)
 
+func draw() -> Dictionary:
+	return draw_active()
+
 func stop_active() -> void:
 	if phase == "potions" and not players.is_empty():
 		players[active_player].stop()
+
+func stop() -> void:
+	stop_active()
 
 func use_flask_active() -> bool:
 	if phase != "potions" or players.is_empty():
 		return false
 	return players[active_player].use_flask()
+
+func use_flask() -> bool:
+	return use_flask_active()
 
 func all_players_stopped() -> bool:
 	if players.is_empty():
@@ -117,7 +128,12 @@ func buy(player_index: int, sku_id: String) -> bool:
 	if round == 9 or not _valid_player(player_index) or phase != "shop":
 		return false
 	var player := players[player_index]
-	if not player.chose_shop or player.purchases.size() >= 2 or not market.has(sku_id):
+	if (
+		not player.chose_shop
+		or player.evaluation_done
+		or player.purchases.size() >= 2
+		or not market.has(sku_id)
+	):
 		return false
 	var entry: Dictionary = market[sku_id]
 	if not MarketCatalog.is_unlocked(entry, round):
@@ -151,6 +167,7 @@ func convert_coins_to_vp(player_index: int) -> bool:
 		return false
 	player.coins -= 5
 	player.vp += 1
+	player.chose_shop = true
 	return true
 
 func convert_rubies_to_vp(player_index: int) -> bool:
@@ -161,6 +178,7 @@ func convert_rubies_to_vp(player_index: int) -> bool:
 		return false
 	player.rubies -= 2
 	player.vp += 1
+	player.chose_shop = true
 	return true
 
 func end_turn() -> void:
