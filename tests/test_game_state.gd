@@ -5,6 +5,7 @@ static func run() -> int:
 	var f := 0
 	f += _test_new_game_and_round_reset()
 	f += _test_evaluation_fork_and_shop()
+	f += _test_ruby_grant_and_flask_refill()
 	f += _test_turn_nine_and_winners()
 	f += _test_potion_helpers_and_end_turn()
 	return f
@@ -82,6 +83,37 @@ static func _test_evaluation_fork_and_shop() -> int:
 	g3.finish_shop(0)
 	f += AssertUtil.truthy(g3.players[0].evaluation_done, "shop finish completes evaluation")
 	f += AssertUtil.eq(g3.buy(0, "pumpkin_1"), false, "cannot buy after finishing shop")
+	return f
+
+static func _test_ruby_grant_and_flask_refill() -> int:
+	var f := 0
+	var gs := GameState.new_game(1, 9)
+	gs.begin_round()
+	gs.players[0].pot.placements = [
+		{"chip": Chip.make(Chip.ChipColor.ORANGE, 1), "index": 5}
+	]
+	gs.begin_evaluation()
+	f += AssertUtil.eq(gs.players[0].rubies, 1, "ruby granted on ruby scoring space")
+	f += AssertUtil.eq(
+		gs.players[0].coins,
+		PotTrack.coins_for_space(6),
+		"coins granted from same scoring space"
+	)
+
+	gs.players[0].flask_full = false
+	gs.players[0].rubies = 2
+	f += AssertUtil.truthy(gs.refill_flask(0), "two rubies refill an empty flask")
+	f += AssertUtil.eq(gs.players[0].rubies, 0, "flask refill spends two rubies")
+	f += AssertUtil.truthy(gs.players[0].flask_full, "refilled flask is full")
+	f += AssertUtil.eq(gs.refill_flask(0), false, "full flask cannot be refilled")
+	f += AssertUtil.eq(gs.refill_flask(-1), false, "invalid player cannot refill")
+
+	var controller := PhaseController.new()
+	controller.setup(1, 10)
+	controller.state.players[0].flask_full = false
+	controller.state.players[0].rubies = 2
+	f += AssertUtil.truthy(controller.refill_flask_active(), "controller refills active flask")
+	controller.free()
 	return f
 
 static func _test_turn_nine_and_winners() -> int:

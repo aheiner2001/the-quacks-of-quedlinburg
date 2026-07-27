@@ -49,6 +49,9 @@ func go_shop_active() -> bool:
 func buy_active(sku: String) -> bool:
 	return state.buy(state.eval_player, sku)
 
+func refill_flask_active() -> bool:
+	return state.refill_flask(state.eval_player)
+
 func finish_eval_player() -> bool:
 	return state.finish_eval_player()
 
