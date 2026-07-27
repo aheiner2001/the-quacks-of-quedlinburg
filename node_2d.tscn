@@ -114,8 +114,6 @@ animations = [{
 
 [node name="Shop" type="Node2D" unique_id=2127043720]
 script = ExtResource("1_epypp")
-player_money = null
-player_rubies = null
 
 [node name="backgorund" type="Sprite2D" parent="." unique_id=384659669]
 scale = Vector2(1.1298828, 1.1413238)
@@ -356,6 +354,65 @@ offset_bottom = 650.7457
 text = "CONTINUE
 "
 
+[node name="EvaluationPanel" type="Panel" parent="."]
+z_index = 100
+offset_left = 18.0
+offset_top = 18.0
+offset_right = 408.0
+offset_bottom = 342.0
+
+[node name="StatusLabel" type="Label" parent="EvaluationPanel"]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 374.0
+offset_bottom = 58.0
+text = "Evaluation"
+autowrap_mode = 2
+
+[node name="TakeVPButton" type="Button" parent="EvaluationPanel"]
+offset_left = 16.0
+offset_top = 66.0
+offset_right = 180.0
+offset_bottom = 102.0
+text = "Take VP"
+
+[node name="GoShopButton" type="Button" parent="EvaluationPanel"]
+offset_left = 194.0
+offset_top = 66.0
+offset_right = 374.0
+offset_bottom = 102.0
+text = "Go to Shop"
+
+[node name="ConvertCoinsButton" type="Button" parent="EvaluationPanel"]
+visible = false
+offset_left = 16.0
+offset_top = 66.0
+offset_right = 180.0
+offset_bottom = 102.0
+text = "5 Coins → 1 VP"
+
+[node name="ConvertRubiesButton" type="Button" parent="EvaluationPanel"]
+visible = false
+offset_left = 194.0
+offset_top = 66.0
+offset_right = 374.0
+offset_bottom = 102.0
+text = "2 Rubies → 1 VP"
+
+[node name="WhiteShop" type="ItemList" parent="EvaluationPanel"]
+offset_left = 16.0
+offset_top = 112.0
+offset_right = 374.0
+offset_bottom = 262.0
+allow_reselect = true
+
+[node name="DoneButton" type="Button" parent="EvaluationPanel"]
+offset_left = 194.0
+offset_top = 274.0
+offset_right = 374.0
+offset_bottom = 312.0
+text = "Done / Pass"
+
 [node name="Settingicon" type="TextureButton" parent="." unique_id=635803236]
 offset_left = 1063.0
 offset_top = 545.0
@@ -379,4 +436,10 @@ texture_normal = ExtResource("33_kq1c5")
 [connection signal="pressed" from="Mandrake/mandrakexit" to="." method="_on_mandrakexit_pressed"]
 [connection signal="pressed" from="Moth/Moth exit" to="." method="_on_moth_exit_pressed"]
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="EvaluationPanel/TakeVPButton" to="." method="_on_take_vp_pressed"]
+[connection signal="pressed" from="EvaluationPanel/GoShopButton" to="." method="_on_go_shop_pressed"]
+[connection signal="pressed" from="EvaluationPanel/ConvertCoinsButton" to="." method="_on_convert_coins_pressed"]
+[connection signal="pressed" from="EvaluationPanel/ConvertRubiesButton" to="." method="_on_convert_rubies_pressed"]
+[connection signal="item_clicked" from="EvaluationPanel/WhiteShop" to="." method="_on_white_shop_item_clicked"]
+[connection signal="pressed" from="EvaluationPanel/DoneButton" to="." method="_on_done_pressed"]
 [connection signal="pressed" from="Settingicon" to="." method="_on_settingicon_pressed"]

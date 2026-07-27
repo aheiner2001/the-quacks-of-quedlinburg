@@ -1,0 +1,55 @@
+class_name PlayerState
+extends RefCounted
+
+var bag: Bag
+var pot: Pot
+var flask_full: bool = true
+var vp: int = 0
+var rubies: int = 0
+var coins: int = 0
+var exploded: bool = false
+var stopped: bool = false
+var purchases: Array = []
+var chose_vp: bool = false
+var chose_shop: bool = false
+var evaluation_done: bool = false
+var pending_bag_chips: Array = []
+var final_pot_furthest: int = 0
+
+static func create_fresh() -> PlayerState:
+	var p := PlayerState.new()
+	p.bag = Bag.make_starter()
+	p.pot = Pot.new()
+	p.flask_full = true
+	return p
+
+func can_draw() -> bool:
+	return not stopped and not exploded and not bag.is_empty()
+
+func can_use_flask() -> bool:
+	if stopped or not flask_full or exploded or pot.placements.is_empty():
+		return false
+	var last: Dictionary = pot.last_chip()
+	return Chip.is_white(last)
+
+func draw(rng: RandomNumberGenerator) -> Dictionary:
+	assert(can_draw())
+	var chip := bag.draw(rng)
+	var result := pot.place(chip)
+	if result["exploded"]:
+		exploded = true
+		stopped = true
+	if bag.is_empty():
+		stopped = true
+	return result
+
+func stop() -> void:
+	stopped = true
+
+func use_flask() -> bool:
+	if not can_use_flask():
+		return false
+	var chip := pot.undo_last()
+	bag.put_back(chip)
+	flask_full = false
+	return true
