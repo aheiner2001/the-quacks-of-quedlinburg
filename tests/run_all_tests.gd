@@ -5,6 +5,7 @@ func _init() -> void:
 	failures += TestChip.run()
 	failures += TestBag.run()
 	failures += TestPot.run()
+	failures += TestPotions.run()
 	if failures == 0:
 		print("ALL TESTS PASSED")
 	else:
