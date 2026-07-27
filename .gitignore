@@ -2,5 +2,8 @@
 .godot/
 /android/
 
+# Accidental CSV→translation imports (game reads CSVs via CsvUtil)
+*.translation
+
 # Local git worktrees
 .worktrees/
