@@ -140,6 +140,16 @@ static func run() -> int:
 		"unspent coins" in shop.get_node("EvaluationPanel/StatusLabel").text.to_lower(),
 		"done warns about unspent coins"
 	)
+	shop.call("_on_done_pressed")
+	controller.state.begin_evaluation()
+	controller.go_shop_active()
+	shop.call("_refresh_evaluation")
+	player.coins = 3
+	shop.call("_on_done_pressed")
+	failures += AssertUtil.truthy(
+		"unspent coins" in shop.get_node("EvaluationPanel/StatusLabel").text.to_lower(),
+		"done warns about unspent coins on second shop visit"
+	)
 
 	controller.state.round = 9
 	controller.state.begin_evaluation()

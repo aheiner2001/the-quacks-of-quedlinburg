@@ -197,6 +197,8 @@ func _on_take_vp_pressed() -> void:
 
 func _on_go_shop_pressed() -> void:
 	var success := _controller().go_shop_active()
+	if success:
+		_unspent_coin_warning_player = -1
 	_refresh_evaluation("Shop opened." if success else "Shop choice unavailable.")
 
 func _on_convert_coins_pressed() -> void:
@@ -220,6 +222,7 @@ func _on_done_pressed() -> void:
 		_refresh_evaluation("Unspent coins will be lost. Press Done again to continue.")
 		return
 	if pc.finish_eval_player():
+		_unspent_coin_warning_player = -1
 		pc.end_turn_and_continue()
 		if pc.state.phase == "game_over":
 			_show_winners()
