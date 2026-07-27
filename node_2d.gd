@@ -1,46 +1,30 @@
 extends Node2D
 
-# --- Currency ---
-@export var player_money: int = 100
-@export var player_rubies: int = 10
-
-# --- Shop setup ---
-# Each item: name -> {cost_money, cost_rubies}
-var shop_items = {
-	"potion": {"money": 20, "rubies": 0},
-	"sword": {"money": 50, "rubies": 2},
-	"gem": {"money": 0, "rubies": 5},
-	"shield": {"money": 30, "rubies": 1},
+const SHELF_SKU := {
+	"PumpkinShelf": "pumpkin",
+	"ShroomInfo": "shroom",
+	"SpiderShelf": "spider",
+	"MothShelf": "moth",
+	"MandrakeShelf": "mandrake",
+	"Pootsshelf": "poots",
+	"TextureButton": "flask_refill",
 }
+const WHITE_SKUS := ["white_1", "white_2", "white_3"]
 
-var cart: Array = []
-const MAX_CART_ITEMS = 2
-const stone = preload("res://stone.tscn")
-
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	# Automatically apply the mask to all your bottle buttons here
-	setup_bottle_mask($TextureButton)
-	setup_bottle_mask($TextureButton2)
-	setup_bottle_mask($GaryInfo)
-	setup_bottle_mask($garyexit)
-	setup_bottle_mask($PumpkinShelf)
-	setup_bottle_mask($Shopsign)
+	for button_path in [
+		"TextureButton",
+		"GaryInfo",
+		"Gary/garyexit",
+		"PumpkinShelf",
+		"Shopsign",
+	]:
+		setup_bottle_mask(get_node_or_null(button_path) as TextureButton)
 	$Flame.play("flame")
-	for i in range(1, 51): # Loops from 1 to 50
-		# 1. Instance the scene
-		var new_stone = stone.instantiate()
-		
-		# 2. Set its unique number property
-		new_stone.stone_value = i
-		
-		# 3. Position it somewhere (e.g., in a grid or random spread)
-		new_stone.position = Vector2((i - 1) % 10 * 60, floor((i - 1) / 10) * 60)
-		
-		# 4. Add it to the active scene tree
-		add_child(new_stone)
+	_wire_shop_buttons()
+	_populate_white_shop()
+	_refresh_evaluation()
 
-# Reusable helper function to keep your code clean
 func setup_bottle_mask(btn: TextureButton) -> void:
 	if btn and btn.texture_normal:
 		var img = btn.texture_normal.get_image()
@@ -48,58 +32,153 @@ func setup_bottle_mask(btn: TextureButton) -> void:
 		bm.create_from_image_alpha(img)
 		btn.texture_click_mask = bm
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func _wire_shop_buttons() -> void:
+	for node_name: String in SHELF_SKU:
+		var button := get_node(node_name) as BaseButton
+		var callback := Callable(self, "_on_shop_item_pressed").bind(SHELF_SKU[node_name])
+		if not button.pressed.is_connected(callback):
+			button.pressed.connect(callback)
 
-# --- Shopping cart functions ---
+func _populate_white_shop() -> void:
+	$EvaluationPanel/WhiteShop.clear()
+	for sku: String in WHITE_SKUS:
+		var entry: Dictionary = _controller().state.market[sku]
+		$EvaluationPanel/WhiteShop.add_item(
+			"%s — %d coins" % [entry["label"], entry["cost"]]
+		)
+		var index: int = $EvaluationPanel/WhiteShop.item_count - 1
+		$EvaluationPanel/WhiteShop.set_item_metadata(index, sku)
 
-func add_to_cart(item_name: String) -> bool:
-	if not shop_items.has(item_name):
-		print("Item not found: ", item_name)
-		return false
+func _refresh_evaluation(message: String = "") -> void:
+	var pc := _controller()
+	if pc == null or pc.state == null:
+		$EvaluationPanel.visible = false
+		return
+	var state := pc.state
+	$EvaluationPanel.visible = state.phase in ["evaluation", "shop", "game_over"]
+	if state.phase == "game_over":
+		_show_winners()
+		return
+	var player: PlayerState = state.players[state.eval_player]
+	var status := "Round %d · Player %d · VP %d · Coins %d · Rubies %d" % [
+		state.round,
+		state.eval_player + 1,
+		player.vp,
+		player.coins,
+		player.rubies,
+	]
+	if not message.is_empty():
+		status += "\n" + message
+	$EvaluationPanel/StatusLabel.text = status
+	$EvaluationPanel/TakeVPButton.disabled = (
+		player.chose_vp or (player.exploded and player.chose_shop)
+	)
+	$EvaluationPanel/GoShopButton.visible = state.round != 9
+	$EvaluationPanel/GoShopButton.disabled = (
+		player.chose_shop or (player.exploded and player.chose_vp)
+	)
+	$EvaluationPanel/ConvertCoinsButton.visible = state.round == 9
+	$EvaluationPanel/ConvertRubiesButton.visible = state.round == 9
+	$EvaluationPanel/ConvertCoinsButton.disabled = (
+		player.coins < 5 or (player.exploded and player.chose_vp)
+	)
+	$EvaluationPanel/ConvertRubiesButton.disabled = (
+		player.rubies < 2 or (player.exploded and player.chose_vp)
+	)
+	$EvaluationPanel/DoneButton.disabled = not (player.chose_vp or player.chose_shop)
+	_refresh_shop_controls(player)
 
-	if cart.size() >= MAX_CART_ITEMS:
-		print("Cart full! Max ", MAX_CART_ITEMS, " items per round.")
-		return false
+func _refresh_shop_controls(player: PlayerState) -> void:
+	var state := _controller().state
+	var shop_available := (
+		state.round != 9
+		and state.phase == "shop"
+		and player.chose_shop
+		and not player.evaluation_done
+	)
+	for node_name: String in SHELF_SKU:
+		var button := get_node(node_name) as BaseButton
+		var entry: Dictionary = state.market[SHELF_SKU[node_name]]
+		button.visible = state.round != 9
+		button.disabled = (
+			not shop_available
+			or not MarketCatalog.is_unlocked(entry, state.round)
+			or int(entry["stock"]) < 1
+			or int(entry["cost"]) > player.coins
+			or player.purchases.size() >= 2
+		)
+	$EvaluationPanel/WhiteShop.visible = state.round != 9
+	for index in $EvaluationPanel/WhiteShop.item_count:
+		var sku: String = $EvaluationPanel/WhiteShop.get_item_metadata(index)
+		var entry: Dictionary = state.market[sku]
+		$EvaluationPanel/WhiteShop.set_item_disabled(
+			index,
+			not shop_available
+			or not MarketCatalog.is_unlocked(entry, state.round)
+			or int(entry["stock"]) < 1
+			or int(entry["cost"]) > player.coins
+			or player.purchases.size() >= 2
+		)
 
-	cart.append(item_name)
-	print("Added to cart: ", item_name, " (", cart.size(), "/", MAX_CART_ITEMS, ")")
-	return true
+func _on_shop_item_pressed(sku: String) -> void:
+	var bought := _controller().buy_active(sku)
+	_refresh_evaluation("Purchased %s." % sku if bought else "Purchase unavailable.")
 
-func remove_from_cart(item_name: String) -> void:
-	cart.erase(item_name)
+func _on_white_shop_item_clicked(
+	index: int,
+	_at_position: Vector2,
+	_mouse_button_index: int
+) -> void:
+	var sku: String = $EvaluationPanel/WhiteShop.get_item_metadata(index)
+	_on_shop_item_pressed(sku)
 
-func get_cart_total() -> Dictionary:
-	var total_money = 0
-	var total_rubies = 0
-	for item in cart:
-		total_money += shop_items[item]["money"]
-		total_rubies += shop_items[item]["rubies"]
-	return {"money": total_money, "rubies": total_rubies}
+func _on_take_vp_pressed() -> void:
+	var success := _controller().take_vp_active()
+	_refresh_evaluation("Victory points taken." if success else "VP choice unavailable.")
 
-func can_afford_cart() -> bool:
-	var total = get_cart_total()
-	return player_money >= total["money"] and player_rubies >= total["rubies"]
+func _on_go_shop_pressed() -> void:
+	var success := _controller().go_shop_active()
+	_refresh_evaluation("Shop opened." if success else "Shop choice unavailable.")
 
-func checkout() -> bool:
-	if cart.is_empty():
-		print("Cart is empty.")
-		return false
+func _on_convert_coins_pressed() -> void:
+	var success := _controller().convert_coins_active()
+	_refresh_evaluation("Converted 5 coins to 1 VP." if success else "Need 5 coins.")
 
-	if not can_afford_cart():
-		print("Not enough money/rubies to buy items in cart!")
-		return false
+func _on_convert_rubies_pressed() -> void:
+	var success := _controller().convert_rubies_active()
+	_refresh_evaluation("Converted 2 rubies to 1 VP." if success else "Need 2 rubies.")
 
-	var total = get_cart_total()
-	player_money -= total["money"]
-	player_rubies -= total["rubies"]
+func _on_done_pressed() -> void:
+	var pc := _controller()
+	var previous_player := pc.state.eval_player
+	if pc.finish_eval_player():
+		pc.end_turn_and_continue()
+		if pc.state.phase == "game_over":
+			_show_winners()
+		else:
+			get_tree().change_scene_to_file("res://board.tscn")
+	elif pc.state.eval_player != previous_player:
+		_refresh_evaluation("Pass to Player %d." % (pc.state.eval_player + 1))
+	else:
+		_refresh_evaluation("Choose VP, shop, or a conversion first.")
 
-	print("Purchased: ", cart)
-	print("Remaining money: ", player_money, " | Remaining rubies: ", player_rubies)
+func _show_winners() -> void:
+	var winners := _controller().state.winners()
+	var labels: Array[String] = []
+	for winner: int in winners:
+		labels.append("Player %d" % (winner + 1))
+	$EvaluationPanel/StatusLabel.text = "Game over — Winner%s: %s" % [
+		"s" if labels.size() != 1 else "",
+		", ".join(labels),
+	]
+	for child in $EvaluationPanel.get_children():
+		if child is BaseButton or child is ItemList:
+			child.visible = false
+	for node_name: String in SHELF_SKU:
+		get_node(node_name).visible = false
 
-	cart.clear()  # reset cart after buying (new round starts fresh)
-	return true
+func _controller() -> PhaseController:
+	return get_node("/root/GameSession").get("controller") as PhaseController
 
 # --- Existing reveal/hide functions ---
 
@@ -138,4 +217,4 @@ func _on_settingicon_pressed() -> void:
 
 
 func _on_button_pressed() -> void:
-	get_tree().change_scene_to_file("res://board.tscn")
+	_on_done_pressed()

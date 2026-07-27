@@ -35,6 +35,35 @@ func use_flask_active() -> void:
 	if state.use_flask_active():
 		flask_used.emit(state.active_player)
 
+func take_vp_active() -> bool:
+	return state.take_vp(state.eval_player)
+
+func go_shop_active() -> bool:
+	var changed := state.go_to_shop(state.eval_player)
+	if changed:
+		phase_changed.emit(state.phase)
+	return changed
+
+func buy_active(sku: String) -> bool:
+	return state.buy(state.eval_player, sku)
+
+func finish_eval_player() -> bool:
+	return state.finish_eval_player()
+
+func convert_coins_active() -> bool:
+	return state.convert_coins_to_vp(state.eval_player)
+
+func convert_rubies_active() -> bool:
+	return state.convert_rubies_to_vp(state.eval_player)
+
+func end_turn_and_continue() -> void:
+	state.end_turn()
+	if state.phase == "game_over":
+		phase_changed.emit(state.phase)
+		game_over.emit(state.winners())
+	else:
+		begin_round()
+
 func _after_potions_action() -> void:
 	if state.all_players_stopped():
 		state.begin_evaluation()

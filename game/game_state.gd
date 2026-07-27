@@ -5,6 +5,7 @@ var players: Array[PlayerState] = []
 var round: int = 1
 var phase: String = ""
 var active_player: int = 0
+var eval_player: int = 0
 var market: Dictionary = {}
 var rng: RandomNumberGenerator
 var start_player: int = 0
@@ -35,6 +36,7 @@ func begin_round() -> void:
 		player.evaluation_done = false
 		player.pending_bag_chips = []
 	active_player = start_player
+	eval_player = 0
 	phase = "potions"
 
 func draw_active() -> Dictionary:
@@ -92,6 +94,7 @@ func advance_hotseat_if_needed() -> int:
 
 func begin_evaluation() -> void:
 	phase = "evaluation"
+	eval_player = 0
 	for player in players:
 		var space := player.pot.scoring_space()
 		player.coins = PotTrack.coins_for_space(space)
@@ -158,6 +161,23 @@ func finish_shop(player_index: int) -> void:
 	var player := players[player_index]
 	if player.chose_shop:
 		player.evaluation_done = true
+
+func finish_eval_player() -> bool:
+	if not _valid_player(eval_player):
+		return true
+	var player := players[eval_player]
+	if player.chose_shop:
+		finish_shop(eval_player)
+	elif player.chose_vp:
+		player.evaluation_done = true
+	else:
+		return false
+	for offset in range(1, players.size() + 1):
+		var candidate := (eval_player + offset) % players.size()
+		if not players[candidate].evaluation_done:
+			eval_player = candidate
+			return false
+	return true
 
 func convert_coins_to_vp(player_index: int) -> bool:
 	if not _can_convert(player_index):
