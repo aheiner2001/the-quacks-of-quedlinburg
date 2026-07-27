@@ -1,0 +1,10 @@
+extends SceneTree
+
+func _init() -> void:
+	var failures := 0
+	failures += TestChip.run()
+	if failures == 0:
+		print("ALL TESTS PASSED")
+	else:
+		print("FAILURES: %d" % failures)
+	quit(0 if failures == 0 else 1)
