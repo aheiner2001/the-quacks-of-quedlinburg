@@ -48,7 +48,8 @@ func _on_active(player_index: int) -> void:
 func _on_drawn(player_index: int, result: Dictionary) -> void:
 	$WhiteSumLabel.text = "White: %s" % str(result["white_sum"])
 	_update_explosion_risk(int(result["white_sum"]), bool(result.get("exploded", false)))
-	_animate_chip_flight()
+	var chip: Dictionary = result.get("chip", {})
+	_animate_chip_flight(chip)
 	_show_placement(player_index, result)
 	_refresh()
 
@@ -102,14 +103,42 @@ func _refresh_rewards_bar(player: PlayerState) -> void:
 		)
 	$RewardsBar.text = "\n".join(lines)
 
-func _animate_chip_flight() -> void:
+const _CHIP_TEX_DIR := "res://assets/ui/board/"
+const _COLOR_SLUG := {
+	Chip.ChipColor.WHITE: "white",
+	Chip.ChipColor.ORANGE: "pumpkin",
+	Chip.ChipColor.GREEN: "shroom",
+	Chip.ChipColor.BLUE: "spider",
+	Chip.ChipColor.RED: "moth",
+	Chip.ChipColor.YELLOW: "mandrake",
+	Chip.ChipColor.PURPLE: "poots",
+	Chip.ChipColor.BLACK: "gary",
+}
+
+
+func _texture_for_chip(chip: Dictionary) -> Texture2D:
+	if chip.is_empty():
+		return load(_CHIP_TEX_DIR + "chip_back.png") as Texture2D
+	var slug := str(_COLOR_SLUG.get(int(chip["color"]), "chip_back"))
+	var value := int(chip.get("value", 1))
+	var path := "%s%s_%d.png" % [_CHIP_TEX_DIR, slug, value]
+	if ResourceLoader.exists(path):
+		return load(path) as Texture2D
+	var fallback_one := "%s%s_1.png" % [_CHIP_TEX_DIR, slug]
+	if ResourceLoader.exists(fallback_one):
+		return load(fallback_one) as Texture2D
+	return load(_CHIP_TEX_DIR + "chip_back.png") as Texture2D
+
+
+func _animate_chip_flight(chip: Dictionary = {}) -> void:
 	_anim_gen += 1
 	var generation := _anim_gen
 	if _draw_tween != null and _draw_tween.is_valid():
 		_draw_tween.kill()
-	var chip_flight := $DrawStage/ChipFlight as ColorRect
-	var bag := $DrawStage/BagPlaceholder as ColorRect
-	var cauldron := $DrawStage/CauldronPlaceholder as ColorRect
+	var chip_flight := $DrawStage/ChipFlight as TextureRect
+	var bag := $DrawStage/BagPlaceholder as TextureRect
+	var cauldron := $DrawStage/CauldronPlaceholder as TextureRect
+	chip_flight.texture = _texture_for_chip(chip)
 	chip_flight.position = bag.position + (bag.size - chip_flight.size) / 2.0
 	chip_flight.scale = Vector2.ONE
 	chip_flight.visible = true
@@ -119,24 +148,24 @@ func _animate_chip_flight() -> void:
 		chip_flight,
 		"position",
 		cauldron.position + (cauldron.size - chip_flight.size) / 2.0,
-		0.25
+		0.28
 	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	_draw_tween.tween_property(
 		chip_flight,
 		"scale",
 		Vector2(1.35, 1.35),
-		0.125
+		0.14
 	).set_trans(Tween.TRANS_SINE)
 	_draw_tween.chain().tween_property(
 		chip_flight,
 		"scale",
 		Vector2.ONE,
-		0.125
+		0.14
 	).set_trans(Tween.TRANS_SINE)
 	_draw_tween.finished.connect(_on_draw_tween_finished.bind(generation, chip_flight))
 
 
-func _on_draw_tween_finished(generation: int, chip_flight: ColorRect) -> void:
+func _on_draw_tween_finished(generation: int, chip_flight: TextureRect) -> void:
 	if generation == _anim_gen and is_instance_valid(chip_flight):
 		chip_flight.visible = false
 

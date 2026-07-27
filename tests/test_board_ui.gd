@@ -20,9 +20,9 @@ static func run() -> int:
 		"HandoffLabel": Label,
 		"PlacementsList": ItemList,
 		"DrawStage": Node2D,
-		"DrawStage/BagPlaceholder": ColorRect,
-		"DrawStage/CauldronPlaceholder": ColorRect,
-		"DrawStage/ChipFlight": ColorRect,
+		"DrawStage/BagPlaceholder": TextureRect,
+		"DrawStage/CauldronPlaceholder": TextureRect,
+		"DrawStage/ChipFlight": TextureRect,
 		"ExplosionRiskBar": ProgressBar,
 		"RewardsBar": RichTextLabel,
 	}
@@ -59,6 +59,22 @@ static func run() -> int:
 		board.has_method("_update_explosion_risk"),
 		"board exposes explosion risk update helper"
 	)
+	var cauldron := board.get_node_or_null("DrawStage/CauldronPlaceholder") as TextureRect
+	if cauldron:
+		failures += AssertUtil.truthy(
+			cauldron.texture != null,
+			"cauldron uses rune texture"
+		)
+	failures += AssertUtil.truthy(
+		board.has_method("_texture_for_chip"),
+		"board resolves chip textures for draw flight"
+	)
+	if board.has_method("_texture_for_chip"):
+		var white_tex: Texture2D = board.call(
+			"_texture_for_chip",
+			Chip.make(Chip.ChipColor.WHITE, 1)
+		)
+		failures += AssertUtil.truthy(white_tex != null, "white 1 chip has texture")
 	if board.has_method("_update_explosion_risk"):
 		board.call("_update_explosion_risk", 12, true)
 		var risk_bar := board.get_node("ExplosionRiskBar") as ProgressBar

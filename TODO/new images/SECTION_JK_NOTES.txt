@@ -1,0 +1,47 @@
+Section J — Audio (not generated)
+---------------------------------
+Image tools cannot create these. Drop your own files here later (or assets/audio/):
+
+sfx_draw.wav
+sfx_place_chip.wav
+sfx_explode.wav
+sfx_flask.wav
+sfx_buy.wav
+sfx_coin.wav
+sfx_ruby.wav
+sfx_click.wav
+music_menu.ogg
+music_brew.ogg
+music_shop.ogg
+
+Section K — Non-image content (draft for wiring)
+-----------------------------------------------
+Keep existing ingredient books / shelf.png / scary gary / shroom book art — do not replace.
+
+Display names (current project slugs):
+  gary      -> Scary Gary
+  pumpkin   -> Pumpkin
+  spider    -> Spider
+  shroom    -> Mushroom / Fun Guy
+  poots     -> Ghost (Puts)
+  mandrake  -> Mandrake (Toby Turnip)
+  moth      -> Moth
+  white     -> Cherry bombs (Boom Berries)
+
+Short shelf info blurbs (placeholders — replace with Almanac Set 1 text when ready):
+  gary:     Black crow-skull chip. Resolve at evaluation (compare blacks).
+  pumpkin:  Orange filler chip. Cheap spaces, no special effect.
+  spider:   Green chip. Resolve at end of round per ingredient book.
+  shroom:   Red mushroom. Bonus move based on orange chips in pot.
+  poots:    Purple ghost. Unlocks turn 3. Resolve at evaluation.
+  mandrake: Yellow root. Unlocks turn 2. Resolve on draw.
+  moth:     Insect chip. See ingredient book for Set effect.
+  white:    Counts toward explosion (>7 white value = boom). Buyable.
+
+Pot map:
+  Use reference/levels.csv for coins/VP/ruby per space 1–54.
+  Confirm ruby columns against your board art before trusting UI markers.
+
+Asset policy:
+  New UI art lives in TODO/new images/.
+  Do not overwrite shelf.png, shroom.png, or scary gary/* book pages.

@@ -1,0 +1,159 @@
+Yes — that workflow works well. Best scenario: you drop named PNGs into folders (transparent where needed), I wire them into the existing screens. You do not need finished Godot scenes; individual cutouts are better than one giant screenshot.
+
+How to hand assets to me
+Put files under something like assets/ui/ with the exact names below.
+Prefer PNG + transparency for chips/buttons/icons.
+Optional: add a one-line note in a text file if a name is ambiguous (buy.png = green Buy button).
+Tell me “assets ready — wire shop” (or board/menu) and I’ll implement that slice.
+One full shop mockup photo is useful as reference layout, but for implementation I want the pieces.
+
+Huge asset list (make the game feel finished)
+A. App / chrome
+icon_app.png (1024² game icon)
+cursor_default.png (optional)
+font_display.ttf / font_body.ttf (or tell me to keep Godot defaults)
+B. Main menu
+menu_bg.png (full-bleed)
+logo_quacks.png
+btn_start.png (+ _hover / _pressed if you have them)
+btn_1_player.png / btn_2_players.png (or one button + selected states)
+btn_settings.png
+btn_quit.png
+btn_back.png
+panel_menu.png (optional frame behind buttons)
+C. Settings / pause / help
+settings_panel.png
+btn_resume.png
+btn_abandon.png
+btn_help.png
+help_overlay.png (or multi-page: help_01.png …)
+toggle_on.png / toggle_off.png
+D. Shared HUD (board + shop)
+icon_coin.png
+icon_ruby.png
+icon_vp.png (victory points / seal marker)
+icon_round.png / flame_turn.png (turn 1–9 marker)
+hud_bar.png (optional strip behind coins/VP/round)
+panel_player.png (“Player 1” frame)
+banner_handoff.png (“Now Player 2”)
+banner_exploded.png
+banner_game_over.png
+toast_bg.png (small message chip)
+E. Potions board / cauldron (highest impact)
+board_bg.png or keep assets/boards/gameboard.png if that’s final
+pot_mask.png (optional — only if chips need clipping)
+Space markers (pick one approach):
+A) space_empty.png + space_ruby.png + space_vp_badge.png (I’ll stamp numbers), or
+B) numbered space_00.png … space_54.png if each tile is unique art
+droplet.png (start marker)
+rat_stone.png
+chip_shadow.png (optional under placed chips)
+explosion_fx.png or spritesheet explosion_sheet.png
+risk_bar_bg.png / risk_bar_fill.png (white total 0–7+)
+btn_draw.png (+ hover/pressed)
+btn_stop.png
+btn_flask_full.png / btn_flask_empty.png
+bag_closed.png / bag_open.png (optional flavor)
+placements_panel.png (if you keep the side list)
+F. Ingredient chips (core — upload every value you sell/draw)
+Use names like: {slug}_{value}.png
+Slugs we already use: gary, pumpkin, spider, shroom, poots, mandrake, moth, plus white.
+
+White (cherry bombs)
+
+white_1.png white_2.png white_3.png white_4.png
+Scary Gary
+
+gary_1.png gary_2.png gary_4.png
+Pumpkin
+
+pumpkin_1.png pumpkin_6.png
+Spider
+
+spider_1.png spider_2.png spider_4.png
+Mushroom / shroom
+
+shroom_1.png shroom_2.png shroom_4.png
+Ghost / Poots
+
+poots_1.png
+Mandrake
+
+mandrake_1.png mandrake_2.png mandrake_4.png
+Moth
+
+moth_1.png
+Optional extras if art exists for other values: same pattern.
+
+Also useful:
+
+chip_back.png (facedown / bag mystery)
+chip_locked.png overlay (yellow/purple not unlocked yet)
+G. Shop / evaluation screen
+shop_bg.png
+shop_shelf_panel.png (generic shelf frame)
+Per-ingredient shelf art (big portraits / books):
+shelf_gary.png
+shelf_pumpkin.png
+shelf_spider.png
+shelf_shroom.png
+shelf_poots.png
+shelf_mandrake.png
+shelf_moth.png
+shelf_white.png
+info_popup_bg.png (rulebook blurb when shelf clicked)
+btn_buy.png (+ hover/pressed/disabled)
+btn_buy_disabled.png
+price_tag.png (optional behind cost number)
+stock_badge.png (“3 left”)
+panel_evaluation.png (VP / coins / exploded choice)
+btn_take_vp.png
+btn_go_shop.png
+btn_convert_coins.png (round 9)
+btn_convert_rubies.png (round 9)
+btn_done.png / btn_submit.png (leave shop)
+btn_refill_flask.png
+dialog_confirm_bg.png (“Spend 2 rubies?”)
+btn_confirm_yes.png / btn_confirm_no.png
+warn_unspent_coins.png (or I’ll use text + your dialog bg)
+money_token_1.png … or one money_pile.png (flavor only)
+ruby_token.png (physical token look, separate from HUD icon if you want)
+H. Scoring track (shared table — even for 1–2P)
+scoring_track.png
+seal_tile.png
+score_marker_p1.png … score_marker_p4.png (or recolorable one)
+turn_flame.png on spaces 1–9
+I. Fortune / rats / die / endgame (later, but list now)
+fortune_card_back.png
+fortune_card_frame.png (text can be data-driven)
+bonus_die_1.png … bonus_die_6.png (or one sheet)
+rat_tail_icon.png
+winner_banner.png
+tie_banner.png
+J. Audio (optional but huge for “feels finished”)
+sfx_draw.wav
+sfx_place_chip.wav
+sfx_explode.wav
+sfx_flask.wav
+sfx_buy.wav
+sfx_coin.wav
+sfx_ruby.wav
+sfx_click.wav
+music_menu.ogg
+music_brew.ogg
+music_shop.ogg
+K. Not images — still needed for “functional”
+Exact pot map: which spaces 1–54 have ruby / VP (CSV already helps; confirm against art)
+Short info text per ingredient (1–2 sentences)
+Confirm final display names (Scary Gary, Puts/Poots, Toby Turnip, etc.)
+Priority order (what unlocks “functional fun” fastest)
+Chip icons for every SKU + white
+Board: droplet, risk bar, Draw/Stop/Flask buttons
+Shop: bg, buy/done/refill, coin/ruby/VP icons
+Menu: bg + start/1P/2P
+Shelf portraits + info popups
+Scoring track / fortune / die / SFX
+What I can do once files land
+Wire textures into current main_menu / board / shop scenes, swap placeholder buttons, show chips on the pot instead of only the text list, and polish layout. Rules logic is already largely there; art + pot placement is the big remaining “this feels like a game” gap.
+
+If you want, next step is: you upload a first batch into assets/ui/ using these names (even partial), and tell me which screen to dress first — menu, board, or shop.
