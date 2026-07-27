@@ -10,9 +10,10 @@ func _last_index() -> int:
 	return int(placements[placements.size() - 1]["index"])
 
 func place(chip: Dictionary) -> Dictionary:
+	var cap := PotTrack.max_space()
 	var idx := _last_index() + int(chip["value"])
-	if idx > 33:
-		idx = 33
+	if idx > cap:
+		idx = cap
 	placements.append({"chip": chip, "index": idx})
 	var sum := white_sum()
 	var exploded := sum > 7
@@ -27,11 +28,12 @@ func white_sum() -> int:
 	return s
 
 func scoring_space() -> int:
+	var cap := PotTrack.max_space()
 	if placements.is_empty():
 		return droplet
 	var last := int(placements[placements.size() - 1]["index"])
-	if last >= 33:
-		return 33
+	if last >= cap:
+		return cap
 	return last + 1
 
 func last_chip() -> Dictionary:

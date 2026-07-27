@@ -98,6 +98,8 @@ func begin_evaluation() -> void:
 	for player in players:
 		var space := player.pot.scoring_space()
 		player.coins = PotTrack.coins_for_space(space)
+		if PotTrack.has_ruby(space):
+			player.rubies += 1
 		if not player.exploded and not player.chose_vp:
 			player.vp += PotTrack.vp_for_space(space)
 			player.chose_vp = true
@@ -130,7 +132,7 @@ func go_to_shop(player_index: int) -> bool:
 	phase = "shop"
 	return true
 
-func buy(player_index: int, sku_id: String) -> bool:
+func can_buy(player_index: int, sku_id: String) -> bool:
 	if round == 9 or not _valid_player(player_index) or phase != "shop":
 		return false
 	var player := players[player_index]
@@ -148,14 +150,31 @@ func buy(player_index: int, sku_id: String) -> bool:
 		return false
 	if entry["kind"] == "chip" and _already_bought_color(player, int(entry["color"])):
 		return false
+	return true
 
+
+func buy(player_index: int, sku_id: String) -> bool:
+	if not can_buy(player_index, sku_id):
+		return false
+	var player := players[player_index]
+	var entry: Dictionary = market[sku_id]
 	player.coins -= int(entry["cost"])
 	entry["stock"] = int(entry["stock"]) - 1
 	player.purchases.append(sku_id)
 	if entry["kind"] == "chip":
 		player.pending_bag_chips.append(Chip.make(int(entry["color"]), int(entry["value"])))
-	elif entry["kind"] == "flask_refill":
-		player.flask_full = true
+	return true
+
+func refill_flask(player_index: int) -> bool:
+	if not _valid_player(player_index):
+		return false
+	if phase != "evaluation" and phase != "shop":
+		return false
+	var player := players[player_index]
+	if player.flask_full or player.rubies < 2:
+		return false
+	player.rubies -= 2
+	player.flask_full = true
 	return true
 
 func finish_shop(player_index: int) -> void:

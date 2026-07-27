@@ -19,6 +19,12 @@ static func run() -> int:
 		"FlaskButton": Button,
 		"HandoffLabel": Label,
 		"PlacementsList": ItemList,
+		"DrawStage": Node2D,
+		"DrawStage/BagPlaceholder": ColorRect,
+		"DrawStage/CauldronPlaceholder": ColorRect,
+		"DrawStage/ChipFlight": ColorRect,
+		"ExplosionRiskBar": ProgressBar,
+		"RewardsBar": RichTextLabel,
 	}
 	for node_name: String in expected_nodes:
 		var node := board.get_node_or_null(node_name)
@@ -47,6 +53,20 @@ static func run() -> int:
 				Callable(board, "_on_flask_pressed")
 			),
 			"flask button wired"
+		)
+
+	failures += AssertUtil.truthy(
+		board.has_method("_update_explosion_risk"),
+		"board exposes explosion risk update helper"
+	)
+	if board.has_method("_update_explosion_risk"):
+		board.call("_update_explosion_risk", 12, true)
+		var risk_bar := board.get_node("ExplosionRiskBar") as ProgressBar
+		failures += AssertUtil.eq(risk_bar.value, 8.0, "risk bar clamps white sum to eight")
+		failures += AssertUtil.eq(
+			risk_bar.modulate,
+			Color.RED,
+			"exploded risk bar turns red"
 		)
 
 	var root: Window = Engine.get_main_loop().root

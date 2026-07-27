@@ -237,6 +237,13 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
+[node name="BuyRow" type="HBoxContainer" parent="Pumpkin"]
+offset_left = -320.0
+offset_top = 230.0
+offset_right = 320.0
+offset_bottom = 280.0
+theme_override_constants/separation = 12
+
 [node name="Gary" type="Sprite2D" parent="." unique_id=796930385]
 visible = false
 position = Vector2(710, 337.00006)
@@ -253,6 +260,13 @@ texture_pressed = ExtResource("8_x0ka3")
 texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
+
+[node name="BuyRow" type="HBoxContainer" parent="Gary"]
+offset_left = -320.0
+offset_top = 230.0
+offset_right = 320.0
+offset_bottom = 280.0
+theme_override_constants/separation = 12
 
 [node name="shroom" type="Sprite2D" parent="." unique_id=158915857]
 visible = false
@@ -271,6 +285,13 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
+[node name="BuyRow" type="HBoxContainer" parent="shroom"]
+offset_left = -320.0
+offset_top = 230.0
+offset_right = 320.0
+offset_bottom = 280.0
+theme_override_constants/separation = 12
+
 [node name="spider" type="Sprite2D" parent="." unique_id=637875817]
 visible = false
 position = Vector2(705.00006, 341.00003)
@@ -287,6 +308,13 @@ texture_pressed = ExtResource("8_x0ka3")
 texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
+
+[node name="BuyRow" type="HBoxContainer" parent="spider"]
+offset_left = -320.0
+offset_top = 230.0
+offset_right = 320.0
+offset_bottom = 280.0
+theme_override_constants/separation = 12
 
 [node name="Poots" type="Sprite2D" parent="." unique_id=1966690903]
 visible = false
@@ -305,6 +333,13 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
+[node name="BuyRow" type="HBoxContainer" parent="Poots"]
+offset_left = -320.0
+offset_top = 230.0
+offset_right = 320.0
+offset_bottom = 280.0
+theme_override_constants/separation = 12
+
 [node name="Mandrake" type="Sprite2D" parent="." unique_id=1783510682]
 visible = false
 position = Vector2(692.8364, 344.37595)
@@ -322,6 +357,13 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
+[node name="BuyRow" type="HBoxContainer" parent="Mandrake"]
+offset_left = -320.0
+offset_top = 230.0
+offset_right = 320.0
+offset_bottom = 280.0
+theme_override_constants/separation = 12
+
 [node name="Moth" type="Sprite2D" parent="." unique_id=1130623288]
 visible = false
 position = Vector2(690.56226, 344.63498)
@@ -338,6 +380,13 @@ texture_pressed = ExtResource("8_x0ka3")
 texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
+
+[node name="BuyRow" type="HBoxContainer" parent="Moth"]
+offset_left = -320.0
+offset_top = 230.0
+offset_right = 320.0
+offset_bottom = 280.0
+theme_override_constants/separation = 12
 
 [node name="Flame" type="AnimatedSprite2D" parent="." unique_id=1233013784]
 position = Vector2(1124, 398)
@@ -413,6 +462,12 @@ offset_right = 374.0
 offset_bottom = 312.0
 text = "Done / Pass"
 
+[node name="FlaskConfirmDialog" type="ConfirmationDialog" parent="."]
+title = "Refill Flask"
+dialog_text = "Spend 2 rubies to refill your flask?"
+ok_button_text = "Refill"
+cancel_button_text = "Cancel"
+
 [node name="Settingicon" type="TextureButton" parent="." unique_id=635803236]
 offset_left = 1063.0
 offset_top = 545.0
@@ -422,6 +477,7 @@ scale = Vector2(0.4765625, 0.4609375)
 texture_normal = ExtResource("33_kq1c5")
 
 [connection signal="pressed" from="GaryInfo" to="." method="_on_reveal_button_pressed"]
+[connection signal="pressed" from="TextureButton" to="." method="_on_flask_pressed"]
 [connection signal="pressed" from="PumpkinShelf" to="." method="_on_pumpkin_shelf_pressed"]
 [connection signal="pressed" from="ShroomInfo" to="." method="_on_shroom_info_pressed"]
 [connection signal="pressed" from="SpiderShelf" to="." method="_on_spider_shelf_pressed"]
@@ -442,4 +498,5 @@ texture_normal = ExtResource("33_kq1c5")
 [connection signal="pressed" from="EvaluationPanel/ConvertRubiesButton" to="." method="_on_convert_rubies_pressed"]
 [connection signal="item_clicked" from="EvaluationPanel/WhiteShop" to="." method="_on_white_shop_item_clicked"]
 [connection signal="pressed" from="EvaluationPanel/DoneButton" to="." method="_on_done_pressed"]
+[connection signal="confirmed" from="FlaskConfirmDialog" to="." method="_on_flask_confirmed"]
 [connection signal="pressed" from="Settingicon" to="." method="_on_settingicon_pressed"]

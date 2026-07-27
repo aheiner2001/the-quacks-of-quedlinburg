@@ -1,19 +1,12 @@
 [remap]
 
-importer="csv_translation"
-type="Translation"
+importer="keep"
+type=""
 uid="uid://ccwr121fsq50x"
 
 [deps]
 
-files=["res://reference/token_shop_prices.token.translation", "res://reference/token_shop_prices.cost.translation"]
-
 source_file="res://reference/token_shop_prices.csv"
-dest_files=["res://reference/token_shop_prices.token.translation", "res://reference/token_shop_prices.cost.translation"]
+dest_files=[]
 
 [params]
-
-compress=1
-delimiter=0
-unescape_keys=false
-unescape_translations=true

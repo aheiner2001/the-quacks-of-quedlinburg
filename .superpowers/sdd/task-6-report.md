@@ -1,3 +1,15 @@
+# Task 6 Report
+
+Implemented the board draw stage with bag, cauldron, and flying-chip placeholders. Draws now run an interruptible 0.25-second tween, clamp and color the explosion-risk bar, and refresh stop-now rewards plus three upcoming `PotTrack` milestones.
+
+Expanded `test_board_ui.gd` to cover the required node paths and explosion-risk helper. TDD red run failed with the expected seven missing-feature assertions.
+
+Verification:
+
+```text
+/opt/homebrew/bin/godot --headless --path . -s res://tests/run_all_tests.gd
+ALL TESTS PASSED
+```
 # Task 6 Report: GameState rounds, evaluation, shop, Turn 9, winners
 
 ## Status
