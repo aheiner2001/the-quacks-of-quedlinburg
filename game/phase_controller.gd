@@ -39,10 +39,12 @@ func use_flask_active() -> void:
 		flask_used.emit(state.active_player)
 
 func roll_bonus_die_active() -> int:
-	if state.phase != "bonus_die":
+	if state.phase != "bonus_die" or state.bonus_die_index >= state.bonus_die_queue.size():
 		return -1
 	var face := BonusDie.roll(state.rng)
-	state.apply_bonus_die(state.active_player, face)
+	var player_index := state.bonus_die_queue[state.bonus_die_index]
+	state.apply_bonus_die(player_index, face)
+	state.bonus_die_index += 1
 	return face
 
 func finish_bonus_die_phase() -> void:

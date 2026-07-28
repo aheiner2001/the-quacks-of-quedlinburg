@@ -11,6 +11,8 @@ var rubies_remaining: int = 0
 var rng: RandomNumberGenerator
 var start_player: int = 0
 var round_6_white_granted: bool = false
+var bonus_die_queue: Array[int] = []
+var bonus_die_index: int = 0
 
 static func new_game(player_count: int, seed: int) -> GameState:
 	var game := GameState.new()
@@ -39,6 +41,8 @@ func begin_round() -> void:
 		player.pending_bag_chips = []
 	active_player = start_player
 	eval_player = 0
+	bonus_die_queue.clear()
+	bonus_die_index = 0
 	phase = "potions"
 
 func draw_active() -> Dictionary:
@@ -107,6 +111,8 @@ func bonus_die_eligible() -> Array[int]:
 	return eligible
 
 func begin_bonus_die() -> void:
+	bonus_die_queue = bonus_die_eligible().duplicate()
+	bonus_die_index = 0
 	phase = "bonus_die"
 
 func apply_bonus_die(player_index: int, face: int) -> void:

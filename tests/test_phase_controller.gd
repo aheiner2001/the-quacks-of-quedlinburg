@@ -5,6 +5,7 @@ static func run() -> int:
 	var failures := 0
 	failures += _test_potions_transition()
 	failures += _test_rejected_draw_emits_nothing()
+	failures += _test_bonus_die_rolls_each_eligible_player()
 	failures += _test_evaluation_hotseat()
 	failures += _test_end_turn_and_continue()
 	return failures
@@ -25,6 +26,87 @@ static func _test_potions_transition() -> int:
 	failures += AssertUtil.eq(controller.state.phase, "evaluation", "bonus die finishes into evaluation")
 	controller.free()
 	return failures
+
+static func _test_bonus_die_rolls_each_eligible_player() -> int:
+	var failures := 0
+	var controller := PhaseController.new()
+	controller.setup(2, 103)
+	controller.begin_round()
+	controller.state.players[0].pot.place(Chip.make(Chip.ChipColor.ORANGE, 4))
+	controller.state.players[1].pot.place(Chip.make(Chip.ChipColor.ORANGE, 1))
+	controller.stop_active()
+	controller.stop_active()
+	controller.state.rng.seed = 1001
+	var leader_before := _bonus_snapshot(controller.state.players[0])
+	var trailing_before := _bonus_snapshot(controller.state.players[1])
+	var face := controller.roll_bonus_die_active()
+	failures += _assert_bonus_die_reward(
+		controller.state.players[0], leader_before, face, "sole leader receives die reward"
+	)
+	failures += _assert_bonus_snapshot(
+		controller.state.players[1], trailing_before, "trailing player receives no die reward"
+	)
+	controller.finish_bonus_die_phase()
+	controller.free()
+
+	controller = PhaseController.new()
+	controller.setup(2, 104)
+	controller.begin_round()
+	controller.state.players[0].pot.place(Chip.make(Chip.ChipColor.ORANGE, 2))
+	controller.state.players[1].pot.place(Chip.make(Chip.ChipColor.ORANGE, 2))
+	controller.stop_active()
+	controller.stop_active()
+	controller.state.rng.seed = 1002
+	var first_before := _bonus_snapshot(controller.state.players[0])
+	var second_before := _bonus_snapshot(controller.state.players[1])
+	face = controller.roll_bonus_die_active()
+	failures += _assert_bonus_die_reward(
+		controller.state.players[0], first_before, face, "first tied leader receives die reward"
+	)
+	failures += _assert_bonus_snapshot(
+		controller.state.players[1], second_before, "second tied leader waits for die reward"
+	)
+	second_before = _bonus_snapshot(controller.state.players[1])
+	face = controller.roll_bonus_die_active()
+	failures += _assert_bonus_die_reward(
+		controller.state.players[1], second_before, face, "second tied leader receives die reward"
+	)
+	controller.finish_bonus_die_phase()
+	failures += AssertUtil.eq(controller.state.phase, "evaluation", "bonus die finishes after eligible rolls")
+	controller.free()
+	return failures
+
+static func _bonus_snapshot(player: PlayerState) -> Dictionary:
+	return {
+		"vp": player.vp,
+		"rubies": player.rubies,
+		"droplet": player.pot.droplet,
+		"bag_size": player.bag.size(),
+	}
+
+static func _assert_bonus_snapshot(player: PlayerState, before: Dictionary, label: String) -> int:
+	var failures := 0
+	failures += AssertUtil.eq(player.vp, before["vp"], "%s vp" % label)
+	failures += AssertUtil.eq(player.rubies, before["rubies"], "%s rubies" % label)
+	failures += AssertUtil.eq(player.pot.droplet, before["droplet"], "%s droplet" % label)
+	failures += AssertUtil.eq(player.bag.size(), before["bag_size"], "%s bag" % label)
+	return failures
+
+static func _assert_bonus_die_reward(
+	player: PlayerState, before: Dictionary, face: int, label: String
+) -> int:
+	match face:
+		BonusDie.Face.VP1:
+			return AssertUtil.eq(player.vp, before["vp"] + 1, label)
+		BonusDie.Face.VP2:
+			return AssertUtil.eq(player.vp, before["vp"] + 2, label)
+		BonusDie.Face.RUBY:
+			return AssertUtil.eq(player.rubies, before["rubies"] + 1, label)
+		BonusDie.Face.DROPLET:
+			return AssertUtil.eq(player.pot.droplet, before["droplet"] + 1, label)
+		BonusDie.Face.ORANGE:
+			return AssertUtil.eq(player.bag.size(), before["bag_size"] + 1, label)
+	return AssertUtil.eq(face, -1, "%s has a valid die face" % label)
 
 static func _test_rejected_draw_emits_nothing() -> int:
 	var failures := 0
