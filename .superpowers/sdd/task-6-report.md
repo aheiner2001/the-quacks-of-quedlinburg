@@ -1,79 +1,40 @@
-# Task 6 Report
+# Task 6 Report: Integrate BrewTable on board (hide stones, danger bar, live refresh)
 
-Implemented the board draw stage with bag, cauldron, and flying-chip placeholders. Draws now run an interruptible 0.25-second tween, clamp and color the explosion-risk bar, and refresh stop-now rewards plus three upcoming `PotTrack` milestones.
+## Status: Complete
 
-Expanded `test_board_ui.gd` to cover the required node paths and explosion-risk helper. TDD red run failed with the expected seven missing-feature assertions.
+All steps from the brief implemented and passing.
 
-Verification:
+## Changes
 
-```text
-/opt/homebrew/bin/godot --headless --path . -s res://tests/run_all_tests.gd
-ALL TESTS PASSED
-```
-# Task 6 Report: GameState rounds, evaluation, shop, Turn 9, winners
+- `tests/test_board_ui.gd`: added assertions for `ProgressTrack`/`TokenHistory` node presence and type, `Gameboard.visible == false`, `stone*` children hidden (loop is a no-op today since `board.tscn` has no `stone*` children), live refresh of `TokenHistory.token_count()` / `ProgressTrack.preview_space()` on draw and on flask use, and bidirectional `scroll_offset` sync between the two components.
+- `board.tscn`: added `ext_resource` entries for `res://ui/progress_track.tscn` and `res://ui/token_history.tscn`; instanced `ProgressTrack` and `TokenHistory` as children positioned left of `DrawStage` (x 400–730, DrawStage at x 900); set `Gameboard.visible = false` (kept the node/texture so nothing else that references it breaks).
+- `board.gd`:
+  - `_ready()` now calls `_hide_spiral_board()` (hides `Gameboard` and any `stone*` child) and `_wire_track_scroll_sync()` before the early-return for no active session, so hiding/wiring happen even on the main-menu placeholder state.
+  - `_wire_track_scroll_sync()` connects `ProgressTrack.scroll_changed`/`TokenHistory.scroll_changed` to new handlers `_on_track_scrolled`/`_on_history_scrolled`, guarded by a `_syncing_scroll` bool to prevent feedback loops (mirrors the `_guard_scroll` pattern already inside each component).
+  - `_refresh()` now calls `$ProgressTrack.refresh(player.pot)` and `$TokenHistory.refresh(player.pot)`. Since `_on_drawn`, `_on_flask_used`, `_on_exploded`, `_on_active`, and `_on_phase` all already end by calling `_refresh()`, this gives live refresh on draw/flask/stop/explosion without duplicating refresh calls in each handler.
+  - Kept the cauldron `DrawStage` (bag/cauldron/chip-flight tween) untouched.
 
-## Status
+## TDD
 
-**DONE** — GameState and PlayerState additions implemented, tested, self-reviewed, and committed.
+1. Added the new assertions to `test_board_ui.gd` first; ran the suite — observed the expected RED: `board has ProgressTrack`, `board has TokenHistory`, and `spiral board hidden` failed (3 assertions), plus a cascading `Node not found: "TokenHistory"` error later in the same test.
+2. Implemented the scene/script changes above.
+3. Re-ran — GREEN.
 
-## Commit
-
-| SHA | Subject |
-|-----|---------|
-| `7c9b6a0` | feat: add GameState evaluation, shop, and Turn 9 rules |
-
-## Implementation
-
-- Added seeded game creation, round setup, round-6 white chip event, and potion hotseat helpers.
-- Added evaluation coin/VP handling and the exploded VP-or-shop fork.
-- Added stock, unlock, affordability, purchase-count, and distinct-chip-color shop validation.
-- Added pending purchased chips and final-pot tiebreak state to `PlayerState`.
-- Added Turn 9 coin/ruby conversions, game-over transition, and winner calculation.
-- Added end-turn pot/purchase chip returns and round progression.
-
-## TDD and Verification
-
-1. Added `TestGameState` and wired it into the test runner.
-2. Observed the expected failure because `GameState` did not exist.
-3. Implemented the required behavior.
-4. During self-review, added a regression test for taking VP after choosing shop; observed it fail, then corrected phase handling.
-5. Ran:
+## Verification
 
 ```bash
+/opt/homebrew/bin/godot --headless --path . --import
 /opt/homebrew/bin/godot --headless --path . -s res://tests/run_all_tests.gd
 ```
 
-Result: exit 0, all Chip, Bag, Pot, Potions, Market, and GameState assertions passed; final output `ALL TESTS PASSED`.
-
-IDE diagnostics also reported no linter errors in the four changed files.
-
-## Self-Review
-
-- Confirmed all color references use `Chip.ChipColor`.
-- Confirmed both legal non-exploded evaluation orders work: VP then shop, or shop then VP.
-- Confirmed exploded players can choose only one evaluation branch.
-- Confirmed failed purchases do not mutate coins, stock, purchases, or pending chips.
-- Confirmed final-pot distance is captured before pots are cleared.
-- Confirmed purchased and placed chips return exactly once at end of turn.
+Result: exit 0, `ALL TESTS PASSED` (full suite, including all `TestBoardUI` and `TestProgressTrackUI` assertions — token history/progress track refresh on draw and flask use, and both scroll-sync directions).
 
 ## Concerns
 
-- Godot generated `.uid` sidecars remain untracked, consistent with prior tasks.
+- `board.tscn` has no `stone*` children today (the spiral board appears to be a flat sprite, not per-space stone nodes), so the "hide stone children" logic is implemented but currently a no-op; it will activate automatically if/when stone nodes are added.
+- Placement of `ProgressTrack`/`TokenHistory` (offsets left of `DrawStage`) is functional but not visually tuned/screenshotted — no manual playtest of on-screen layout, only headless logic tests, consistent with Task 5's stated limitation.
+- Kept `ExplosionRiskBar` (did not replace with boom-berry slot art from `TODO/new images`) since the brief said either is fine as long as the `mini(sum, 8)` mapping stays; no functional change needed there.
 
-## Review Fixes
+## Report path
 
-- Turn 9 coin and ruby conversions now select the shop/conversion branch, preserving the exploded player's exclusive VP-or-conversion choice while allowing non-exploded players to take VP and convert.
-- The round-6 white-1 grant is tracked on `GameState` and occurs exactly once.
-- Purchases are rejected after `finish_shop()` marks evaluation complete.
-- Added `draw()`, `stop()`, and `use_flask()` aliases while retaining the existing `*_active()` methods.
-- Added regressions for both exploded Turn 9 branch orders, repeated round-6 setup, buying after shop completion, and the potion helper aliases.
-
-## Review Fix Verification
-
-Ran:
-
-```bash
-/opt/homebrew/bin/godot --headless --path . -s res://tests/run_all_tests.gd
-```
-
-Result: exit 0. All assertions passed, including the new GameState regressions; final output `ALL TESTS PASSED`. IDE diagnostics reported no linter errors in `game/game_state.gd` or `tests/test_game_state.gd`.
+`.worktrees/brew-progress-track/.superpowers/sdd/task-6-report.md`

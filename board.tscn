@@ -8,6 +8,8 @@
 [ext_resource type="Texture2D" uid="uid://bfcdj6ndrf7a6" path="res://TODO/new images/btn_stop.png" id="4_tngv2"]
 [ext_resource type="Texture2D" uid="uid://dqgcl514afulm" path="res://assets/ui/board/cauldron_rune.png" id="5_cauldron"]
 [ext_resource type="Texture2D" uid="uid://vmlkvomgjdu8" path="res://assets/ui/board/white_1.png" id="6_chip"]
+[ext_resource type="PackedScene" path="res://ui/progress_track.tscn" id="7_track"]
+[ext_resource type="PackedScene" path="res://ui/token_history.tscn" id="8_history"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mgc1s"]
 texture = ExtResource("3_rq8yp")
@@ -34,6 +36,7 @@ scale = Vector2(0.921875, 0.87749124)
 texture = ExtResource("2_tngv2")
 
 [node name="Gameboard" type="Sprite2D" parent="." unique_id=2045807126]
+visible = false
 position = Vector2(243, -465.00006)
 scale = Vector2(0.8061224, 0.7902097)
 texture = ExtResource("1_p0ybc")
@@ -136,6 +139,20 @@ mouse_filter = 2
 texture = ExtResource("6_chip")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="ProgressTrack" parent="." instance=ExtResource("7_track")]
+layout_mode = 0
+offset_left = 400.0
+offset_top = 360.0
+offset_right = 600.0
+offset_bottom = 760.0
+
+[node name="TokenHistory" parent="." instance=ExtResource("8_history")]
+layout_mode = 0
+offset_left = 610.0
+offset_top = 360.0
+offset_right = 730.0
+offset_bottom = 760.0
 
 [node name="ExplosionRiskBar" type="ProgressBar" parent="." unique_id=2079236701]
 offset_left = 433.0

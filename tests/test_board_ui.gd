@@ -25,6 +25,8 @@ static func run() -> int:
 		"DrawStage/ChipFlight": TextureRect,
 		"ExplosionRiskBar": ProgressBar,
 		"RewardsBar": RichTextLabel,
+		"ProgressTrack": Control,
+		"TokenHistory": Control,
 	}
 	for node_name: String in expected_nodes:
 		var node := board.get_node_or_null(node_name)
@@ -34,6 +36,13 @@ static func run() -> int:
 				is_instance_of(node, expected_nodes[node_name]),
 				"%s has expected type" % node_name
 			)
+
+	var gameboard := board.get_node_or_null("Gameboard")
+	if gameboard:
+		failures += AssertUtil.eq(gameboard.visible, false, "spiral board hidden")
+	for child in board.get_children():
+		if str(child.name).begins_with("stone"):
+			failures += AssertUtil.eq(child.visible, false, "stone hidden")
 
 	if failures == 0:
 		failures += AssertUtil.truthy(
@@ -95,11 +104,37 @@ static func run() -> int:
 	root.add_child(board)
 	board.get_node("PlacementsList").add_item("stale placement")
 	controller.draw_active()
+	failures += AssertUtil.eq(
+		board.get_node("TokenHistory").token_count(),
+		controller.state.players[0].pot.placements.size(),
+		"token history refreshes on draw"
+	)
+	failures += AssertUtil.eq(
+		board.get_node("ProgressTrack").preview_space(),
+		controller.state.players[0].pot.scoring_space(),
+		"progress track refreshes on draw"
+	)
 	controller.use_flask_active()
 	failures += AssertUtil.eq(
 		board.get_node("PlacementsList").item_count,
 		0,
 		"flask use clears stale placement list entry"
+	)
+	failures += AssertUtil.eq(
+		board.get_node("TokenHistory").token_count(),
+		controller.state.players[0].pot.placements.size(),
+		"token history refreshes on flask use"
+	)
+
+	var track := board.get_node("ProgressTrack")
+	var history := board.get_node("TokenHistory")
+	track.scroll_offset = 33.0
+	failures += AssertUtil.eq(
+		history.scroll_offset, 33.0, "scrolling track syncs history"
+	)
+	history.scroll_offset = 47.0
+	failures += AssertUtil.eq(
+		track.scroll_offset, 47.0, "scrolling history syncs track"
 	)
 	board.call("_on_exploded", 0)
 	board.call("_on_active", 1)

@@ -9,10 +9,13 @@ extends Node2D
 var _pending_explosion_player: int = -1
 var _anim_gen: int = 0
 var _draw_tween: Tween
+var _syncing_scroll: bool = false
 
 func _ready() -> void:
+	_hide_spiral_board()
 	if Engine.is_editor_hint():
 		return
+	_wire_track_scroll_sync()
 	var pc := _controller()
 	if pc == null or pc.state == null:
 		$HandoffLabel.text = "Start a game from the main menu."
@@ -27,6 +30,40 @@ func _ready() -> void:
 	pc.flask_used.connect(_on_flask_used)
 	$HandoffLabel.text = "Player %d — draw or stop" % (pc.state.active_player + 1)
 	_refresh()
+
+func _hide_spiral_board() -> void:
+	var gameboard := get_node_or_null("Gameboard")
+	if gameboard:
+		gameboard.visible = false
+	for child in get_children():
+		if str(child.name).begins_with("stone"):
+			child.visible = false
+
+## Keeps ProgressTrack and TokenHistory scroll positions in lockstep without
+## re-triggering each other's scroll_changed signal.
+func _wire_track_scroll_sync() -> void:
+	var track := get_node_or_null("ProgressTrack")
+	var history := get_node_or_null("TokenHistory")
+	if track == null or history == null:
+		return
+	if not track.scroll_changed.is_connected(_on_track_scrolled):
+		track.scroll_changed.connect(_on_track_scrolled)
+	if not history.scroll_changed.is_connected(_on_history_scrolled):
+		history.scroll_changed.connect(_on_history_scrolled)
+
+func _on_track_scrolled(offset: float) -> void:
+	if _syncing_scroll:
+		return
+	_syncing_scroll = true
+	$TokenHistory.set_scroll_offset(offset)
+	_syncing_scroll = false
+
+func _on_history_scrolled(offset: float) -> void:
+	if _syncing_scroll:
+		return
+	_syncing_scroll = true
+	$ProgressTrack.set_scroll_offset(offset)
+	_syncing_scroll = false
 
 func _on_phase(phase: String) -> void:
 	if phase == "evaluation" or phase == "shop":
@@ -75,6 +112,8 @@ func _refresh() -> void:
 	$ActivePlayerLabel.text = "P%d" % (pc.state.active_player + 1)
 	_update_explosion_risk(player.pot.white_sum(), player.exploded)
 	_refresh_rewards_bar(player)
+	$ProgressTrack.refresh(player.pot)
+	$TokenHistory.refresh(player.pot)
 
 func _update_explosion_risk(white_sum: int, exploded: bool) -> void:
 	$ExplosionRiskBar.value = mini(white_sum, 8)
