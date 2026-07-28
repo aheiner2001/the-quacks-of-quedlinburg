@@ -73,9 +73,26 @@ func _on_phase(phase: String) -> void:
 		_refresh()
 		return
 	if phase == "evaluation" or phase == "shop":
-		get_tree().change_scene_to_file("res://node_2d.tscn")
+		_ensure_shop_overlay()
+		$ShopOverlay.visible = true
+		var shop := $ShopOverlay.get_child(0)
+		if shop and shop.has_method("_refresh_evaluation"):
+			shop.call("_refresh_evaluation")
 		return
+	if phase == "potions":
+		if has_node("ShopOverlay"):
+			$ShopOverlay.visible = false
 	_refresh()
+
+func _ensure_shop_overlay() -> void:
+	if has_node("ShopOverlay"):
+		return
+	var layer := CanvasLayer.new()
+	layer.name = "ShopOverlay"
+	layer.visible = false
+	var shop := (load("res://node_2d.tscn") as PackedScene).instantiate()
+	layer.add_child(shop)
+	add_child(layer)
 
 func _on_active(player_index: int) -> void:
 	if _pending_explosion_player >= 0:

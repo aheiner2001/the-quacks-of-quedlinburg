@@ -198,4 +198,54 @@ static func run() -> int:
 	)
 	root.remove_child(shop)
 	shop.free()
+	failures += _test_shop_overlay_done_stays_on_board()
 	return failures
+
+static func _test_shop_overlay_done_stays_on_board() -> int:
+	var failures := 0
+	var packed := load("res://board.tscn") as PackedScene
+	var board := packed.instantiate()
+	var root: Window = Engine.get_main_loop().root
+	var session: Node = root.get_node("GameSession")
+	session.call("start_local", 1)
+	var controller := session.get("controller") as PhaseController
+	root.add_child(board)
+	controller.stop_active()
+	controller.finish_bonus_die_phase()
+	failures += AssertUtil.eq(
+		controller.state.phase, "evaluation", "overlay shop test enters evaluation"
+	)
+	var overlay := board.get_node_or_null("ShopOverlay")
+	failures += AssertUtil.truthy(overlay != null and overlay.visible, "shop overlay shown")
+	if overlay == null or overlay.get_child_count() == 0:
+		root.remove_child(board)
+		board.free()
+		return failures
+	var shop: Node = overlay.get_child(0)
+	controller.go_shop_active()
+	shop.call("_refresh_evaluation")
+	controller.state.players[0].coins = 0
+	shop.call("_on_done_pressed")
+	failures += AssertUtil.eq(
+		controller.state.phase, "potions", "done continues into next potions round"
+	)
+	failures += AssertUtil.truthy(
+		is_instance_valid(board) and board.is_inside_tree(),
+		"done from overlay does not leave board"
+	)
+	failures += AssertUtil.eq(
+		overlay.visible, false, "done hides shop overlay for potions"
+	)
+	failures += AssertUtil.truthy(
+		get_tree_current_is_not_shop(shop),
+		"done does not promote shop to current scene"
+	)
+	root.remove_child(board)
+	board.free()
+	return failures
+
+static func get_tree_current_is_not_shop(shop: Node) -> bool:
+	var tree := shop.get_tree()
+	if tree == null:
+		return true
+	return tree.current_scene != shop

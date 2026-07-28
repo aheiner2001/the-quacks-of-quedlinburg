@@ -156,6 +156,7 @@ static func run() -> int:
 	board.free()
 	failures += _test_bonus_die_phase_shows_modal()
 	failures += _test_bonus_die_modal_rolls_and_finishes()
+	failures += _test_evaluation_shows_shop_overlay()
 	return failures
 
 static func _test_bonus_die_phase_shows_modal() -> int:
@@ -229,4 +230,64 @@ static func _test_bonus_die_modal_rolls_and_finishes() -> int:
 	failures += AssertUtil.eq(modal.visible, false, "modal hides once bonus die phase finishes")
 	root.remove_child(modal)
 	modal.free()
+	return failures
+
+static func _test_evaluation_shows_shop_overlay() -> int:
+	var failures := 0
+	var packed := load("res://board.tscn") as PackedScene
+	var board := packed.instantiate()
+	var root: Window = Engine.get_main_loop().root
+	var session: Node = root.get_node("GameSession")
+	session.call("start_local", 2)
+	var controller := session.get("controller") as PhaseController
+	root.add_child(board)
+	controller.state.players[0].pot.place(Chip.make(Chip.ChipColor.ORANGE, 4))
+	controller.state.players[1].pot.place(Chip.make(Chip.ChipColor.ORANGE, 1))
+	controller.stop_active()
+	controller.stop_active()
+	failures += AssertUtil.eq(
+		controller.state.phase, "bonus_die", "overlay test starts in bonus die"
+	)
+	controller.finish_bonus_die_phase()
+	failures += AssertUtil.eq(
+		controller.state.phase, "evaluation", "bonus die finish enters evaluation"
+	)
+	failures += AssertUtil.truthy(
+		is_instance_valid(board) and board.is_inside_tree(),
+		"board stays in tree on evaluation (no scene swap)"
+	)
+	var overlay := board.get_node_or_null("ShopOverlay")
+	failures += AssertUtil.truthy(overlay != null, "board has ShopOverlay after evaluation")
+	if overlay:
+		failures += AssertUtil.truthy(
+			overlay is CanvasLayer,
+			"ShopOverlay is a CanvasLayer"
+		)
+		failures += AssertUtil.truthy(
+			overlay.visible,
+			"ShopOverlay visible during evaluation"
+		)
+		failures += AssertUtil.truthy(
+			overlay.get_child_count() > 0,
+			"ShopOverlay instances shop UI"
+		)
+	controller.end_turn_and_continue()
+	failures += AssertUtil.eq(
+		controller.state.phase, "potions", "continue returns to potions"
+	)
+	if overlay and is_instance_valid(overlay):
+		failures += AssertUtil.eq(
+			overlay.visible,
+			false,
+			"ShopOverlay hides when returning to potions"
+		)
+	failures += AssertUtil.truthy(
+		is_instance_valid(board) and board.is_inside_tree(),
+		"board remains after end_turn_and_continue"
+	)
+	if is_instance_valid(board) and board.is_inside_tree():
+		root.remove_child(board)
+		board.free()
+	elif is_instance_valid(board):
+		board.free()
 	return failures

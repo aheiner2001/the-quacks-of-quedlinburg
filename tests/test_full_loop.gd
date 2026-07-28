@@ -10,7 +10,8 @@ static func run() -> int:
 		game.stop_active()
 		game.advance_hotseat()
 		game.stop_active()
-		game.begin_evaluation()
+		game.begin_bonus_die()
+		game.finish_bonus_die()
 
 		for player_index in game.players.size():
 			game.take_vp(player_index)

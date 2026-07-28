@@ -218,7 +218,8 @@ func _on_done_pressed() -> void:
 		pc.end_turn_and_continue()
 		if pc.state.phase == "game_over":
 			_show_winners()
-		else:
+		elif get_tree().current_scene == self:
+			# Standalone shop scene — return to board. Overlay mode stays on board.
 			get_tree().change_scene_to_file("res://board.tscn")
 	elif pc.state.eval_player != previous_player:
 		_refresh_evaluation("Pass to Player %d." % (pc.state.eval_player + 1))
