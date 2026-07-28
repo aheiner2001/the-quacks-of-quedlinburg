@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://vmlkvomgjdu8" path="res://assets/ui/board/white_1.png" id="6_chip"]
 [ext_resource type="PackedScene" path="res://ui/progress_track.tscn" id="7_track"]
 [ext_resource type="PackedScene" path="res://ui/token_history.tscn" id="8_history"]
+[ext_resource type="PackedScene" path="res://ui/bonus_die_modal.tscn" id="9_bonus_die"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mgc1s"]
 texture = ExtResource("3_rq8yp")
@@ -170,6 +171,14 @@ offset_bottom = 341.0
 bbcode_enabled = true
 text = "Stop now — Space 0: Money 0, VP 0"
 fit_content = true
+
+[node name="BonusDieModal" parent="." instance=ExtResource("9_bonus_die")]
+visible = false
+layout_mode = 0
+offset_left = 520.0
+offset_top = 260.0
+offset_right = 780.0
+offset_bottom = 480.0
 
 [connection signal="pressed" from="DrawButton" to="." method="_on_draw_pressed"]
 [connection signal="pressed" from="StopButton" to="." method="_on_stop_pressed"]

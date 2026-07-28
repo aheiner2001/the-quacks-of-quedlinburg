@@ -66,6 +66,12 @@ func _on_history_scrolled(offset: float) -> void:
 	_syncing_scroll = false
 
 func _on_phase(phase: String) -> void:
+	if phase == "bonus_die":
+		var modal := get_node_or_null("BonusDieModal")
+		if modal:
+			modal.open()
+		_refresh()
+		return
 	if phase == "evaluation" or phase == "shop":
 		get_tree().change_scene_to_file("res://node_2d.tscn")
 		return

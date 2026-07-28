@@ -27,6 +27,11 @@ static func run() -> int:
 		"RewardsBar": RichTextLabel,
 		"ProgressTrack": Control,
 		"TokenHistory": Control,
+		"BonusDieModal": Control,
+		"BonusDieModal/PlayerLabel": Label,
+		"BonusDieModal/FaceTexture": TextureRect,
+		"BonusDieModal/RollButton": Button,
+		"BonusDieModal/NextButton": Button,
 	}
 	for node_name: String in expected_nodes:
 		var node := board.get_node_or_null(node_name)
@@ -36,6 +41,10 @@ static func run() -> int:
 				is_instance_of(node, expected_nodes[node_name]),
 				"%s has expected type" % node_name
 			)
+
+	var bonus_modal := board.get_node_or_null("BonusDieModal")
+	if bonus_modal:
+		failures += AssertUtil.eq(bonus_modal.visible, false, "bonus die modal starts hidden")
 
 	var gameboard := board.get_node_or_null("Gameboard")
 	if gameboard:
@@ -145,4 +154,79 @@ static func run() -> int:
 	)
 	root.remove_child(board)
 	board.free()
+	failures += _test_bonus_die_phase_shows_modal()
+	failures += _test_bonus_die_modal_rolls_and_finishes()
+	return failures
+
+static func _test_bonus_die_phase_shows_modal() -> int:
+	var failures := 0
+	var packed := load("res://board.tscn") as PackedScene
+	var board := packed.instantiate()
+	var root: Window = Engine.get_main_loop().root
+	var session: Node = root.get_node("GameSession")
+	session.call("start_local", 2)
+	var controller := session.get("controller") as PhaseController
+	root.add_child(board)
+	controller.state.players[0].pot.place(Chip.make(Chip.ChipColor.ORANGE, 4))
+	controller.state.players[1].pot.place(Chip.make(Chip.ChipColor.ORANGE, 1))
+	controller.stop_active()
+	controller.stop_active()
+	failures += AssertUtil.eq(
+		controller.state.phase, "bonus_die", "phase enters bonus die after both stop"
+	)
+	var modal := board.get_node_or_null("BonusDieModal")
+	failures += AssertUtil.truthy(modal != null, "board has bonus die modal node")
+	if modal:
+		failures += AssertUtil.truthy(
+			modal.visible, "board shows bonus die modal during bonus_die phase"
+		)
+		failures += AssertUtil.eq(
+			modal.get_node("RollButton").disabled,
+			false,
+			"roll button enabled for eligible leader"
+		)
+	root.remove_child(board)
+	board.free()
+	return failures
+
+static func _test_bonus_die_modal_rolls_and_finishes() -> int:
+	var failures := 0
+	var packed := load("res://ui/bonus_die_modal.tscn") as PackedScene
+	failures += AssertUtil.truthy(packed != null, "bonus die modal scene loads")
+	if packed == null:
+		return failures
+	var modal := packed.instantiate()
+	var root: Window = Engine.get_main_loop().root
+	var session: Node = root.get_node("GameSession")
+	session.call("start_local", 2)
+	var controller := session.get("controller") as PhaseController
+	controller.state.players[0].pot.place(Chip.make(Chip.ChipColor.ORANGE, 4))
+	controller.state.players[1].pot.place(Chip.make(Chip.ChipColor.ORANGE, 1))
+	controller.stop_active()
+	controller.stop_active()
+	root.add_child(modal)
+	modal.open()
+	failures += AssertUtil.truthy(modal.visible, "modal open() shows itself")
+	failures += AssertUtil.eq(
+		modal.get_node("FaceTexture").visible, false, "face hidden before rolling"
+	)
+	modal.get_node("RollButton").pressed.emit()
+	failures += AssertUtil.eq(
+		controller.state.bonus_die_index, 1, "rolling advances bonus die queue index"
+	)
+	failures += AssertUtil.truthy(
+		modal.get_node("FaceTexture").visible, "face shown after rolling"
+	)
+	failures += AssertUtil.truthy(
+		modal.get_node("FaceTexture").texture != null, "face texture resolves a die image"
+	)
+	modal.get_node("NextButton").pressed.emit()
+	failures += AssertUtil.eq(
+		controller.state.phase,
+		"evaluation",
+		"finishing the queue advances the controller to evaluation"
+	)
+	failures += AssertUtil.eq(modal.visible, false, "modal hides once bonus die phase finishes")
+	root.remove_child(modal)
+	modal.free()
 	return failures

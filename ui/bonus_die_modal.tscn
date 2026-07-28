@@ -1,0 +1,51 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/bonus_die_modal.gd" id="1_script"]
+
+[node name="BonusDieModal" type="Control"]
+custom_minimum_size = Vector2(260, 220)
+layout_mode = 3
+mouse_filter = 1
+script = ExtResource("1_script")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 260.0
+offset_bottom = 220.0
+
+[node name="PlayerLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 244.0
+offset_bottom = 44.0
+theme_override_font_sizes/font_size = 20
+text = "Player 1 rolls the bonus die"
+horizontal_alignment = 1
+
+[node name="FaceTexture" type="TextureRect" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 90.0
+offset_top = 52.0
+offset_right = 170.0
+offset_bottom = 132.0
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RollButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 156.0
+offset_right = 130.0
+offset_bottom = 196.0
+text = "Roll"
+
+[node name="NextButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 140.0
+offset_top = 156.0
+offset_right = 230.0
+offset_bottom = 196.0
+disabled = true
+text = "Next"
