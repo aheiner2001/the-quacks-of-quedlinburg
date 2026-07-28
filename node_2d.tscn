@@ -141,6 +141,7 @@ scale = Vector2(0.47553018, 0.39487684)
 size_flags_horizontal = 0
 size_flags_vertical = 0
 texture_normal = ExtResource("4_q6r6c")
+texture_pressed = ExtResource("4_0hol4")
 texture_hover = ExtResource("4_0hol4")
 ignore_texture_size = true
 stretch_mode = 5
@@ -237,7 +238,7 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="BuyRow" type="HBoxContainer" parent="Pumpkin"]
+[node name="BuyRow" type="HBoxContainer" parent="Pumpkin" unique_id=850908115]
 offset_left = -320.0
 offset_top = 230.0
 offset_right = 320.0
@@ -261,7 +262,7 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="BuyRow" type="HBoxContainer" parent="Gary"]
+[node name="BuyRow" type="HBoxContainer" parent="Gary" unique_id=69155155]
 offset_left = -320.0
 offset_top = 230.0
 offset_right = 320.0
@@ -285,7 +286,7 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="BuyRow" type="HBoxContainer" parent="shroom"]
+[node name="BuyRow" type="HBoxContainer" parent="shroom" unique_id=533694845]
 offset_left = -320.0
 offset_top = 230.0
 offset_right = 320.0
@@ -309,7 +310,7 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="BuyRow" type="HBoxContainer" parent="spider"]
+[node name="BuyRow" type="HBoxContainer" parent="spider" unique_id=1105876398]
 offset_left = -320.0
 offset_top = 230.0
 offset_right = 320.0
@@ -333,7 +334,7 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="BuyRow" type="HBoxContainer" parent="Poots"]
+[node name="BuyRow" type="HBoxContainer" parent="Poots" unique_id=258940985]
 offset_left = -320.0
 offset_top = 230.0
 offset_right = 320.0
@@ -357,7 +358,7 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="BuyRow" type="HBoxContainer" parent="Mandrake"]
+[node name="BuyRow" type="HBoxContainer" parent="Mandrake" unique_id=1303850363]
 offset_left = -320.0
 offset_top = 230.0
 offset_right = 320.0
@@ -381,7 +382,7 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="BuyRow" type="HBoxContainer" parent="Moth"]
+[node name="BuyRow" type="HBoxContainer" parent="Moth" unique_id=573474260]
 offset_left = -320.0
 offset_top = 230.0
 offset_right = 320.0
@@ -403,14 +404,15 @@ offset_bottom = 650.7457
 text = "CONTINUE
 "
 
-[node name="EvaluationPanel" type="Panel" parent="."]
+[node name="EvaluationPanel" type="Panel" parent="." unique_id=1207748951]
 z_index = 100
-offset_left = 18.0
-offset_top = 18.0
-offset_right = 408.0
-offset_bottom = 342.0
+offset_left = 21.0
+offset_top = 320.0
+offset_right = 411.0
+offset_bottom = 644.0
 
-[node name="StatusLabel" type="Label" parent="EvaluationPanel"]
+[node name="StatusLabel" type="Label" parent="EvaluationPanel" unique_id=456359456]
+layout_mode = 0
 offset_left = 16.0
 offset_top = 12.0
 offset_right = 374.0
@@ -418,55 +420,60 @@ offset_bottom = 58.0
 text = "Evaluation"
 autowrap_mode = 2
 
-[node name="TakeVPButton" type="Button" parent="EvaluationPanel"]
+[node name="TakeVPButton" type="Button" parent="EvaluationPanel" unique_id=1520489056]
+layout_mode = 0
 offset_left = 16.0
 offset_top = 66.0
 offset_right = 180.0
 offset_bottom = 102.0
 text = "Take VP"
 
-[node name="GoShopButton" type="Button" parent="EvaluationPanel"]
+[node name="GoShopButton" type="Button" parent="EvaluationPanel" unique_id=1773221697]
+layout_mode = 0
 offset_left = 194.0
 offset_top = 66.0
 offset_right = 374.0
 offset_bottom = 102.0
 text = "Go to Shop"
 
-[node name="ConvertCoinsButton" type="Button" parent="EvaluationPanel"]
+[node name="ConvertCoinsButton" type="Button" parent="EvaluationPanel" unique_id=1889000753]
 visible = false
+layout_mode = 0
 offset_left = 16.0
 offset_top = 66.0
 offset_right = 180.0
 offset_bottom = 102.0
 text = "5 Coins → 1 VP"
 
-[node name="ConvertRubiesButton" type="Button" parent="EvaluationPanel"]
+[node name="ConvertRubiesButton" type="Button" parent="EvaluationPanel" unique_id=1807529384]
 visible = false
+layout_mode = 0
 offset_left = 194.0
 offset_top = 66.0
 offset_right = 374.0
 offset_bottom = 102.0
 text = "2 Rubies → 1 VP"
 
-[node name="WhiteShop" type="ItemList" parent="EvaluationPanel"]
+[node name="WhiteShop" type="ItemList" parent="EvaluationPanel" unique_id=1934903243]
+layout_mode = 0
 offset_left = 16.0
 offset_top = 112.0
 offset_right = 374.0
 offset_bottom = 262.0
 allow_reselect = true
 
-[node name="DoneButton" type="Button" parent="EvaluationPanel"]
+[node name="DoneButton" type="Button" parent="EvaluationPanel" unique_id=53722011]
+layout_mode = 0
 offset_left = 194.0
 offset_top = 274.0
 offset_right = 374.0
 offset_bottom = 312.0
 text = "Done / Pass"
 
-[node name="FlaskConfirmDialog" type="ConfirmationDialog" parent="."]
+[node name="FlaskConfirmDialog" type="ConfirmationDialog" parent="." unique_id=242328722]
 title = "Refill Flask"
-dialog_text = "Spend 2 rubies to refill your flask?"
 ok_button_text = "Refill"
-cancel_button_text = "Cancel"
+dialog_text = "Spend 2 rubies to refill your flask?"
 
 [node name="Settingicon" type="TextureButton" parent="." unique_id=635803236]
 offset_left = 1063.0

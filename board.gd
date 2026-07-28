@@ -142,12 +142,16 @@ func _animate_chip_flight(chip: Dictionary = {}) -> void:
 	chip_flight.position = bag.position + (bag.size - chip_flight.size) / 2.0
 	chip_flight.scale = Vector2.ONE
 	chip_flight.visible = true
+
+	var target_pos := cauldron.position + (cauldron.size - chip_flight.size) / 2.0
+	target_pos.y -= 90  # move landing point up by 40px — tweak this number
+
 	_draw_tween = create_tween()
 	_draw_tween.set_parallel(true)
 	_draw_tween.tween_property(
 		chip_flight,
 		"position",
-		cauldron.position + (cauldron.size - chip_flight.size) / 2.0,
+		target_pos,
 		0.28
 	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	_draw_tween.tween_property(
@@ -163,7 +167,6 @@ func _animate_chip_flight(chip: Dictionary = {}) -> void:
 		0.14
 	).set_trans(Tween.TRANS_SINE)
 	_draw_tween.finished.connect(_on_draw_tween_finished.bind(generation, chip_flight))
-
 
 func _on_draw_tween_finished(generation: int, chip_flight: TextureRect) -> void:
 	if generation == _anim_gen and is_instance_valid(chip_flight):

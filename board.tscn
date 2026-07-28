@@ -2,29 +2,44 @@
 
 [ext_resource type="Texture2D" uid="uid://dyn1lvuh44u0i" path="res://assets/boards/gameboard.png" id="1_p0ybc"]
 [ext_resource type="Script" uid="uid://dgok2bl0fmk87" path="res://board.gd" id="1_psm7c"]
-[ext_resource type="PackedScene" uid="uid://b7hmpjitxkp3" path="res://stone.tscn" id="3_8l818"]
-[ext_resource type="Texture2D" path="res://assets/ui/board/chip_back.png" id="4_bag"]
-[ext_resource type="Texture2D" path="res://assets/ui/board/cauldron_rune.png" id="5_cauldron"]
-[ext_resource type="Texture2D" path="res://assets/ui/board/white_1.png" id="6_chip"]
+[ext_resource type="Texture2D" uid="uid://br7y0oo4r6rwb" path="res://TODO/new images/shop_bg.png" id="2_tngv2"]
+[ext_resource type="Texture2D" uid="uid://c53w312ot3861" path="res://TODO/new images/btn_draw.png" id="3_rq8yp"]
+[ext_resource type="Texture2D" uid="uid://cloomsdr82rj0" path="res://assets/ui/board/chip_back.png" id="4_bag"]
+[ext_resource type="Texture2D" uid="uid://bfcdj6ndrf7a6" path="res://TODO/new images/btn_stop.png" id="4_tngv2"]
+[ext_resource type="Texture2D" uid="uid://dqgcl514afulm" path="res://assets/ui/board/cauldron_rune.png" id="5_cauldron"]
+[ext_resource type="Texture2D" uid="uid://vmlkvomgjdu8" path="res://assets/ui/board/white_1.png" id="6_chip"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mgc1s"]
+texture = ExtResource("3_rq8yp")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_5qf1t"]
+texture = ExtResource("3_rq8yp")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_c4ttu"]
+texture = ExtResource("3_rq8yp")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_rq8yp"]
+texture = ExtResource("4_tngv2")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_xhrpu"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tngv2"]
 
 [node name="Node2D" type="Node2D" unique_id=1050217479]
 script = ExtResource("1_psm7c")
 
+[node name="ShopBg" type="Sprite2D" parent="." unique_id=994261589]
+position = Vector2(590, 324.00003)
+scale = Vector2(0.921875, 0.87749124)
+texture = ExtResource("2_tngv2")
+
 [node name="Gameboard" type="Sprite2D" parent="." unique_id=2045807126]
-position = Vector2(166, 99)
+position = Vector2(243, -465.00006)
 scale = Vector2(0.8061224, 0.7902097)
 texture = ExtResource("1_p0ybc")
 centered = false
 
-[node name="stone_edge" parent="." unique_id=583259958 instance=ExtResource("3_8l818")]
-position = Vector2(55.998573, 348.5206)
-scale = Vector2(0.8061224, 0.7902097)
-
-[node name="stone_edge2" parent="." unique_id=1656217809 instance=ExtResource("3_8l818")]
-position = Vector2(68.00001, 441.00006)
-scale = Vector2(0.8061224, 0.7902097)
-
-[node name="ActivePlayerLabel" type="Label" parent="."]
+[node name="ActivePlayerLabel" type="Label" parent="." unique_id=1995485769]
 offset_left = 24.0
 offset_top = 20.0
 offset_right = 84.0
@@ -32,7 +47,7 @@ offset_bottom = 52.0
 theme_override_font_sizes/font_size = 24
 text = "P1"
 
-[node name="WhiteSumLabel" type="Label" parent="."]
+[node name="WhiteSumLabel" type="Label" parent="." unique_id=1960198089]
 offset_left = 24.0
 offset_top = 58.0
 offset_right = 144.0
@@ -40,7 +55,7 @@ offset_bottom = 88.0
 theme_override_font_sizes/font_size = 20
 text = "White: 0"
 
-[node name="FlaskLabel" type="Label" parent="."]
+[node name="FlaskLabel" type="Label" parent="." unique_id=1604454261]
 offset_left = 24.0
 offset_top = 92.0
 offset_right = 144.0
@@ -48,28 +63,32 @@ offset_bottom = 122.0
 theme_override_font_sizes/font_size = 20
 text = "Flask: Full"
 
-[node name="DrawButton" type="Button" parent="."]
-offset_left = 24.0
-offset_top = 140.0
-offset_right = 144.0
-offset_bottom = 184.0
-text = "Draw"
+[node name="DrawButton" type="Button" parent="." unique_id=2130251755]
+offset_left = 28.0
+offset_top = 118.0
+offset_right = 145.0
+offset_bottom = 214.0
+theme_override_styles/normal = SubResource("StyleBoxTexture_mgc1s")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_5qf1t")
+theme_override_styles/hover = SubResource("StyleBoxTexture_c4ttu")
 
-[node name="StopButton" type="Button" parent="."]
-offset_left = 24.0
-offset_top = 194.0
-offset_right = 144.0
-offset_bottom = 238.0
-text = "Stop"
+[node name="StopButton" type="Button" parent="." unique_id=860703010]
+offset_left = 31.0
+offset_top = 188.0
+offset_right = 146.0
+offset_bottom = 300.0
+theme_override_styles/normal = SubResource("StyleBoxTexture_rq8yp")
+theme_override_styles/hover = SubResource("StyleBoxTexture_xhrpu")
 
-[node name="FlaskButton" type="Button" parent="."]
-offset_left = 24.0
-offset_top = 248.0
-offset_right = 144.0
-offset_bottom = 292.0
+[node name="FlaskButton" type="Button" parent="." unique_id=1712549610]
+offset_left = 29.0
+offset_top = 297.0
+offset_right = 149.0
+offset_bottom = 341.0
+theme_override_styles/normal = SubResource("StyleBoxTexture_tngv2")
 text = "Use Flask"
 
-[node name="HandoffLabel" type="Label" parent="."]
+[node name="HandoffLabel" type="Label" parent="." unique_id=600317756]
 offset_left = 180.0
 offset_top = 20.0
 offset_right = 500.0
@@ -77,34 +96,36 @@ offset_bottom = 54.0
 theme_override_font_sizes/font_size = 22
 text = "Player 1 — draw or stop"
 
-[node name="PlacementsList" type="ItemList" parent="."]
+[node name="PlacementsList" type="ItemList" parent="." unique_id=1269331625]
 offset_left = 930.0
 offset_top = 24.0
 offset_right = 1210.0
 offset_bottom = 300.0
 
-[node name="DrawStage" type="Node2D" parent="."]
+[node name="DrawStage" type="Node2D" parent="." unique_id=841217103]
 position = Vector2(900, 310)
 
-[node name="BagPlaceholder" type="TextureRect" parent="DrawStage"]
-offset_right = 96.0
-offset_bottom = 96.0
+[node name="BagPlaceholder" type="TextureRect" parent="DrawStage" unique_id=154731546]
+offset_left = -831.0
+offset_top = 54.0
+offset_right = -644.0
+offset_bottom = 240.0
 mouse_filter = 2
 texture = ExtResource("4_bag")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CauldronPlaceholder" type="TextureRect" parent="DrawStage"]
-offset_left = 140.0
-offset_top = -20.0
-offset_right = 300.0
-offset_bottom = 140.0
+[node name="CauldronPlaceholder" type="TextureRect" parent="DrawStage" unique_id=1515686609]
+offset_left = -538.0
+offset_top = -95.0
+offset_right = -94.0
+offset_bottom = 266.0
 mouse_filter = 2
 texture = ExtResource("5_cauldron")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ChipFlight" type="TextureRect" parent="DrawStage"]
+[node name="ChipFlight" type="TextureRect" parent="DrawStage" unique_id=755754591]
 visible = false
 z_index = 2
 offset_left = 28.0
@@ -116,22 +137,22 @@ texture = ExtResource("6_chip")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ExplosionRiskBar" type="ProgressBar" parent="."]
-offset_left = 930.0
-offset_top = 424.0
-offset_right = 1210.0
-offset_bottom = 452.0
+[node name="ExplosionRiskBar" type="ProgressBar" parent="." unique_id=2079236701]
+offset_left = 433.0
+offset_top = 141.0
+offset_right = 713.0
+offset_bottom = 169.0
 max_value = 8.0
 show_percentage = false
 
-[node name="RewardsBar" type="RichTextLabel" parent="."]
-offset_left = 930.0
-offset_top = 468.0
-offset_right = 1240.0
-offset_bottom = 650.0
+[node name="RewardsBar" type="RichTextLabel" parent="." unique_id=1312100565]
+offset_left = 426.0
+offset_top = 159.0
+offset_right = 736.0
+offset_bottom = 341.0
 bbcode_enabled = true
-fit_content = true
 text = "Stop now — Space 0: Money 0, VP 0"
+fit_content = true
 
 [connection signal="pressed" from="DrawButton" to="." method="_on_draw_pressed"]
 [connection signal="pressed" from="StopButton" to="." method="_on_stop_pressed"]
