@@ -34,6 +34,7 @@ static func run() -> int:
 	session.call("start_local", 1)
 	var controller := session.get("controller") as PhaseController
 	controller.stop_active()
+	controller.finish_bonus_die_phase()
 	root.add_child(shop)
 	failures += AssertUtil.truthy(
 		shop.get_node("EvaluationPanel").visible,

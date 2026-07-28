@@ -18,9 +18,11 @@ static func _test_potions_transition() -> int:
 	controller.stop_active()
 	failures += AssertUtil.eq(
 		controller.state.phase,
-		"evaluation",
-		"auto eval after only player stops"
+		"bonus_die",
+		"bonus die starts after only player stops"
 	)
+	controller.finish_bonus_die_phase()
+	failures += AssertUtil.eq(controller.state.phase, "evaluation", "bonus die finishes into evaluation")
 	controller.free()
 	return failures
 

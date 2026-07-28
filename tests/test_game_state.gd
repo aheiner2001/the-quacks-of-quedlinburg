@@ -127,6 +127,7 @@ static func _test_ruby_grant_and_flask_refill() -> int:
 		"flask cannot be refilled during potions"
 	)
 	controller.stop_active()
+	controller.finish_bonus_die_phase()
 	f += AssertUtil.truthy(controller.refill_flask_active(), "controller refills active flask")
 	controller.free()
 	return f

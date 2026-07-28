@@ -8,6 +8,7 @@ signal exploded(player: int)
 signal flask_used(player: int)
 signal round_ended(round: int)
 signal game_over(winner_indices: Array)
+signal bonus_die_needed
 
 var state: GameState
 
@@ -36,6 +37,19 @@ func stop_active() -> void:
 func use_flask_active() -> void:
 	if state.use_flask_active():
 		flask_used.emit(state.active_player)
+
+func roll_bonus_die_active() -> int:
+	if state.phase != "bonus_die":
+		return -1
+	var face := BonusDie.roll(state.rng)
+	state.apply_bonus_die(state.active_player, face)
+	return face
+
+func finish_bonus_die_phase() -> void:
+	if state.phase != "bonus_die":
+		return
+	state.finish_bonus_die()
+	phase_changed.emit(state.phase)
 
 func take_vp_active() -> bool:
 	return state.take_vp(state.eval_player)
@@ -71,8 +85,9 @@ func end_turn_and_continue() -> void:
 
 func _after_potions_action() -> void:
 	if state.all_players_stopped():
-		state.begin_evaluation()
+		state.begin_bonus_die()
 		phase_changed.emit(state.phase)
+		bonus_die_needed.emit()
 	elif state.players[state.active_player].stopped:
 		state.advance_hotseat()
 		active_player_changed.emit(state.active_player)

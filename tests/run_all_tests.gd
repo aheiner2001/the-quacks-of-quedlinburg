@@ -8,6 +8,7 @@ const TestShopUI = preload("res://tests/test_shop_ui.gd")
 const TestFullLoop = preload("res://tests/test_full_loop.gd")
 const TestSupplyScaler = preload("res://tests/test_supply_scaler.gd")
 const TestMainMenu = preload("res://tests/test_main_menu.gd")
+const TestBonusDie = preload("res://tests/test_bonus_die.gd")
 
 func _init() -> void:
 	call_deferred("_run")
@@ -21,6 +22,7 @@ func _run() -> void:
 	failures += TestMarket.run()
 	failures += TestSupplyScaler.run()
 	failures += TestMainMenu.run()
+	failures += TestBonusDie.run()
 	failures += TestGameState.run()
 	failures += TestPhaseController.run()
 	failures += TestBoardUI.run()

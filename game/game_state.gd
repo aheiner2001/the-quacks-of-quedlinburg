@@ -94,6 +94,42 @@ func advance_hotseat_if_needed() -> int:
 		return advance_hotseat()
 	return active_player
 
+func bonus_die_eligible() -> Array[int]:
+	var best := -1
+	for player in players:
+		if not player.exploded:
+			best = maxi(best, player.pot.scoring_space())
+	var eligible: Array[int] = []
+	for i in players.size():
+		var player := players[i]
+		if not player.exploded and player.pot.scoring_space() == best:
+			eligible.append(i)
+	return eligible
+
+func begin_bonus_die() -> void:
+	phase = "bonus_die"
+
+func apply_bonus_die(player_index: int, face: int) -> void:
+	if not _valid_player(player_index):
+		return
+	var player := players[player_index]
+	match face:
+		BonusDie.Face.VP1:
+			player.vp += 1
+		BonusDie.Face.VP2:
+			player.vp += 2
+		BonusDie.Face.RUBY:
+			if rubies_remaining > 0:
+				player.rubies += 1
+				rubies_remaining -= 1
+		BonusDie.Face.DROPLET:
+			player.pot.droplet += 1
+		BonusDie.Face.ORANGE:
+			player.bag.add(Chip.make(Chip.ChipColor.ORANGE, 1))
+
+func finish_bonus_die() -> void:
+	begin_evaluation()
+
 func begin_evaluation() -> void:
 	phase = "evaluation"
 	eval_player = 0
