@@ -49,6 +49,12 @@ const CHAR_META := {
 		"unlock": 1,
 		"shelf": "MothShelf",
 	},
+	"Cherry Bomb": {
+		"slug": "white",
+		"color": Chip.ChipColor.WHITE,
+		"unlock": 1,
+		"shelf": "WhiteShop",
+	},
 }
 
 const SHELF_SLUGS := {
@@ -90,6 +96,10 @@ static func ensure_loaded() -> void:
 
 
 static func default_stock() -> Dictionary:
+	return SupplyScaler.build_market(1)
+
+
+static func default_stock_template() -> Dictionary:
 	ensure_loaded()
 	return _stock_template.duplicate(true)
 

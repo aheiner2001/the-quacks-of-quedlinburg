@@ -7,6 +7,7 @@ var phase: String = ""
 var active_player: int = 0
 var eval_player: int = 0
 var market: Dictionary = {}
+var rubies_remaining: int = 0
 var rng: RandomNumberGenerator
 var start_player: int = 0
 var round_6_white_granted: bool = false
@@ -15,7 +16,8 @@ static func new_game(player_count: int, seed: int) -> GameState:
 	var game := GameState.new()
 	for i in max(player_count, 0):
 		game.players.append(PlayerState.create_fresh())
-	game.market = MarketCatalog.default_stock()
+	game.market = SupplyScaler.build_market(player_count)
+	game.rubies_remaining = SupplyScaler.shared_ruby_supply(player_count)
 	game.rng = RandomNumberGenerator.new()
 	game.rng.seed = seed
 	return game

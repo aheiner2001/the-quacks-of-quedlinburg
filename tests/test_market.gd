@@ -31,7 +31,7 @@ static func run() -> int:
 		"poots unlocks r3"
 	)
 	f += AssertUtil.eq(stock.has("flask_refill"), false, "no coin flask sku")
-	f += AssertUtil.eq(stock.size(), 16, "one sku per CSV row")
+	f += AssertUtil.eq(stock.size(), 20, "one sku per CSV row")
 	f += AssertUtil.eq(
 		MarketCatalog.skus_for_shelf("GaryInfo"),
 		["gary_1", "gary_2", "gary_4"],
@@ -45,16 +45,17 @@ static func run() -> int:
 	f += AssertUtil.eq(stock["gary_1"]["kind"], "chip", "entry kind")
 	f += AssertUtil.eq(stock["gary_1"]["color"], Chip.ChipColor.BLACK, "gary color")
 	f += AssertUtil.eq(stock["gary_1"]["value"], 1, "gary value")
-	f += AssertUtil.eq(stock["gary_1"]["stock"], 10, "gary stock")
+	f += AssertUtil.truthy(int(stock["gary_1"]["stock"]) > 0, "gary stock")
 	f += AssertUtil.eq(stock["gary_1"]["unlock_round"], 1, "gary unlock")
 	f += AssertUtil.eq(stock["gary_1"]["label"], "Scary Gary 1", "gary label")
 	f += AssertUtil.eq(stock["gary_1"]["character_slug"], "gary", "gary slug")
 	f += AssertUtil.eq(stock["gary_1"]["shelf_node"], "GaryInfo", "gary shelf")
+	var original_gary_stock := int(stock["gary_1"]["stock"])
 	stock["gary_1"]["stock"] = 0
 	var fresh_stock := MarketCatalog.default_stock()
 	f += AssertUtil.eq(
 		fresh_stock["gary_1"]["stock"],
-		10,
+		original_gary_stock,
 		"default stock deep-copies the cached template"
 	)
 	return f

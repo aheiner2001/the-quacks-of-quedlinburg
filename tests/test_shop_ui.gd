@@ -41,7 +41,7 @@ static func run() -> int:
 	)
 	failures += AssertUtil.eq(
 		shop.get_node("EvaluationPanel/WhiteShop").item_count,
-		16,
+		20,
 		"shop list provides explicit purchase controls for every chip"
 	)
 	failures += AssertUtil.truthy(
