@@ -81,6 +81,7 @@ static func _bonus_snapshot(player: PlayerState) -> Dictionary:
 		"vp": player.vp,
 		"rubies": player.rubies,
 		"droplet": player.pot.droplet,
+		"pending_droplet_bonus": player.pending_droplet_bonus,
 		"bag_size": player.bag.size(),
 	}
 
@@ -89,6 +90,11 @@ static func _assert_bonus_snapshot(player: PlayerState, before: Dictionary, labe
 	failures += AssertUtil.eq(player.vp, before["vp"], "%s vp" % label)
 	failures += AssertUtil.eq(player.rubies, before["rubies"], "%s rubies" % label)
 	failures += AssertUtil.eq(player.pot.droplet, before["droplet"], "%s droplet" % label)
+	failures += AssertUtil.eq(
+		player.pending_droplet_bonus,
+		before["pending_droplet_bonus"],
+		"%s pending droplet" % label
+	)
 	failures += AssertUtil.eq(player.bag.size(), before["bag_size"], "%s bag" % label)
 	return failures
 
@@ -103,7 +109,14 @@ static func _assert_bonus_die_reward(
 		BonusDie.Face.RUBY:
 			return AssertUtil.eq(player.rubies, before["rubies"] + 1, label)
 		BonusDie.Face.DROPLET:
-			return AssertUtil.eq(player.pot.droplet, before["droplet"] + 1, label)
+			var failures := 0
+			failures += AssertUtil.eq(player.pot.droplet, before["droplet"], "%s defers droplet" % label)
+			failures += AssertUtil.eq(
+				player.pending_droplet_bonus,
+				before["pending_droplet_bonus"] + 1,
+				label
+			)
+			return failures
 		BonusDie.Face.ORANGE:
 			return AssertUtil.eq(player.bag.size(), before["bag_size"] + 1, label)
 	return AssertUtil.eq(face, -1, "%s has a valid die face" % label)

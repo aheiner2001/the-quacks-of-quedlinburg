@@ -30,7 +30,9 @@ func begin_round() -> void:
 			player.bag.add(Chip.make(Chip.ChipColor.WHITE, 1))
 		round_6_white_granted = true
 	for player in players:
+		var carried_droplet := player.pot.droplet if player.pot != null else 0
 		player.pot = Pot.new()
+		player.pot.droplet = carried_droplet
 		player.exploded = false
 		player.stopped = false
 		player.coins = 0
@@ -39,6 +41,7 @@ func begin_round() -> void:
 		player.chose_shop = false
 		player.evaluation_done = false
 		player.pending_bag_chips = []
+		player.pending_droplet_bonus = 0
 	active_player = start_player
 	eval_player = 0
 	bonus_die_queue.clear()
@@ -129,7 +132,8 @@ func apply_bonus_die(player_index: int, face: int) -> void:
 				player.rubies += 1
 				rubies_remaining -= 1
 		BonusDie.Face.DROPLET:
-			player.pot.droplet += 1
+			# Defer droplet bump so this round's scoring_space grants stay unchanged.
+			player.pending_droplet_bonus += 1
 		BonusDie.Face.ORANGE:
 			player.bag.add(Chip.make(Chip.ChipColor.ORANGE, 1))
 
@@ -269,6 +273,8 @@ func convert_rubies_to_vp(player_index: int) -> bool:
 
 func end_turn() -> void:
 	for player in players:
+		player.pot.droplet += player.pending_droplet_bonus
+		player.pending_droplet_bonus = 0
 		for chip in player.pot.clear_round():
 			player.bag.put_back(chip)
 		for chip in player.pending_bag_chips:
