@@ -9,6 +9,9 @@ func _last_index() -> int:
 		return droplet
 	return int(placements[placements.size() - 1]["index"])
 
+func last_index() -> int:
+	return _last_index()
+
 func place(chip: Dictionary) -> Dictionary:
 	var cap := PotTrack.max_space()
 	var idx := _last_index() + int(chip["value"])

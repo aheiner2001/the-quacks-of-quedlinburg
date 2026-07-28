@@ -25,6 +25,11 @@ static func run() -> int:
 	f += AssertUtil.eq(r2["index"], 3, "white 2 from 1 -> 3")
 	f += AssertUtil.eq(pot.white_sum(), 2, "white sum 2")
 	f += AssertUtil.eq(pot.scoring_space(), 4, "scoring after last")
+	f += AssertUtil.eq(pot.last_index(), 3, "last_index matches last placement")
+
+	var empty_pot := Pot.new()
+	empty_pot.droplet = 5
+	f += AssertUtil.eq(empty_pot.last_index(), 5, "last_index falls back to droplet when empty")
 
 	# Explosion: whites 3+3+2 = 8 > 7
 	var p2 := Pot.new()
