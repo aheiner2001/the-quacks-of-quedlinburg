@@ -1,7 +1,7 @@
 # Brew Progress Track & BrewTable Redesign
 
 **Date:** 2026-07-27  
-**Status:** Approved — implementation plan ready  
+**Status:** Implemented  
 **Approach:** Single BrewTable scene with phase overlays
 
 ## Goal

@@ -172,6 +172,19 @@ Do these **after** the core loop feels good:
 
 ---
 
+## 9b. Brew progress track smoke (feature/brew-progress-track)
+
+Worktree: `.worktrees/brew-progress-track`
+
+- [ ] Menu set 3 players → start
+- [ ] Draw chips → track fills bottom-up; preview highlight moves to scoring space
+- [ ] History icons align; scroll syncs
+- [ ] Explode → danger; bonus die skipped for exploded leader
+- [ ] Shop overlay on same scene; books unchanged
+- [ ] Cauldron flight unchanged
+
+---
+
 ## 10. Suggested order (smooth path)
 
 1. Setup (§0) + 1P/2P playtest (§1)  
