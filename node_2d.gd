@@ -111,10 +111,17 @@ func _refresh_evaluation(message: String = "") -> void:
 
 func _refresh_shop_controls(player: PlayerState) -> void:
 	var state := _controller().state
+	var shop_open := state.round != 9 and player.chose_shop
 	for node_name: String in INFO_SHELVES:
 		var button := get_node(node_name) as BaseButton
-		button.visible = state.round != 9
-		button.disabled = false
+		button.visible = shop_open
+		button.disabled = not shop_open
+		if not shop_open:
+			var popup := get_node(SHELF_POPUPS[node_name])
+			popup.visible = false
+			var buy_row := popup.get_node_or_null("BuyRow") as Control
+			if buy_row:
+				buy_row.visible = false
 	var flask_button := get_node(FLASK_BUY_BUTTON) as BaseButton
 	flask_button.visible = state.round != 9
 	flask_button.disabled = (
@@ -166,11 +173,17 @@ func _can_refill_flask() -> bool:
 	return not player.evaluation_done and not player.flask_full and player.rubies >= 2
 
 func _open_ingredient(shelf_node: String, popup: Node) -> void:
+	if not _is_shopping():
+		popup.visible = false
+		return
 	popup.visible = true
 	_rebuild_buy_buttons(shelf_node, popup)
 
 func _rebuild_buy_buttons(shelf_node: String, popup: Node) -> void:
 	var row := popup.get_node("BuyRow") as HBoxContainer
+	row.visible = _is_shopping()
+	if not row.visible:
+		return
 	for child in row.get_children():
 		row.remove_child(child)
 		child.queue_free()

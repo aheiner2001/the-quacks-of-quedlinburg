@@ -40,6 +40,17 @@ static func run() -> int:
 		shop.get_node("EvaluationPanel").visible,
 		"evaluation panel visible during evaluation"
 	)
+	var pumpkin_shelf := shop.get_node("PumpkinShelf") as BaseButton
+	failures += AssertUtil.eq(
+		pumpkin_shelf.visible,
+		false,
+		"pumpkin shelf is hidden before entering the shop"
+	)
+	failures += AssertUtil.eq(
+		pumpkin_shelf.disabled,
+		true,
+		"pumpkin shelf is disabled before entering the shop"
+	)
 	failures += AssertUtil.eq(
 		shop.get_node("EvaluationPanel/WhiteShop").item_count,
 		20,
@@ -81,6 +92,16 @@ static func run() -> int:
 
 	controller.go_shop_active()
 	shop.call("_refresh_evaluation")
+	failures += AssertUtil.eq(
+		pumpkin_shelf.visible,
+		true,
+		"pumpkin shelf is visible after entering the shop"
+	)
+	failures += AssertUtil.eq(
+		pumpkin_shelf.disabled,
+		false,
+		"pumpkin shelf is enabled after entering the shop"
+	)
 	failures += AssertUtil.eq(
 		shop.get_node("EvaluationPanel/DoneButton").visible,
 		true,
