@@ -10,6 +10,7 @@ const TestFullLoop = preload("res://tests/test_full_loop.gd")
 const TestSupplyScaler = preload("res://tests/test_supply_scaler.gd")
 const TestMainMenu = preload("res://tests/test_main_menu.gd")
 const TestBonusDie = preload("res://tests/test_bonus_die.gd")
+const TestChipEffects = preload("res://tests/test_chip_effects.gd")
 
 func _init() -> void:
 	call_deferred("_run")
@@ -19,6 +20,7 @@ func _run() -> void:
 	failures += TestChip.run()
 	failures += TestBag.run()
 	failures += TestPot.run()
+	failures += TestChipEffects.run()
 	failures += TestPotions.run()
 	failures += TestMarket.run()
 	failures += TestSupplyScaler.run()

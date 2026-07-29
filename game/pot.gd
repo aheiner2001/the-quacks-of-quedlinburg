@@ -12,9 +12,16 @@ func _last_index() -> int:
 func last_index() -> int:
 	return _last_index()
 
-func place(chip: Dictionary) -> Dictionary:
+func count_color(color: int) -> int:
+	var n := 0
+	for p in placements:
+		if int(p["chip"]["color"]) == color:
+			n += 1
+	return n
+
+func place(chip: Dictionary, bonus_spaces: int = 0) -> Dictionary:
 	var cap := PotTrack.max_space()
-	var idx := _last_index() + int(chip["value"])
+	var idx := _last_index() + int(chip["value"]) + maxi(bonus_spaces, 0)
 	if idx > cap:
 		idx = cap
 	placements.append({"chip": chip, "index": idx})

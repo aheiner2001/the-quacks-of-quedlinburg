@@ -36,7 +36,10 @@ func can_use_flask() -> bool:
 func draw(rng: RandomNumberGenerator) -> Dictionary:
 	assert(can_draw())
 	var chip := bag.draw(rng)
-	var result := pot.place(chip)
+	var bonus := 0
+	if int(chip["color"]) == Chip.ChipColor.RED:
+		bonus = ChipEffects.toadstool_bonus(pot.count_color(Chip.ChipColor.ORANGE))
+	var result := pot.place(chip, bonus)
 	if result["exploded"]:
 		exploded = true
 		stopped = true
