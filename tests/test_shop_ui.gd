@@ -11,6 +11,7 @@ static func run() -> int:
 	var shop := packed.instantiate()
 	failures += AssertUtil.truthy(shop.get_script() != null, "shop script compiles")
 	var expected_nodes := {
+		"Button": Button,
 		"EvaluationPanel/TakeVPButton": Button,
 		"EvaluationPanel/GoShopButton": Button,
 		"EvaluationPanel/ConvertCoinsButton": Button,
@@ -59,7 +60,7 @@ static func run() -> int:
 	failures += AssertUtil.eq(
 		shop.get_node("EvaluationPanel/WhiteShop").visible,
 		false,
-		"shop catalog list is hidden in favor of shelf buy rows"
+		"white shop is hidden before entering the shop"
 	)
 	failures += AssertUtil.truthy(
 		controller.state.players[0].chose_vp,
@@ -69,6 +70,11 @@ static func run() -> int:
 		shop.get_node("EvaluationPanel/DoneButton").disabled,
 		false,
 		"done is available after mandatory vp is granted"
+	)
+	failures += AssertUtil.eq(
+		shop.get_node("Button").disabled,
+		false,
+		"continue matches done availability after mandatory vp"
 	)
 	var player: PlayerState = controller.state.players[0]
 	player.flask_full = false
@@ -108,15 +114,63 @@ static func run() -> int:
 		"done is visible after choosing shop"
 	)
 	failures += AssertUtil.eq(
+		shop.get_node("EvaluationPanel/WhiteShop").visible,
+		true,
+		"white shop is visible after choosing shop"
+	)
+	failures += AssertUtil.eq(
 		shop.get_node("EvaluationPanel/DoneButton").disabled,
 		false,
 		"done is enabled when no shop purchase is affordable"
+	)
+	failures += AssertUtil.eq(
+		shop.get_node("Button").disabled,
+		false,
+		"continue matches done when no purchase is affordable"
 	)
 	failures += AssertUtil.eq(
 		controller.state.players[0].evaluation_done,
 		false,
 		"shop does not auto-finish when no purchase is affordable"
 	)
+	var original_market: Dictionary = controller.state.market.duplicate(true)
+	for sku: String in controller.state.market:
+		var entry: Dictionary = controller.state.market[sku]
+		entry["cost"] = 1 if sku == "white_1" else 99
+		controller.state.market[sku] = entry
+	player.coins = 1
+	shop.call("_refresh_evaluation")
+	var white_shop := shop.get_node("EvaluationPanel/WhiteShop") as ItemList
+	var white_index := -1
+	for index in white_shop.item_count:
+		if white_shop.get_item_metadata(index) == "white_1":
+			white_index = index
+			break
+	failures += AssertUtil.truthy(white_index >= 0, "white shop offers white 1")
+	if white_index >= 0:
+		failures += AssertUtil.eq(
+			white_shop.is_item_disabled(white_index),
+			false,
+			"white-only affordable purchase remains reachable"
+		)
+		failures += AssertUtil.eq(
+			shop.get_node("EvaluationPanel/DoneButton").disabled,
+			true,
+			"done remains gated while white-only purchase is affordable"
+		)
+		failures += AssertUtil.eq(
+			shop.get_node("Button").disabled,
+			true,
+			"continue remains gated while white-only purchase is affordable"
+		)
+		shop.call("_on_white_shop_item_clicked", white_index, Vector2.ZERO, MOUSE_BUTTON_LEFT)
+		failures += AssertUtil.eq(
+			player.purchases,
+			["white_1"],
+			"white shop purchase buys an affordable white chip"
+		)
+	controller.state.market = original_market
+	player.purchases.clear()
 	controller.state.players[0].coins = 30
 	shop.call("_refresh_evaluation")
 	shop.get_node("PumpkinShelf").pressed.emit()
@@ -153,6 +207,11 @@ static func run() -> int:
 			"done stays disabled after one purchase with an affordable buy remaining"
 		)
 		failures += AssertUtil.eq(
+			shop.get_node("Button").disabled,
+			true,
+			"continue stays disabled after one purchase with an affordable buy remaining"
+		)
+		failures += AssertUtil.eq(
 			pumpkin_buy_row.get_child_count(),
 			2,
 			"pumpkin buy row rebuilds after its button emits"
@@ -172,6 +231,11 @@ static func run() -> int:
 			shop.get_node("EvaluationPanel/DoneButton").disabled,
 			false,
 			"done is enabled after two purchases"
+		)
+		failures += AssertUtil.eq(
+			shop.get_node("Button").disabled,
+			false,
+			"continue is enabled after two purchases"
 		)
 	player.flask_full = false
 	player.rubies = 2
@@ -206,8 +270,18 @@ static func run() -> int:
 	player.coins = 3
 	shop.call("_on_done_pressed")
 	failures += AssertUtil.truthy(
-		"unspent coins" in shop.get_node("EvaluationPanel/StatusLabel").text.to_lower(),
-		"done warns about unspent coins on second shop visit"
+		"buy another chip" in shop.get_node("EvaluationPanel/StatusLabel").text.to_lower(),
+		"done handler cannot bypass purchase gating on second shop visit"
+	)
+	failures += AssertUtil.eq(
+		shop.get_node("EvaluationPanel/DoneButton").disabled,
+		true,
+		"done is disabled while a second purchase is affordable"
+	)
+	failures += AssertUtil.eq(
+		shop.get_node("Button").disabled,
+		true,
+		"continue is disabled while a second purchase is affordable"
 	)
 
 	controller.state.round = 9

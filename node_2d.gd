@@ -98,16 +98,18 @@ func _refresh_evaluation(message: String = "") -> void:
 		player.rubies < 2 or (player.exploded and player.chose_vp)
 	)
 	if state.round != 9 and player.chose_shop:
-		var shop_ready := (
+		_update_done_buttons(
 			player.purchases.size() >= 2
 			or not state.has_affordable_buy(state.eval_player)
 		)
-		$EvaluationPanel/DoneButton.visible = true
-		$EvaluationPanel/DoneButton.disabled = not shop_ready
 	else:
-		$EvaluationPanel/DoneButton.visible = true
-		$EvaluationPanel/DoneButton.disabled = not (player.chose_vp or player.chose_shop)
+		_update_done_buttons(player.chose_vp or player.chose_shop)
 	_refresh_shop_controls(player)
+
+func _update_done_buttons(ready: bool) -> void:
+	for button: BaseButton in [$EvaluationPanel/DoneButton, $Button]:
+		button.visible = true
+		button.disabled = not ready
 
 func _refresh_shop_controls(player: PlayerState) -> void:
 	var state := _controller().state
@@ -129,7 +131,7 @@ func _refresh_shop_controls(player: PlayerState) -> void:
 		or player.flask_full
 		or player.rubies < 2
 	)
-	$EvaluationPanel/WhiteShop.visible = false
+	$EvaluationPanel/WhiteShop.visible = shop_open
 	for index in $EvaluationPanel/WhiteShop.item_count:
 		var sku: String = $EvaluationPanel/WhiteShop.get_item_metadata(index)
 		$EvaluationPanel/WhiteShop.set_item_disabled(
@@ -226,6 +228,14 @@ func _on_done_pressed() -> void:
 	var pc := _controller()
 	var previous_player := pc.state.eval_player
 	var player: PlayerState = pc.state.players[previous_player]
+	if (
+		pc.state.round != 9
+		and player.chose_shop
+		and player.purchases.size() < 2
+		and pc.state.has_affordable_buy(previous_player)
+	):
+		_refresh_evaluation("Buy another chip or spend your remaining coins first.")
+		return
 	if (
 		pc.state.round != 9
 		and player.coins > 0

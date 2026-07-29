@@ -20,7 +20,7 @@ static func spider_ruby_count(pot: Pot) -> int:
 	return count
 
 static func moth_reward(mine: int, left: int, right: int, player_count: int) -> Dictionary:
-	if player_count < 2:
+	if player_count < 2 or mine <= 0:
 		return {"droplet": 0, "ruby": 0}
 	if player_count <= 2:
 		if mine > left:

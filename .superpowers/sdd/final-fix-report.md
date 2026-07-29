@@ -63,3 +63,30 @@ TEST_EXIT=0
 ## Report path
 
 `.worktrees/brew-progress-track/.superpowers/sdd/final-fix-report.md`
+
+---
+
+# Set 1 effects and shop review fixes
+
+**Date:** 2026-07-29  
+**Status:** Complete
+
+## Fixes
+
+- Hawkmoth rewards now require the player to have at least one black chip, preventing 0–0 ties from granting a droplet.
+- The root `CONTINUE` button and panel Done button share gating and visibility; the Done handler also rejects direct calls when a first or second affordable purchase remains.
+- White chips are available through the WhiteShop list while shopping, and participate in the same affordability gating.
+- Crow Skull choice rows detach old buttons before queuing them for deletion.
+
+## Regression coverage
+
+- Added zero-black-chip moth cases for two- and three-player games.
+- Added shop UI coverage for root Continue parity, the direct-handler bypass, and purchasing when only white chips are affordable.
+
+## Verification
+
+```bash
+./tests/run.sh
+```
+
+Exited 0 with `ALL TESTS PASSED`.

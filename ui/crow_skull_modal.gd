@@ -15,6 +15,7 @@ func open() -> void:
 	if not visible:
 		return
 	for child in $ChipChoices.get_children():
+		$ChipChoices.remove_child(child)
 		child.queue_free()
 	for i in player.pending_crow_draws.size():
 		var choice := TextureButton.new()

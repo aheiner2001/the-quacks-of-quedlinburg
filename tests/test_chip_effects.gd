@@ -45,6 +45,16 @@ static func _test_evaluation_b_helpers() -> int:
 		"solo game has no moth comparison"
 	)
 	f += AssertUtil.eq(
+		ChipEffects.moth_reward(0, 0, 0, 2),
+		{"droplet": 0, "ruby": 0},
+		"two-player no moths gain no reward"
+	)
+	f += AssertUtil.eq(
+		ChipEffects.moth_reward(0, 1, 1, 3),
+		{"droplet": 0, "ruby": 0},
+		"three-player no moths gain no reward"
+	)
+	f += AssertUtil.eq(
 		ChipEffects.moth_reward(2, 1, 1, 2),
 		{"droplet": 1, "ruby": 1},
 		"two-player leading moths gain ruby"
