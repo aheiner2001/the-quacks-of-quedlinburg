@@ -92,6 +92,19 @@ static func _test_token_history() -> int:
 		f += AssertUtil.eq(
 			token1.texture, ChipArt.texture_for(white_chip), "token1 uses white chip art"
 		)
+	f += AssertUtil.truthy(
+		TokenHistory.TOKEN_SIZE <= TokenHistory.SEGMENT_H,
+		"history icons fit inside one track row"
+	)
+	if token0:
+		f += AssertUtil.eq(
+			token0.custom_minimum_size.x, TokenHistory.TOKEN_SIZE, "token min width"
+		)
+		f += AssertUtil.eq(
+			token0.custom_minimum_size.y, TokenHistory.TOKEN_SIZE, "token min height"
+		)
+		f += AssertUtil.eq(token0.size.x, TokenHistory.TOKEN_SIZE, "token width matches TOKEN_SIZE")
+		f += AssertUtil.eq(token0.size.y, TokenHistory.TOKEN_SIZE, "token height matches TOKEN_SIZE")
 
 	var received: Array = []
 	history.scroll_changed.connect(func(v): received.append(v))

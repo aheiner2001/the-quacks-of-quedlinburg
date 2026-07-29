@@ -1,77 +1,126 @@
-[gd_scene format=3 uid="uid://dglv3ltnvmrhf"]
+[gd_scene load_steps=3 format=3 uid="uid://dglv3ltnvmrhf"]
 
-[ext_resource type="Script" uid="uid://ccfdgjb34u3oa" path="res://main_menu.gd" id="1_06t4h"]
-[ext_resource type="Texture2D" uid="uid://cugj4kys8gfr1" path="res://assets/boards/Untitled - July 26, 2026 at 16.02.33.png" id="2_fu7sn"]
-[ext_resource type="Texture2D" uid="uid://ciawwr5x541l0" path="res://TODO/new images/btn_start.png" id="3_fu7sn"]
+[ext_resource type="Script" path="res://main_menu.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/menu_bg.png" id="2_bg"]
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_psm7c"]
-texture = ExtResource("3_fu7sn")
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
 
-[node name="Node2D" type="Node2D" unique_id=1559598785]
-script = ExtResource("1_06t4h")
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
 
-[node name="background" type="ColorRect" parent="." unique_id=1780408556]
-offset_right = 1191.0
-offset_bottom = 677.0
+[node name="Scrim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -280.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+color = Color(0.08, 0.06, 0.04, 0.72)
 
-[node name="UntitledJuly26,2026At16_02_33" type="Sprite2D" parent="background" unique_id=407915034]
-position = Vector2(572, 280)
-texture = ExtResource("2_fu7sn")
+[node name="Brand" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -420.0
+offset_top = 72.0
+offset_right = 420.0
+offset_bottom = 160.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.98, 0.93, 0.82, 1)
+theme_override_colors/font_shadow_color = Color(0.05, 0.03, 0.02, 0.85)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 56
+text = "The Quacks of Quedlinburg"
+horizontal_alignment = 1
+autowrap_mode = 2
 
-[node name="Label" type="Label" parent="background" unique_id=831669416]
-layout_mode = 0
-offset_left = 187.0
-offset_top = 500.0
-offset_right = 307.0
-offset_bottom = 567.0
-theme_override_colors/font_color = Color(0.22352941, 0.28235295, 0.34117648, 1)
-theme_override_font_sizes/font_size = 23
-text = "Join Room
-"
+[node name="Tagline" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -360.0
+offset_top = 168.0
+offset_right = 360.0
+offset_bottom = 220.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.92, 0.86, 0.74, 1)
+theme_override_font_sizes/font_size = 22
+text = "Brew bold. Stop before it explodes."
+horizontal_alignment = 1
 
-[node name="LineEdit" type="LineEdit" parent="background/Label" unique_id=1256751708]
-layout_mode = 0
-offset_left = -71.0
-offset_top = 52.0
-offset_right = 187.0
-offset_bottom = 106.0
+[node name="PlayersLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -120.0
+offset_top = -210.0
+offset_right = 120.0
+offset_bottom = -178.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_font_sizes/font_size = 20
+text = "Players"
+horizontal_alignment = 1
 
-[node name="Label2" type="Label" parent="background" unique_id=849645451]
-layout_mode = 0
-offset_left = 811.0
-offset_top = 500.0
-offset_right = 955.0
-offset_bottom = 567.0
-theme_override_colors/font_color = Color(0.22352941, 0.28235295, 0.34117648, 1)
-theme_override_font_sizes/font_size = 23
-text = "Create Room
-"
-
-[node name="LineEdit" type="LineEdit" parent="background/Label2" unique_id=1111668133]
-layout_mode = 0
-offset_left = -71.0
-offset_top = 52.0
-offset_right = 187.0
-offset_bottom = 106.0
-
-[node name="CheckButton" type="Button" parent="background" unique_id=364015244]
-layout_mode = 0
-offset_left = 471.0
-offset_top = 513.0
-offset_right = 674.0
-offset_bottom = 659.0
-theme_override_colors/font_color = Color(0.13725491, 0.15294118, 0.19607843, 1)
-theme_override_colors/font_pressed_color = Color(0.13725491, 0.15294118, 0.19607843, 1)
-theme_override_colors/font_hover_color = Color(0.13725491, 0.15294118, 0.19607843, 1)
-theme_override_styles/normal = SubResource("StyleBoxTexture_psm7c")
-
-[node name="PlayerCount" type="SpinBox" parent="." unique_id=-1447773646]
-offset_left = 509.0
-offset_top = 490.0
-offset_right = 669.0
-offset_bottom = 524.0
+[node name="PlayerCount" type="SpinBox" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -70.0
+offset_top = -172.0
+offset_right = 70.0
+offset_bottom = -136.0
+grow_horizontal = 2
+grow_vertical = 0
 min_value = 1.0
 max_value = 15.0
 value = 2.0
+alignment = 1
 
-[connection signal="pressed" from="background/CheckButton" to="." method="_on_check_button_pressed"]
+[node name="StartButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -140.0
+offset_top = -120.0
+offset_right = 140.0
+offset_bottom = -48.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 28
+text = "Start Game"
+
+[connection signal="pressed" from="StartButton" to="." method="_on_start_pressed"]

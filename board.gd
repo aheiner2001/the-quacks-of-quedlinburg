@@ -15,6 +15,7 @@ func _ready() -> void:
 	_hide_spiral_board()
 	if Engine.is_editor_hint():
 		return
+	_ensure_brew_panels()
 	_wire_track_scroll_sync()
 	var pc := _controller()
 	if pc == null or pc.state == null:
@@ -122,10 +123,28 @@ func _on_flask_used(_player_index: int) -> void:
 	_rebuild_placements()
 	_refresh()
 
+func _ensure_brew_panels() -> void:
+	if get_node_or_null("ProgressTrack") == null:
+		var track := (load("res://ui/progress_track.tscn") as PackedScene).instantiate()
+		track.name = "ProgressTrack"
+		if track is Control:
+			(track as Control).position = Vector2(24, 80)
+			(track as Control).size = Vector2(200, 520)
+		add_child(track)
+	if get_node_or_null("TokenHistory") == null:
+		var history := (load("res://ui/token_history.tscn") as PackedScene).instantiate()
+		history.name = "TokenHistory"
+		if history is Control:
+			(history as Control).position = Vector2(240, 80)
+			(history as Control).size = Vector2(160, 520)
+		add_child(history)
+	_wire_track_scroll_sync()
+
 func _refresh() -> void:
 	var pc := _controller()
 	if pc == null or pc.state == null or pc.state.players.is_empty():
 		return
+	_ensure_brew_panels()
 	var player: PlayerState = pc.state.players[pc.state.active_player]
 	$DrawButton.disabled = not player.can_draw()
 	$StopButton.disabled = player.stopped
@@ -135,8 +154,12 @@ func _refresh() -> void:
 	$ActivePlayerLabel.text = "P%d" % (pc.state.active_player + 1)
 	_update_explosion_risk(player.pot.white_sum(), player.exploded)
 	_refresh_rewards_bar(player)
-	$ProgressTrack.refresh(player.pot)
-	$TokenHistory.refresh(player.pot)
+	var track := get_node_or_null("ProgressTrack")
+	var history := get_node_or_null("TokenHistory")
+	if track and track.has_method("refresh"):
+		track.call("refresh", player.pot)
+	if history and history.has_method("refresh"):
+		history.call("refresh", player.pot)
 
 func _update_explosion_risk(white_sum: int, exploded: bool) -> void:
 	$ExplosionRiskBar.value = mini(white_sum, 8)

@@ -1,7 +1,13 @@
-extends Node2D
+extends Control
 
+func _ready() -> void:
+	if has_node("PlayerCount"):
+		$PlayerCount.min_value = 1
+		$PlayerCount.max_value = 15
+		if $PlayerCount.value < 1:
+			$PlayerCount.value = 2
 
-func _on_check_button_pressed() -> void:
+func _on_start_pressed() -> void:
 	var n := 2
 	if has_node("PlayerCount"):
 		n = int($PlayerCount.value)

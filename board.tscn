@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://dgok2bl0fmk87" path="res://board.gd" id="1_psm7c"]
 [ext_resource type="Texture2D" uid="uid://br7y0oo4r6rwb" path="res://TODO/new images/shop_bg.png" id="2_tngv2"]
 [ext_resource type="Texture2D" uid="uid://c53w312ot3861" path="res://TODO/new images/btn_draw.png" id="3_rq8yp"]
-[ext_resource type="Texture2D" uid="uid://cloomsdr82rj0" path="res://assets/ui/board/chip_back.png" id="4_bag"]
+[ext_resource type="Texture2D" path="res://assets/ui/board/bag_pouch.png" id="4_bag"]
 [ext_resource type="Texture2D" uid="uid://bfcdj6ndrf7a6" path="res://TODO/new images/btn_stop.png" id="4_tngv2"]
 [ext_resource type="Texture2D" uid="uid://dqgcl514afulm" path="res://assets/ui/board/cauldron_rune.png" id="5_cauldron"]
 [ext_resource type="Texture2D" uid="uid://vmlkvomgjdu8" path="res://assets/ui/board/white_1.png" id="6_chip"]
@@ -143,17 +143,17 @@ stretch_mode = 5
 
 [node name="ProgressTrack" parent="." instance=ExtResource("7_track")]
 layout_mode = 0
-offset_left = 400.0
-offset_top = 360.0
-offset_right = 600.0
-offset_bottom = 760.0
+offset_left = 24.0
+offset_top = 80.0
+offset_right = 224.0
+offset_bottom = 600.0
 
 [node name="TokenHistory" parent="." instance=ExtResource("8_history")]
 layout_mode = 0
-offset_left = 610.0
-offset_top = 360.0
-offset_right = 730.0
-offset_bottom = 760.0
+offset_left = 240.0
+offset_top = 80.0
+offset_right = 420.0
+offset_bottom = 600.0
 
 [node name="ExplosionRiskBar" type="ProgressBar" parent="." unique_id=2079236701]
 offset_left = 433.0

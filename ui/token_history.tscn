@@ -3,15 +3,21 @@
 [ext_resource type="Script" path="res://ui/token_history.gd" id="1_script"]
 
 [node name="TokenHistory" type="Control"]
-custom_minimum_size = Vector2(120, 400)
+clip_contents = true
+custom_minimum_size = Vector2(160, 400)
 layout_mode = 3
 script = ExtResource("1_script")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
-layout_mode = 0
-offset_right = 120.0
-offset_bottom = 400.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+clip_contents = true
 
 [node name="Content" type="Control" parent="ScrollContainer"]
-custom_minimum_size = Vector2(100, 100)
+clip_contents = true
+custom_minimum_size = Vector2(140, 100)
 layout_mode = 2

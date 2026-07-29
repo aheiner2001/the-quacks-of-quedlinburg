@@ -3,7 +3,10 @@ extends Control
 
 signal scroll_changed(offset: float)
 
+## Row height along the synced track; keep equal to ProgressTrack.SEGMENT_H.
 const SEGMENT_H := 22.0
+## Fit icons inside one track row so scroll doesn't clip them.
+const TOKEN_SIZE := 18.0
 const BOARD_TEX_DIR := "res://assets/ui/board/"
 
 var _guard_scroll: bool = false
@@ -19,8 +22,11 @@ var scroll_offset: float = 0.0:
 			scroll_changed.emit(value)
 
 func _ready() -> void:
+	clip_contents = true
 	var scroll := get_node_or_null("ScrollContainer") as ScrollContainer
 	if scroll:
+		scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		scroll.clip_contents = true
 		var bar := scroll.get_v_scroll_bar()
 		if bar and not bar.value_changed.is_connected(_on_scrollbar_scrolled):
 			bar.value_changed.connect(_on_scrollbar_scrolled)
@@ -51,6 +57,17 @@ func _rat_texture() -> Texture2D:
 		return load(rat_path) as Texture2D
 	return load(BOARD_TEX_DIR + "rat_stone.png") as Texture2D
 
+func _make_icon(tex: Texture2D, at: Vector2) -> TextureRect:
+	var icon := TextureRect.new()
+	icon.texture = tex
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	icon.custom_minimum_size = Vector2(TOKEN_SIZE, TOKEN_SIZE)
+	icon.position = at
+	icon.size = Vector2(TOKEN_SIZE, TOKEN_SIZE)
+	return icon
+
 func _rebuild_tokens(pot: Pot) -> void:
 	var content := get_node_or_null("ScrollContainer/Content") as Control
 	if content == null:
@@ -60,29 +77,38 @@ func _rebuild_tokens(pot: Pot) -> void:
 		child.free()
 
 	var max_space := PotTrack.max_space()
+	var content_w := maxf(size.x - 8.0, TOKEN_SIZE * 2.0 + 24.0)
 	content.custom_minimum_size = Vector2(
-		content.custom_minimum_size.x, float(max_space + 1) * SEGMENT_H
+		content_w, float(max_space + 1) * SEGMENT_H
 	)
+	content.clip_contents = false
 
-	var rat := TextureRect.new()
+	# Center icon on the space row so it lines up with track ticks.
+	var y_pad := (SEGMENT_H - TOKEN_SIZE) * 0.5
+	var col0 := 8.0
+	var col1 := col0 + TOKEN_SIZE + 10.0
+	var rat := _make_icon(_rat_texture(), Vector2(col0, float(max_space - pot.droplet) * SEGMENT_H + y_pad))
 	rat.name = "Rat"
-	rat.texture = _rat_texture()
-	rat.position = Vector2(0.0, float(max_space - pot.droplet) * SEGMENT_H)
-	rat.size = Vector2(SEGMENT_H, SEGMENT_H)
-	rat.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	rat.stretch_mode = TextureRect.STRETCH_SCALE
 	content.add_child(rat)
+	_force_token_size(rat)
 
 	_token_count = pot.placements.size()
 	for i in pot.placements.size():
 		var placement: Dictionary = pot.placements[i]
 		var chip: Dictionary = placement["chip"]
 		var index := int(placement["index"])
-		var token := TextureRect.new()
+		var token := _make_icon(
+			ChipArt.texture_for(chip),
+			Vector2(col1, float(max_space - index) * SEGMENT_H + y_pad)
+		)
 		token.name = "Token%d" % i
-		token.texture = ChipArt.texture_for(chip)
-		token.position = Vector2(SEGMENT_H + 4.0, float(max_space - index) * SEGMENT_H)
-		token.size = Vector2(SEGMENT_H, SEGMENT_H)
-		token.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		token.stretch_mode = TextureRect.STRETCH_SCALE
 		content.add_child(token)
+		_force_token_size(token)
+
+func _force_token_size(icon: TextureRect) -> void:
+	# TextureRect resets to texture pixel size until sized after entering the tree.
+	icon.custom_minimum_size = Vector2(TOKEN_SIZE, TOKEN_SIZE)
+	icon.size = Vector2(TOKEN_SIZE, TOKEN_SIZE)
+	icon.offset_right = icon.offset_left + TOKEN_SIZE
+	icon.offset_bottom = icon.offset_top + TOKEN_SIZE
+
