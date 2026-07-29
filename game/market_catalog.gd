@@ -9,7 +9,7 @@ static var _loaded := false
 const CHAR_META := {
 	"Scary Gary": {
 		"slug": "gary",
-		"color": Chip.ChipColor.BLACK,
+		"color": Chip.ChipColor.BLUE,
 		"unlock": 1,
 		"shelf": "GaryInfo",
 	},
@@ -21,13 +21,13 @@ const CHAR_META := {
 	},
 	"Spider": {
 		"slug": "spider",
-		"color": Chip.ChipColor.BLUE,
+		"color": Chip.ChipColor.GREEN,
 		"unlock": 1,
 		"shelf": "SpiderShelf",
 	},
 	"Mushroom": {
 		"slug": "shroom",
-		"color": Chip.ChipColor.GREEN,
+		"color": Chip.ChipColor.RED,
 		"unlock": 1,
 		"shelf": "ShroomInfo",
 	},
@@ -45,7 +45,7 @@ const CHAR_META := {
 	},
 	"Moth": {
 		"slug": "moth",
-		"color": Chip.ChipColor.RED,
+		"color": Chip.ChipColor.BLACK,
 		"unlock": 1,
 		"shelf": "MothShelf",
 	},

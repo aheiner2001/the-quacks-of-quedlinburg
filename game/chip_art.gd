@@ -5,12 +5,12 @@ const TEX_DIR := "res://assets/ui/board/"
 const _COLOR_SLUG := {
 	Chip.ChipColor.WHITE: "white",
 	Chip.ChipColor.ORANGE: "pumpkin",
-	Chip.ChipColor.GREEN: "shroom",
-	Chip.ChipColor.BLUE: "spider",
-	Chip.ChipColor.RED: "moth",
+	Chip.ChipColor.GREEN: "spider",
+	Chip.ChipColor.BLUE: "gary",
+	Chip.ChipColor.RED: "shroom",
 	Chip.ChipColor.YELLOW: "mandrake",
 	Chip.ChipColor.PURPLE: "poots",
-	Chip.ChipColor.BLACK: "gary",
+	Chip.ChipColor.BLACK: "moth",
 }
 
 static func texture_for(chip: Dictionary) -> Texture2D:
