@@ -44,6 +44,8 @@ func resolve_crow_skull_active(keep_index: int) -> void:
 	var result := state.resolve_crow_skull(player_index, keep_index)
 	if not result.is_empty():
 		chip_drawn.emit(player_index, result)
+		if result.get("exploded", false):
+			exploded.emit(player_index)
 	potion_choice_resolved.emit(player_index)
 	_after_potions_action()
 

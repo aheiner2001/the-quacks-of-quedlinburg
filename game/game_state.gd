@@ -63,8 +63,12 @@ func draw() -> Dictionary:
 	return draw_active()
 
 func stop_active() -> void:
-	if phase == "potions" and not players.is_empty():
-		players[active_player].stop()
+	if phase != "potions" or players.is_empty():
+		return
+	var player := players[active_player]
+	if player.awaiting_crow_choice or player.awaiting_mandrake:
+		return
+	player.stop()
 
 func stop() -> void:
 	stop_active()
@@ -72,7 +76,10 @@ func stop() -> void:
 func use_flask_active() -> bool:
 	if phase != "potions" or players.is_empty():
 		return false
-	return players[active_player].use_flask()
+	var player := players[active_player]
+	if player.awaiting_crow_choice or player.awaiting_mandrake:
+		return false
+	return player.use_flask()
 
 func use_flask() -> bool:
 	return use_flask_active()

@@ -5,6 +5,7 @@ static func run() -> int:
 	var failures := 0
 	failures += _test_potions_transition()
 	failures += _test_rejected_draw_emits_nothing()
+	failures += _test_crow_skull_explosion_emits_signal()
 	failures += _test_bonus_die_rolls_each_eligible_player()
 	failures += _test_evaluation_hotseat()
 	failures += _test_end_turn_and_continue()
@@ -24,6 +25,26 @@ static func _test_potions_transition() -> int:
 	)
 	controller.finish_bonus_die_phase()
 	failures += AssertUtil.eq(controller.state.phase, "evaluation", "bonus die finishes into evaluation")
+	controller.free()
+	return failures
+
+static func _test_crow_skull_explosion_emits_signal() -> int:
+	var failures := 0
+	var controller := PhaseController.new()
+	controller.setup(1, 105)
+	controller.begin_round()
+	var player := controller.state.players[0]
+	player.pot.place(Chip.make(Chip.ChipColor.WHITE, 7))
+	player.pending_crow_draws = [Chip.make(Chip.ChipColor.WHITE, 1)]
+	player.awaiting_crow_choice = true
+	var explosion_events: Array[int] = []
+	controller.exploded.connect(func(player_index: int): explosion_events.append(player_index))
+
+	controller.resolve_crow_skull_active(0)
+
+	failures += AssertUtil.eq(explosion_events, [0], "exploding crow selection emits explosion")
+	failures += AssertUtil.truthy(player.exploded, "exploding crow selection marks player exploded")
+	failures += AssertUtil.truthy(player.stopped, "exploding crow selection stops player")
 	controller.free()
 	return failures
 

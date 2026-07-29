@@ -8,6 +8,7 @@ static func run() -> int:
 	f += _test_ruby_grant_and_flask_refill()
 	f += _test_turn_nine_and_winners()
 	f += _test_potion_helpers_and_end_turn()
+	f += _test_pending_potion_choices_block_stop_and_flask()
 	return f
 
 static func _test_new_game_and_round_reset() -> int:
@@ -215,3 +216,29 @@ static func _test_potion_helpers_and_end_turn() -> int:
 	gs.end_turn()
 	f += AssertUtil.eq(gs.phase, "game_over", "round 9 ends game")
 	return f
+
+static func _test_pending_potion_choices_block_stop_and_flask() -> int:
+	var failures := 0
+	for pending_choice in ["awaiting_crow_choice", "awaiting_mandrake"]:
+		var gs := GameState.new_game(1, 11)
+		gs.begin_round()
+		var player := gs.players[0]
+		player.pot.place(Chip.make(Chip.ChipColor.WHITE, 1))
+		player.set(pending_choice, true)
+
+		failures += AssertUtil.eq(
+			gs.use_flask_active(),
+			false,
+			"%s blocks flask use" % pending_choice
+		)
+		failures += AssertUtil.truthy(
+			player.flask_full,
+			"%s preserves flask while pending" % pending_choice
+		)
+		gs.stop_active()
+		failures += AssertUtil.eq(
+			player.stopped,
+			false,
+			"%s blocks stopping" % pending_choice
+		)
+	return failures
