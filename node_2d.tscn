@@ -32,7 +32,10 @@
 [ext_resource type="Texture2D" uid="uid://q2k1huj0x88o" path="res://scary gary/Untitled - July 25, 2026 at 20.21.27.png" id="30_24dk6"]
 [ext_resource type="Texture2D" uid="uid://cab7fhj15y2lk" path="res://scary gary/Untitled - July 25, 2026 at 20.21.27 (2).png" id="31_mryly"]
 [ext_resource type="Texture2D" uid="uid://cgv2cfek68bvi" path="res://scary gary/Untitled - July 25, 2026 at 21.56.47 (1).png" id="32_mryly"]
+[ext_resource type="Texture2D" uid="uid://bm5bv8nm035ta" path="res://TODO/new images/btn_take_vp.png" id="33_6ip5v"]
 [ext_resource type="Texture2D" uid="uid://dl0gvp8etrj8s" path="res://assets/settingicon.png" id="33_kq1c5"]
+[ext_resource type="Texture2D" uid="uid://ippeibptlbix" path="res://TODO/new images/btn_go_shop.png" id="34_q5dlx"]
+[ext_resource type="Texture2D" uid="uid://o2gr7nw15urf" path="res://TODO/new images/btn_done.png" id="36_7plk7"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kq1c5"]
 atlas = ExtResource("32_mryly")
@@ -111,6 +114,22 @@ animations = [{
 "name": &"flame",
 "speed": 5.0
 }]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_vtrmx"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_kq1c5"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_xrivr"]
+texture = ExtResource("33_6ip5v")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_13qdw"]
+texture = ExtResource("34_q5dlx")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3662s"]
+modulate_color = Color(0.5058824, 0.54509807, 0.33333334, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_25bs2"]
+texture = ExtResource("36_7plk7")
 
 [node name="Shop" type="Node2D" unique_id=2127043720]
 script = ExtResource("1_epypp")
@@ -397,19 +416,21 @@ animation = &"flame"
 frame_progress = 0.36372885
 
 [node name="Button" type="Button" parent="." unique_id=1893781590]
-offset_left = 510.0
-offset_top = 462.0
-offset_right = 885.6067
-offset_bottom = 650.7457
+offset_left = 982.0
+offset_top = 333.0
+offset_right = 1357.6067
+offset_bottom = 521.7457
+theme_override_styles/normal = SubResource("StyleBoxTexture_vtrmx")
 text = "CONTINUE
 "
 
 [node name="EvaluationPanel" type="Panel" parent="." unique_id=1207748951]
 z_index = 100
-offset_left = 21.0
-offset_top = 320.0
-offset_right = 411.0
-offset_bottom = 644.0
+offset_left = 52.0
+offset_top = 312.0
+offset_right = 442.0
+offset_bottom = 636.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_kq1c5")
 
 [node name="StatusLabel" type="Label" parent="EvaluationPanel" unique_id=456359456]
 layout_mode = 0
@@ -422,19 +443,19 @@ autowrap_mode = 2
 
 [node name="TakeVPButton" type="Button" parent="EvaluationPanel" unique_id=1520489056]
 layout_mode = 0
-offset_left = 16.0
-offset_top = 66.0
-offset_right = 180.0
-offset_bottom = 102.0
-text = "Take VP"
+offset_left = 54.0
+offset_top = 31.0
+offset_right = 186.0
+offset_bottom = 139.0
+theme_override_styles/normal = SubResource("StyleBoxTexture_xrivr")
 
 [node name="GoShopButton" type="Button" parent="EvaluationPanel" unique_id=1773221697]
 layout_mode = 0
-offset_left = 194.0
-offset_top = 66.0
-offset_right = 374.0
-offset_bottom = 102.0
-text = "Go to Shop"
+offset_left = 202.0
+offset_top = 27.0
+offset_right = 330.0
+offset_bottom = 136.0
+theme_override_styles/normal = SubResource("StyleBoxTexture_13qdw")
 
 [node name="ConvertCoinsButton" type="Button" parent="EvaluationPanel" unique_id=1889000753]
 visible = false
@@ -456,19 +477,22 @@ text = "2 Rubies → 1 VP"
 
 [node name="WhiteShop" type="ItemList" parent="EvaluationPanel" unique_id=1934903243]
 layout_mode = 0
-offset_left = 16.0
-offset_top = 112.0
-offset_right = 374.0
-offset_bottom = 262.0
+offset_left = -92.0
+offset_top = 24.0
+offset_right = 464.0
+offset_bottom = 534.0
+theme_override_colors/font_color = Color(0.65, 0.65, 0.65, 1)
+theme_override_colors/font_hovered_selected_color = Color(1, 1, 1, 1)
+theme_override_styles/panel = SubResource("StyleBoxTexture_3662s")
 allow_reselect = true
 
 [node name="DoneButton" type="Button" parent="EvaluationPanel" unique_id=53722011]
 layout_mode = 0
-offset_left = 194.0
-offset_top = 274.0
-offset_right = 374.0
-offset_bottom = 312.0
-text = "Done / Pass"
+offset_left = 244.0
+offset_top = 212.0
+offset_right = 357.0
+offset_bottom = 311.0
+theme_override_styles/normal = SubResource("StyleBoxTexture_25bs2")
 
 [node name="FlaskConfirmDialog" type="ConfirmationDialog" parent="." unique_id=242328722]
 title = "Refill Flask"

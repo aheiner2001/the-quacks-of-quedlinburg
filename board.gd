@@ -15,9 +15,7 @@ func _ready() -> void:
 	_hide_spiral_board()
 	if Engine.is_editor_hint():
 		return
-	_ensure_brew_panels()
 	_wire_track_scroll_sync()
-	$FlaskDrag.dropped_on_cauldron.connect(_on_flask_drag_dropped)
 	var pc := _controller()
 	if pc == null or pc.state == null:
 		$HandoffLabel.text = "Start a game from the main menu."
@@ -30,7 +28,6 @@ func _ready() -> void:
 	pc.chip_drawn.connect(_on_drawn)
 	pc.exploded.connect(_on_exploded)
 	pc.flask_used.connect(_on_flask_used)
-	pc.potion_choice_resolved.connect(_on_potion_choice_resolved)
 	$HandoffLabel.text = "Player %d — draw or stop" % (pc.state.active_player + 1)
 	_refresh()
 
@@ -125,57 +122,48 @@ func _on_flask_used(_player_index: int) -> void:
 	_rebuild_placements()
 	_refresh()
 
-func _on_potion_choice_resolved(_player_index: int) -> void:
-	_rebuild_placements()
-	_refresh()
-
-func _ensure_brew_panels() -> void:
-	if get_node_or_null("ProgressTrack") == null:
-		var track := (load("res://ui/progress_track.tscn") as PackedScene).instantiate()
-		track.name = "ProgressTrack"
-		if track is Control:
-			(track as Control).position = Vector2(24, 80)
-			(track as Control).size = Vector2(200, 520)
-		add_child(track)
-	if get_node_or_null("TokenHistory") == null:
-		var history := (load("res://ui/token_history.tscn") as PackedScene).instantiate()
-		history.name = "TokenHistory"
-		if history is Control:
-			(history as Control).position = Vector2(240, 80)
-			(history as Control).size = Vector2(160, 520)
-		add_child(history)
-	_wire_track_scroll_sync()
-
 func _refresh() -> void:
 	var pc := _controller()
 	if pc == null or pc.state == null or pc.state.players.is_empty():
 		return
-	_ensure_brew_panels()
 	var player: PlayerState = pc.state.players[pc.state.active_player]
-	var awaiting_choice := player.awaiting_crow_choice or player.awaiting_mandrake
-	$DrawButton.disabled = awaiting_choice or not player.can_draw()
-	$StopButton.disabled = awaiting_choice or player.stopped
-	$FlaskButton.disabled = awaiting_choice or not player.can_use_flask()
-	$FlaskDrag.set_enabled(not $FlaskButton.disabled)
+	$DrawButton.disabled = not player.can_draw()
+	$StopButton.disabled = player.stopped
+	$FlaskButton.disabled = not player.can_use_flask()
 	$FlaskLabel.text = "Flask: %s" % ("Full" if player.flask_full else "Empty")
 	$WhiteSumLabel.text = "White: %d" % player.pot.white_sum()
 	$ActivePlayerLabel.text = "P%d" % (pc.state.active_player + 1)
 	_update_explosion_risk(player.pot.white_sum(), player.exploded)
-	$RewardsStrip.refresh(player.pot)
-	var track := get_node_or_null("ProgressTrack")
-	var history := get_node_or_null("TokenHistory")
-	if track and track.has_method("refresh"):
-		track.call("refresh", player.pot)
-	if history and history.has_method("refresh"):
-		history.call("refresh", player.pot)
-	if player.awaiting_crow_choice:
-		$CrowSkullModal.open()
-	elif player.awaiting_mandrake:
-		$MandrakeModal.open()
+	_refresh_rewards_bar(player)
+	$ProgressTrack.refresh(player.pot)
+	$TokenHistory.refresh(player.pot)
 
 func _update_explosion_risk(white_sum: int, exploded: bool) -> void:
 	$ExplosionRiskBar.value = mini(white_sum, 8)
 	$ExplosionRiskBar.modulate = Color.RED if exploded else Color.WHITE
+
+func _refresh_rewards_bar(player: PlayerState) -> void:
+	var space := player.pot.scoring_space()
+	var ruby_text := ", Ruby" if PotTrack.has_ruby(space) else ""
+	var lines: Array[String] = [
+		"Stop now — Space %d: Money %d, VP %d%s" % [
+			space,
+			PotTrack.coins_for_space(space),
+			PotTrack.vp_for_space(space),
+			ruby_text,
+		]
+	]
+	for milestone: Dictionary in PotTrack.upcoming_milestones(space, 3):
+		var milestone_ruby := ", Ruby" if bool(milestone["ruby"]) else ""
+		lines.append(
+			"Next %d — Money %d, VP %d%s" % [
+				int(milestone["space"]),
+				int(milestone["money"]),
+				int(milestone["vp"]),
+				milestone_ruby,
+			]
+		)
+	$RewardsBar.text = "\n".join(lines)
 
 func _texture_for_chip(chip: Dictionary) -> Texture2D:
 	return ChipArt.texture_for(chip)
@@ -267,10 +255,6 @@ func _on_stop_pressed() -> void:
 func _on_flask_pressed() -> void:
 	_controller().use_flask_active()
 	_refresh()
-
-func _on_flask_drag_dropped() -> void:
-	if not $FlaskButton.disabled:
-		_on_flask_pressed()
 
 func _controller() -> PhaseController:
 	var session := get_node_or_null("/root/GameSession")

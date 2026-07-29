@@ -6,7 +6,7 @@ signal scroll_changed(offset: float)
 ## Row height along the synced track; keep equal to ProgressTrack.SEGMENT_H.
 const SEGMENT_H := 22.0
 ## Fit icons inside one track row so scroll doesn't clip them.
-const TOKEN_SIZE := 18.0
+const TOKEN_SIZE :=75
 const BOARD_TEX_DIR := "res://assets/ui/board/"
 
 var _guard_scroll: bool = false
@@ -111,4 +111,3 @@ func _force_token_size(icon: TextureRect) -> void:
 	icon.size = Vector2(TOKEN_SIZE, TOKEN_SIZE)
 	icon.offset_right = icon.offset_left + TOKEN_SIZE
 	icon.offset_bottom = icon.offset_top + TOKEN_SIZE
-
