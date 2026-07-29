@@ -9,14 +9,12 @@ extends Node2D
 var _pending_explosion_player: int = -1
 var _anim_gen: int = 0
 var _draw_tween: Tween
-var _syncing_scroll: bool = false
 
 func _ready() -> void:
 	_hide_spiral_board()
 	if Engine.is_editor_hint():
 		return
 	_ensure_brew_panels()
-	_wire_track_scroll_sync()
 	$FlaskDrag.dropped_on_cauldron.connect(_on_flask_drag_dropped)
 	var pc := _controller()
 	if pc == null or pc.state == null:
@@ -41,32 +39,6 @@ func _hide_spiral_board() -> void:
 	for child in get_children():
 		if str(child.name).begins_with("stone"):
 			child.visible = false
-
-## Keeps ProgressTrack and TokenHistory scroll positions in lockstep without
-## re-triggering each other's scroll_changed signal.
-func _wire_track_scroll_sync() -> void:
-	var track := get_node_or_null("ProgressTrack")
-	var history := get_node_or_null("TokenHistory")
-	if track == null or history == null:
-		return
-	if not track.scroll_changed.is_connected(_on_track_scrolled):
-		track.scroll_changed.connect(_on_track_scrolled)
-	if not history.scroll_changed.is_connected(_on_history_scrolled):
-		history.scroll_changed.connect(_on_history_scrolled)
-
-func _on_track_scrolled(offset: float) -> void:
-	if _syncing_scroll:
-		return
-	_syncing_scroll = true
-	$TokenHistory.set_scroll_offset(offset)
-	_syncing_scroll = false
-
-func _on_history_scrolled(offset: float) -> void:
-	if _syncing_scroll:
-		return
-	_syncing_scroll = true
-	$ProgressTrack.set_scroll_offset(offset)
-	_syncing_scroll = false
 
 func _on_phase(phase: String) -> void:
 	if phase == "bonus_die":
@@ -137,14 +109,9 @@ func _ensure_brew_panels() -> void:
 			(track as Control).position = Vector2(24, 80)
 			(track as Control).size = Vector2(200, 520)
 		add_child(track)
-	if get_node_or_null("TokenHistory") == null:
-		var history := (load("res://ui/token_history.tscn") as PackedScene).instantiate()
-		history.name = "TokenHistory"
-		if history is Control:
-			(history as Control).position = Vector2(240, 80)
-			(history as Control).size = Vector2(160, 520)
-		add_child(history)
-	_wire_track_scroll_sync()
+	var history := get_node_or_null("TokenHistory")
+	if history:
+		history.visible = false
 
 func _refresh() -> void:
 	var pc := _controller()
@@ -163,11 +130,11 @@ func _refresh() -> void:
 	_update_explosion_risk(player.pot.white_sum(), player.exploded)
 	$RewardsStrip.refresh(player.pot)
 	var track := get_node_or_null("ProgressTrack")
-	var history := get_node_or_null("TokenHistory")
 	if track and track.has_method("refresh"):
 		track.call("refresh", player.pot)
-	if history and history.has_method("refresh"):
-		history.call("refresh", player.pot)
+	var history := get_node_or_null("TokenHistory")
+	if history:
+		history.visible = false
 	if player.awaiting_crow_choice:
 		$CrowSkullModal.open()
 	elif player.awaiting_mandrake:

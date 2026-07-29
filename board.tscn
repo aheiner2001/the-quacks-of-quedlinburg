@@ -166,6 +166,7 @@ offset_right = 956.0
 offset_bottom = 524.0
 
 [node name="TokenHistory" parent="." unique_id=1241667 instance=ExtResource("8_history")]
+visible = false
 anchors_preset = 0
 offset_left = 946.0
 offset_top = 50.0

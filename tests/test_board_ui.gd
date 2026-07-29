@@ -129,14 +129,19 @@ static func run() -> int:
 	board.get_node("PlacementsList").add_item("stale placement")
 	controller.draw_active()
 	failures += AssertUtil.eq(
-		board.get_node("TokenHistory").token_count(),
+		board.get_node("ProgressTrack").token_count(),
 		controller.state.players[0].pot.placements.size(),
-		"token history refreshes on draw"
+		"progress track chip count refreshes on draw"
 	)
 	failures += AssertUtil.eq(
 		board.get_node("ProgressTrack").preview_space(),
 		controller.state.players[0].pot.scoring_space(),
 		"progress track refreshes on draw"
+	)
+	failures += AssertUtil.eq(
+		board.get_node("TokenHistory").visible,
+		false,
+		"token history column is hidden"
 	)
 	controller.use_flask_active()
 	failures += AssertUtil.eq(
@@ -145,20 +150,9 @@ static func run() -> int:
 		"flask use clears stale placement list entry"
 	)
 	failures += AssertUtil.eq(
-		board.get_node("TokenHistory").token_count(),
+		board.get_node("ProgressTrack").token_count(),
 		controller.state.players[0].pot.placements.size(),
-		"token history refreshes on flask use"
-	)
-
-	var track := board.get_node("ProgressTrack")
-	var history := board.get_node("TokenHistory")
-	track.scroll_offset = 33.0
-	failures += AssertUtil.eq(
-		history.scroll_offset, 33.0, "scrolling track syncs history"
-	)
-	history.scroll_offset = 47.0
-	failures += AssertUtil.eq(
-		track.scroll_offset, 47.0, "scrolling history syncs track"
+		"progress track chip count refreshes on flask use"
 	)
 	board.call("_on_exploded", 0)
 	board.call("_on_active", 1)

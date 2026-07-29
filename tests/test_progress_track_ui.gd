@@ -4,8 +4,8 @@ extends RefCounted
 static func run() -> int:
 	var f := 0
 	f += _test_progress_track()
-	f += _test_token_history()
 	return f
+
 
 static func _test_progress_track() -> int:
 	var f := 0
@@ -23,11 +23,37 @@ static func _test_progress_track() -> int:
 	f += AssertUtil.eq(track.preview_space(), 3, "preview is scoring space")
 
 	var pot2 := Pot.new()
-	pot2.place(Chip.make(Chip.ChipColor.ORANGE, 1))
-	pot2.place(Chip.make(Chip.ChipColor.WHITE, 2))
+	var orange_chip := Chip.make(Chip.ChipColor.ORANGE, 1)
+	var white_chip := Chip.make(Chip.ChipColor.WHITE, 2)
+	pot2.place(orange_chip)
+	pot2.place(white_chip)
 	track.refresh(pot2)
 	f += AssertUtil.eq(track.preview_space(), 4, "preview tracks scoring space after refresh")
 	f += AssertUtil.eq(track.last_filled_index(), 3, "last filled index matches pot.last_index")
+	f += AssertUtil.eq(track.token_count(), 2, "token count matches placements")
+
+	var content := track.get_node("ScrollContainer/Content")
+	var chip1 := content.get_node_or_null("Chip1") as TextureRect
+	var chip3 := content.get_node_or_null("Chip3") as TextureRect
+	f += AssertUtil.truthy(chip1 != null, "orange chip icon on space 1")
+	f += AssertUtil.truthy(chip3 != null, "white chip icon on space 3")
+	if chip1:
+		f += AssertUtil.eq(
+			chip1.texture, ChipArt.texture_for(orange_chip), "chip1 uses orange art"
+		)
+		f += AssertUtil.eq(chip1.size.x, ProgressTrack.CHIP_SIZE, "chip width fits cell")
+		f += AssertUtil.eq(chip1.size.y, ProgressTrack.CHIP_SIZE, "chip height fits cell")
+	if chip3:
+		f += AssertUtil.eq(
+			chip3.texture, ChipArt.texture_for(white_chip), "chip3 uses white art"
+		)
+	f += AssertUtil.truthy(
+		ProgressTrack.CHIP_SIZE <= ProgressTrack.SEGMENT_H,
+		"chip icons fit inside one track row"
+	)
+	var rat := content.get_node_or_null("Rat") as TextureRect
+	f += AssertUtil.truthy(rat != null and rat.texture != null, "rat placed at droplet")
+
 	var empty := Pot.new()
 	track.refresh(empty)
 	var empty_scroll: float = float(track.scroll_offset)
@@ -43,7 +69,6 @@ static func _test_progress_track() -> int:
 		"filled pot scrolls up to follow latest tokens"
 	)
 
-	var content := track.get_node("ScrollContainer/Content")
 	var filled_tex := load("res://assets/ui/track/progress_segment_filled.png")
 	var empty_tex := load("res://assets/ui/track/progress_segment_empty.png")
 	for space in range(4):
@@ -70,61 +95,4 @@ static func _test_progress_track() -> int:
 	f += AssertUtil.eq(track.scroll_offset, 20.0, "guarded update still applies value")
 
 	track.free()
-	return f
-
-static func _test_token_history() -> int:
-	var f := 0
-	var history_scene := load("res://ui/token_history.tscn") as PackedScene
-	f += AssertUtil.truthy(history_scene != null, "token history scene loads")
-	if history_scene == null:
-		return f
-
-	var history := history_scene.instantiate()
-	f += AssertUtil.truthy(history.get_script() != null, "token history script compiles")
-
-	var pot := Pot.new()
-	var orange_chip := Chip.make(Chip.ChipColor.ORANGE, 1)
-	var white_chip := Chip.make(Chip.ChipColor.WHITE, 2)
-	pot.place(orange_chip)
-	pot.place(white_chip)
-	history.refresh(pot)
-	f += AssertUtil.eq(history.token_count(), 2, "token count matches placements")
-
-	var content := history.get_node("ScrollContainer/Content")
-	var rat := content.get_node_or_null("Rat") as TextureRect
-	f += AssertUtil.truthy(rat != null and rat.texture != null, "rat stub placed at droplet")
-
-	var token0 := content.get_node_or_null("Token0") as TextureRect
-	var token1 := content.get_node_or_null("Token1") as TextureRect
-	f += AssertUtil.truthy(token0 != null, "first token placed")
-	f += AssertUtil.truthy(token1 != null, "second token placed")
-	if token0:
-		f += AssertUtil.eq(
-			token0.texture, ChipArt.texture_for(orange_chip), "token0 uses orange chip art"
-		)
-	if token1:
-		f += AssertUtil.eq(
-			token1.texture, ChipArt.texture_for(white_chip), "token1 uses white chip art"
-		)
-	f += AssertUtil.truthy(
-		TokenHistory.TOKEN_SIZE <= TokenHistory.SEGMENT_H,
-		"history icons fit inside one track row"
-	)
-	if token0:
-		f += AssertUtil.eq(
-			token0.custom_minimum_size.x, TokenHistory.TOKEN_SIZE, "token min width"
-		)
-		f += AssertUtil.eq(
-			token0.custom_minimum_size.y, TokenHistory.TOKEN_SIZE, "token min height"
-		)
-		f += AssertUtil.eq(token0.size.x, TokenHistory.TOKEN_SIZE, "token width matches TOKEN_SIZE")
-		f += AssertUtil.eq(token0.size.y, TokenHistory.TOKEN_SIZE, "token height matches TOKEN_SIZE")
-
-	var received: Array = []
-	history.scroll_changed.connect(func(v): received.append(v))
-	history.set_scroll_offset(40.0)
-	f += AssertUtil.eq(received.size(), 0, "guarded set does not emit scroll_changed")
-	f += AssertUtil.eq(history.scroll_offset, 40.0, "guarded set still applies value")
-
-	history.free()
 	return f
