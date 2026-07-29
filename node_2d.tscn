@@ -35,6 +35,7 @@
 [ext_resource type="Texture2D" uid="uid://bm5bv8nm035ta" path="res://TODO/new images/btn_take_vp.png" id="33_6ip5v"]
 [ext_resource type="Texture2D" uid="uid://dl0gvp8etrj8s" path="res://assets/settingicon.png" id="33_kq1c5"]
 [ext_resource type="Texture2D" uid="uid://ippeibptlbix" path="res://TODO/new images/btn_go_shop.png" id="34_q5dlx"]
+[ext_resource type="Texture2D" uid="uid://b4dl4v3b7b0ju" path="res://TODO/new images/stock_badge.png" id="35_c4wnb"]
 [ext_resource type="Texture2D" uid="uid://o2gr7nw15urf" path="res://TODO/new images/btn_done.png" id="36_7plk7"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kq1c5"]
@@ -126,6 +127,7 @@ texture = ExtResource("33_6ip5v")
 texture = ExtResource("34_q5dlx")
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3662s"]
+texture = ExtResource("35_c4wnb")
 modulate_color = Color(0.5058824, 0.54509807, 0.33333334, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_25bs2"]
