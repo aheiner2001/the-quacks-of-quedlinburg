@@ -29,6 +29,7 @@ func _ready() -> void:
 	pc.chip_drawn.connect(_on_drawn)
 	pc.exploded.connect(_on_exploded)
 	pc.flask_used.connect(_on_flask_used)
+	pc.potion_choice_resolved.connect(_on_potion_choice_resolved)
 	$HandoffLabel.text = "Player %d — draw or stop" % (pc.state.active_player + 1)
 	_refresh()
 
@@ -123,6 +124,10 @@ func _on_flask_used(_player_index: int) -> void:
 	_rebuild_placements()
 	_refresh()
 
+func _on_potion_choice_resolved(_player_index: int) -> void:
+	_rebuild_placements()
+	_refresh()
+
 func _ensure_brew_panels() -> void:
 	if get_node_or_null("ProgressTrack") == null:
 		var track := (load("res://ui/progress_track.tscn") as PackedScene).instantiate()
@@ -146,9 +151,10 @@ func _refresh() -> void:
 		return
 	_ensure_brew_panels()
 	var player: PlayerState = pc.state.players[pc.state.active_player]
-	$DrawButton.disabled = not player.can_draw()
-	$StopButton.disabled = player.stopped
-	$FlaskButton.disabled = not player.can_use_flask()
+	var awaiting_choice := player.awaiting_crow_choice or player.awaiting_mandrake
+	$DrawButton.disabled = awaiting_choice or not player.can_draw()
+	$StopButton.disabled = awaiting_choice or player.stopped
+	$FlaskButton.disabled = awaiting_choice or not player.can_use_flask()
 	$FlaskLabel.text = "Flask: %s" % ("Full" if player.flask_full else "Empty")
 	$WhiteSumLabel.text = "White: %d" % player.pot.white_sum()
 	$ActivePlayerLabel.text = "P%d" % (pc.state.active_player + 1)
@@ -160,6 +166,10 @@ func _refresh() -> void:
 		track.call("refresh", player.pot)
 	if history and history.has_method("refresh"):
 		history.call("refresh", player.pot)
+	if player.awaiting_crow_choice:
+		$CrowSkullModal.open()
+	elif player.awaiting_mandrake:
+		$MandrakeModal.open()
 
 func _update_explosion_risk(white_sum: int, exploded: bool) -> void:
 	$ExplosionRiskBar.value = mini(white_sum, 8)

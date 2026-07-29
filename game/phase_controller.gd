@@ -6,6 +6,7 @@ signal active_player_changed(index: int)
 signal chip_drawn(player: int, result: Dictionary)
 signal exploded(player: int)
 signal flask_used(player: int)
+signal potion_choice_resolved(player: int)
 signal round_ended(round: int)
 signal game_over(winner_indices: Array)
 signal bonus_die_needed
@@ -37,6 +38,20 @@ func stop_active() -> void:
 func use_flask_active() -> void:
 	if state.use_flask_active():
 		flask_used.emit(state.active_player)
+
+func resolve_crow_skull_active(keep_index: int) -> void:
+	var player_index := state.active_player
+	var result := state.resolve_crow_skull(player_index, keep_index)
+	if not result.is_empty():
+		chip_drawn.emit(player_index, result)
+	potion_choice_resolved.emit(player_index)
+	_after_potions_action()
+
+func resolve_mandrake_active(return_white: bool) -> void:
+	var player_index := state.active_player
+	state.resolve_mandrake(player_index, return_white)
+	potion_choice_resolved.emit(player_index)
+	_after_potions_action()
 
 func roll_bonus_die_active() -> int:
 	if state.phase != "bonus_die" or state.bonus_die_index >= state.bonus_die_queue.size():

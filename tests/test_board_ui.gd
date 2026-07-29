@@ -32,6 +32,12 @@ static func run() -> int:
 		"BonusDieModal/FaceTexture": TextureRect,
 		"BonusDieModal/RollButton": Button,
 		"BonusDieModal/NextButton": Button,
+		"CrowSkullModal": Control,
+		"CrowSkullModal/ChipChoices": HBoxContainer,
+		"CrowSkullModal/KeepNoneButton": Button,
+		"MandrakeModal": Control,
+		"MandrakeModal/ReturnWhiteButton": Button,
+		"MandrakeModal/KeepWhiteButton": Button,
 	}
 	for node_name: String in expected_nodes:
 		var node := board.get_node_or_null(node_name)
@@ -45,6 +51,12 @@ static func run() -> int:
 	var bonus_modal := board.get_node_or_null("BonusDieModal")
 	if bonus_modal:
 		failures += AssertUtil.eq(bonus_modal.visible, false, "bonus die modal starts hidden")
+	var crow_modal := board.get_node_or_null("CrowSkullModal")
+	if crow_modal:
+		failures += AssertUtil.eq(crow_modal.visible, false, "crow modal starts hidden")
+	var mandrake_modal := board.get_node_or_null("MandrakeModal")
+	if mandrake_modal:
+		failures += AssertUtil.eq(mandrake_modal.visible, false, "mandrake modal starts hidden")
 
 	var gameboard := board.get_node_or_null("Gameboard")
 	if gameboard:
@@ -157,6 +169,8 @@ static func run() -> int:
 	failures += _test_bonus_die_phase_shows_modal()
 	failures += _test_bonus_die_modal_rolls_and_finishes()
 	failures += _test_evaluation_shows_shop_overlay()
+	failures += _test_potion_choice_modals_pause_actions()
+	failures += _test_nested_crow_choice_stays_open()
 	return failures
 
 static func _test_bonus_die_phase_shows_modal() -> int:
@@ -290,4 +304,60 @@ static func _test_evaluation_shows_shop_overlay() -> int:
 		board.free()
 	elif is_instance_valid(board):
 		board.free()
+	return failures
+
+static func _test_potion_choice_modals_pause_actions() -> int:
+	var failures := 0
+	var packed := load("res://board.tscn") as PackedScene
+	var board := packed.instantiate()
+	var root: Window = Engine.get_main_loop().root
+	var session: Node = root.get_node("GameSession")
+	session.call("start_local", 1)
+	var controller := session.get("controller") as PhaseController
+	var player := controller.state.players[0]
+	player.pending_crow_draws = [Chip.make(Chip.ChipColor.ORANGE, 1)]
+	player.awaiting_crow_choice = true
+	root.add_child(board)
+	board.call("_refresh")
+	failures += AssertUtil.truthy(
+		board.get_node("CrowSkullModal").visible, "crow choice opens crow modal"
+	)
+	failures += AssertUtil.eq(board.get_node("DrawButton").disabled, true, "crow choice pauses draw")
+	failures += AssertUtil.eq(board.get_node("StopButton").disabled, true, "crow choice pauses stop")
+	failures += AssertUtil.eq(board.get_node("FlaskButton").disabled, true, "crow choice pauses flask")
+	board.get_node("CrowSkullModal/KeepNoneButton").pressed.emit()
+
+	player.awaiting_mandrake = true
+	board.call("_refresh")
+	failures += AssertUtil.truthy(
+		board.get_node("MandrakeModal").visible, "mandrake choice opens mandrake modal"
+	)
+	board.get_node("MandrakeModal/KeepWhiteButton").pressed.emit()
+	root.remove_child(board)
+	board.free()
+	return failures
+
+static func _test_nested_crow_choice_stays_open() -> int:
+	var failures := 0
+	var packed := load("res://board.tscn") as PackedScene
+	var board := packed.instantiate()
+	var root: Window = Engine.get_main_loop().root
+	var session: Node = root.get_node("GameSession")
+	session.call("start_local", 1)
+	var controller := session.get("controller") as PhaseController
+	var player := controller.state.players[0]
+	player.bag = Bag.new()
+	player.bag.add(Chip.make(Chip.ChipColor.ORANGE, 1))
+	player.pending_crow_draws = [Chip.make(Chip.ChipColor.BLUE, 1)]
+	player.awaiting_crow_choice = true
+	root.add_child(board)
+	board.call("_refresh")
+	var choices := board.get_node("CrowSkullModal/ChipChoices")
+	choices.get_child(0).pressed.emit()
+	failures += AssertUtil.truthy(
+		board.get_node("CrowSkullModal").visible,
+		"nested crow choice remains open after keeping blue"
+	)
+	root.remove_child(board)
+	board.free()
 	return failures

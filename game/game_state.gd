@@ -42,6 +42,9 @@ func begin_round() -> void:
 		player.evaluation_done = false
 		player.pending_bag_chips = []
 		player.pending_droplet_bonus = 0
+		player.pending_crow_draws = []
+		player.awaiting_crow_choice = false
+		player.awaiting_mandrake = false
 	active_player = start_player
 	eval_player = 0
 	bonus_die_queue.clear()
@@ -73,6 +76,37 @@ func use_flask_active() -> bool:
 
 func use_flask() -> bool:
 	return use_flask_active()
+
+func resolve_crow_skull(player_index: int, keep_index: int) -> Dictionary:
+	if not _valid_player(player_index):
+		return {}
+	var player := players[player_index]
+	if not player.awaiting_crow_choice:
+		return {}
+	if keep_index < -1 or keep_index >= player.pending_crow_draws.size():
+		return {}
+	var kept := ChipEffects.finish_crow_skull(player, keep_index)
+	if kept.is_empty():
+		if player.bag.is_empty():
+			player.stopped = true
+		return {}
+	return player.place_drawn_chip(kept, rng)
+
+func resolve_mandrake(player_index: int, return_white: bool) -> void:
+	if not _valid_player(player_index):
+		return
+	var player := players[player_index]
+	if not player.awaiting_mandrake:
+		return
+	if return_white and player.pot.placements.size() >= 2:
+		var white_placement: Dictionary = player.pot.placements[player.pot.placements.size() - 2]
+		var white_chip: Dictionary = white_placement["chip"]
+		if Chip.is_white(white_chip):
+			player.pot.placements.remove_at(player.pot.placements.size() - 2)
+			player.bag.put_back(white_chip)
+	player.awaiting_mandrake = false
+	if player.bag.is_empty():
+		player.stopped = true
 
 func all_players_stopped() -> bool:
 	if players.is_empty():

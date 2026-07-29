@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/crow_skull_modal.gd" id="1_script"]
+
+[node name="CrowSkullModal" type="Control"]
+custom_minimum_size = Vector2(320, 190)
+layout_mode = 3
+mouse_filter = 1
+script = ExtResource("1_script")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 320.0
+offset_bottom = 190.0
+
+[node name="PromptLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 304.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 20
+text = "Crow Skull: choose one chip"
+horizontal_alignment = 1
+
+[node name="ChipChoices" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 58.0
+offset_right = 304.0
+offset_bottom = 122.0
+alignment = 1
+
+[node name="KeepNoneButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 90.0
+offset_top = 138.0
+offset_right = 230.0
+offset_bottom = 178.0
+text = "Keep none"

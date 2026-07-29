@@ -11,6 +11,8 @@
 [ext_resource type="PackedScene" path="res://ui/progress_track.tscn" id="7_track"]
 [ext_resource type="PackedScene" path="res://ui/token_history.tscn" id="8_history"]
 [ext_resource type="PackedScene" path="res://ui/bonus_die_modal.tscn" id="9_bonus_die"]
+[ext_resource type="PackedScene" path="res://ui/crow_skull_modal.tscn" id="10_crow_skull"]
+[ext_resource type="PackedScene" path="res://ui/mandrake_modal.tscn" id="11_mandrake"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mgc1s"]
 texture = ExtResource("3_rq8yp")
@@ -179,6 +181,22 @@ offset_left = 520.0
 offset_top = 260.0
 offset_right = 780.0
 offset_bottom = 480.0
+
+[node name="CrowSkullModal" parent="." instance=ExtResource("10_crow_skull")]
+visible = false
+layout_mode = 0
+offset_left = 500.0
+offset_top = 240.0
+offset_right = 820.0
+offset_bottom = 430.0
+
+[node name="MandrakeModal" parent="." instance=ExtResource("11_mandrake")]
+visible = false
+layout_mode = 0
+offset_left = 500.0
+offset_top = 240.0
+offset_right = 820.0
+offset_bottom = 430.0
 
 [connection signal="pressed" from="DrawButton" to="." method="_on_draw_pressed"]
 [connection signal="pressed" from="StopButton" to="." method="_on_stop_pressed"]

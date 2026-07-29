@@ -16,6 +16,9 @@ var evaluation_done: bool = false
 var pending_bag_chips: Array = []
 var pending_droplet_bonus: int = 0
 var final_pot_furthest: int = 0
+var pending_crow_draws: Array = []
+var awaiting_crow_choice: bool = false
+var awaiting_mandrake: bool = false
 
 static func create_fresh() -> PlayerState:
 	var p := PlayerState.new()
@@ -25,7 +28,13 @@ static func create_fresh() -> PlayerState:
 	return p
 
 func can_draw() -> bool:
-	return not stopped and not exploded and not bag.is_empty()
+	return (
+		not stopped
+		and not exploded
+		and not awaiting_crow_choice
+		and not awaiting_mandrake
+		and not bag.is_empty()
+	)
 
 func can_use_flask() -> bool:
 	if stopped or not flask_full or exploded or pot.placements.is_empty():
@@ -36,6 +45,10 @@ func can_use_flask() -> bool:
 func draw(rng: RandomNumberGenerator) -> Dictionary:
 	assert(can_draw())
 	var chip := bag.draw(rng)
+	return place_drawn_chip(chip, rng)
+
+func place_drawn_chip(chip: Dictionary, rng: RandomNumberGenerator) -> Dictionary:
+	var prior_chip := pot.last_chip()
 	var bonus := 0
 	if int(chip["color"]) == Chip.ChipColor.RED:
 		bonus = ChipEffects.toadstool_bonus(pot.count_color(Chip.ChipColor.ORANGE))
@@ -43,7 +56,11 @@ func draw(rng: RandomNumberGenerator) -> Dictionary:
 	if result["exploded"]:
 		exploded = true
 		stopped = true
-	if bag.is_empty():
+	if int(chip["color"]) == Chip.ChipColor.BLUE:
+		ChipEffects.begin_crow_skull(self, int(chip["value"]), rng)
+	if int(chip["color"]) == Chip.ChipColor.YELLOW and Chip.is_white(prior_chip):
+		awaiting_mandrake = true
+	if bag.is_empty() and not awaiting_crow_choice and not awaiting_mandrake:
 		stopped = true
 	return result
 
