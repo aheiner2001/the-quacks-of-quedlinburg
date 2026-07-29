@@ -4,9 +4,9 @@ extends Control
 signal scroll_changed(offset: float)
 
 ## Row height along the synced track; keep equal to ProgressTrack.SEGMENT_H.
-const SEGMENT_H := 22.0
+const SEGMENT_H := 75.0
 ## Fit icons inside one track row so scroll doesn't clip them.
-const TOKEN_SIZE :=75
+const TOKEN_SIZE := 75.0
 const BOARD_TEX_DIR := "res://assets/ui/board/"
 
 var _guard_scroll: bool = false
@@ -32,6 +32,9 @@ func _ready() -> void:
 			bar.value_changed.connect(_on_scrollbar_scrolled)
 
 func _on_scrollbar_scrolled(value: float) -> void:
+	# Ignore events caused by set_scroll_offset / follow (prevents sync feedback loops).
+	if _guard_scroll:
+		return
 	_guard_scroll = true
 	scroll_offset = value
 	_guard_scroll = false
@@ -50,6 +53,27 @@ func token_count() -> int:
 func refresh(pot: Pot) -> void:
 	PotTrack.ensure_loaded()
 	_rebuild_tokens(pot)
+	_follow_brew_space(pot.last_index())
+
+## Keep the latest placement (or droplet baseline) in view; matches ProgressTrack follow.
+func _follow_brew_space(space: int) -> void:
+	var scroll := get_node_or_null("ScrollContainer") as ScrollContainer
+	if scroll == null:
+		return
+	var max_space := PotTrack.max_space()
+	var view_h := scroll.size.y
+	if view_h < 1.0:
+		view_h = size.y
+	if view_h < 1.0:
+		view_h = 520.0
+	var content_h := float(max_space + 1) * SEGMENT_H
+	var row_y := float(max_space - clampi(space, 0, max_space)) * SEGMENT_H
+	var target := row_y - view_h * 0.55
+	var max_scroll := maxf(0.0, content_h - view_h)
+	_guard_scroll = true
+	scroll_offset = clampf(target, 0.0, max_scroll)
+	_guard_scroll = false
+	scroll_changed.emit(scroll_offset)
 
 func _rat_texture() -> Texture2D:
 	var rat_path := BOARD_TEX_DIR + "rat.png"

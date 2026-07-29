@@ -172,6 +172,14 @@ offset_top = 63.0
 offset_right = 1024.0
 offset_bottom = 468.0
 
+[node name="ExplosionRiskBar" type="ProgressBar" parent="."]
+offset_left = 566.0
+offset_top = 40.0
+offset_right = 1040.0
+offset_bottom = 68.0
+max_value = 8.0
+show_percentage = false
+
 [node name="RewardsStrip" parent="." unique_id=1793024599 instance=ExtResource("12_rewards")]
 offset_left = 566.0
 offset_top = 72.0

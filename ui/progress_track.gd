@@ -3,7 +3,7 @@ extends Control
 
 signal scroll_changed(offset: float)
 
-const SEGMENT_H := 22.0
+const SEGMENT_H := 75.0
 const TRACK_TEX_DIR := "res://assets/ui/track/"
 
 var _preview_space: int = 0
@@ -37,6 +37,9 @@ func _set_icon(node: Node, file_name: String) -> void:
 		rect.texture = load(TRACK_TEX_DIR + file_name) as Texture2D
 
 func _on_scrollbar_scrolled(value: float) -> void:
+	# Ignore events caused by set_scroll_offset / follow (prevents sync feedback loops).
+	if _guard_scroll:
+		return
 	_guard_scroll = true
 	scroll_offset = value
 	_guard_scroll = false
@@ -60,6 +63,29 @@ func refresh(pot: Pot) -> void:
 	_preview_space = pot.scoring_space()
 	_last_filled_index = pot.last_index()
 	_rebuild_segments()
+	# Follow the brew: empty pot shows the bottom (space 0); each fill scrolls to the latest.
+	_follow_brew_space(_last_filled_index)
+
+## Scroll so `space` stays visible in the lower half of the viewport (synced with history).
+func _follow_brew_space(space: int) -> void:
+	var scroll := get_node_or_null("ScrollContainer") as ScrollContainer
+	if scroll == null:
+		return
+	var max_space := PotTrack.max_space()
+	var view_h := scroll.size.y
+	if view_h < 1.0:
+		view_h = size.y
+	if view_h < 1.0:
+		view_h = 520.0
+	var content_h := float(max_space + 1) * SEGMENT_H
+	var row_y := float(max_space - clampi(space, 0, max_space)) * SEGMENT_H
+	var target := row_y - view_h * 0.55
+	var max_scroll := maxf(0.0, content_h - view_h)
+	# Guarded set avoids scrollbar re-entrancy; emit once so TokenHistory can sync.
+	_guard_scroll = true
+	scroll_offset = clampf(target, 0.0, max_scroll)
+	_guard_scroll = false
+	scroll_changed.emit(scroll_offset)
 
 func _rebuild_segments() -> void:
 	var content := get_node_or_null("ScrollContainer/Content") as Control

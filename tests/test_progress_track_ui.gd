@@ -28,6 +28,20 @@ static func _test_progress_track() -> int:
 	track.refresh(pot2)
 	f += AssertUtil.eq(track.preview_space(), 4, "preview tracks scoring space after refresh")
 	f += AssertUtil.eq(track.last_filled_index(), 3, "last filled index matches pot.last_index")
+	var empty := Pot.new()
+	track.refresh(empty)
+	var empty_scroll: float = float(track.scroll_offset)
+	var max_space := PotTrack.max_space()
+	var bottomish: float = float(max_space) * ProgressTrack.SEGMENT_H * 0.2
+	f += AssertUtil.truthy(
+		empty_scroll >= bottomish,
+		"empty pot follows toward bottom of track"
+	)
+	track.refresh(pot2)
+	f += AssertUtil.truthy(
+		track.scroll_offset < empty_scroll,
+		"filled pot scrolls up to follow latest tokens"
+	)
 
 	var content := track.get_node("ScrollContainer/Content")
 	var filled_tex := load("res://assets/ui/track/progress_segment_filled.png")
