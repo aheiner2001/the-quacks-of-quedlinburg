@@ -269,6 +269,13 @@ func can_buy(player_index: int, sku_id: String) -> bool:
 	return true
 
 
+func has_affordable_buy(player_index: int) -> bool:
+	for sku_id: String in market:
+		if can_buy(player_index, sku_id):
+			return true
+	return false
+
+
 func buy(player_index: int, sku_id: String) -> bool:
 	if not can_buy(player_index, sku_id):
 		return false

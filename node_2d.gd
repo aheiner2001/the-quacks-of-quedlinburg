@@ -97,7 +97,16 @@ func _refresh_evaluation(message: String = "") -> void:
 	$EvaluationPanel/ConvertRubiesButton.disabled = (
 		player.rubies < 2 or (player.exploded and player.chose_vp)
 	)
-	$EvaluationPanel/DoneButton.disabled = not (player.chose_vp or player.chose_shop)
+	if state.round != 9 and player.chose_shop:
+		var shop_ready := (
+			player.purchases.size() >= 2
+			or not state.has_affordable_buy(state.eval_player)
+		)
+		$EvaluationPanel/DoneButton.visible = true
+		$EvaluationPanel/DoneButton.disabled = not shop_ready
+	else:
+		$EvaluationPanel/DoneButton.visible = true
+		$EvaluationPanel/DoneButton.disabled = not (player.chose_vp or player.chose_shop)
 	_refresh_shop_controls(player)
 
 func _refresh_shop_controls(player: PlayerState) -> void:
@@ -113,7 +122,7 @@ func _refresh_shop_controls(player: PlayerState) -> void:
 		or player.flask_full
 		or player.rubies < 2
 	)
-	$EvaluationPanel/WhiteShop.visible = state.round != 9
+	$EvaluationPanel/WhiteShop.visible = false
 	for index in $EvaluationPanel/WhiteShop.item_count:
 		var sku: String = $EvaluationPanel/WhiteShop.get_item_metadata(index)
 		$EvaluationPanel/WhiteShop.set_item_disabled(
