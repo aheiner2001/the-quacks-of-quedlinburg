@@ -35,8 +35,10 @@ func _on_gui_input(event: InputEvent) -> void:
 		global_position = get_global_mouse_position() - size / 2.0
 		accept_event()
 
-func _finish_drag() -> void:
-	var cauldron := get_node_or_null(cauldron_path) as Control
-	if cauldron and cauldron.get_global_rect().has_point(get_global_mouse_position()):
+func _finish_drag(release_position = null) -> void:
+	var board := get_parent()
+	var cauldron := board.get_node_or_null(cauldron_path) as Control if board else null
+	var point: Vector2 = release_position if release_position is Vector2 else get_global_mouse_position()
+	if cauldron and cauldron.get_global_rect().has_point(point):
 		dropped_on_cauldron.emit()
 	global_position = _home_position

@@ -11,6 +11,7 @@ const TestSupplyScaler = preload("res://tests/test_supply_scaler.gd")
 const TestMainMenu = preload("res://tests/test_main_menu.gd")
 const TestBonusDie = preload("res://tests/test_bonus_die.gd")
 const TestChipEffects = preload("res://tests/test_chip_effects.gd")
+const TestFlaskDrag = preload("res://tests/test_flask_drag.gd")
 
 func _init() -> void:
 	call_deferred("_run")
@@ -29,6 +30,7 @@ func _run() -> void:
 	failures += TestGameState.run()
 	failures += TestPhaseController.run()
 	failures += TestBoardUI.run()
+	failures += TestFlaskDrag.run()
 	failures += TestShopUI.run()
 	failures += TestProgressTrackUI.run()
 	failures += TestFullLoop.run()
