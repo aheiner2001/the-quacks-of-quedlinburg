@@ -16,15 +16,15 @@ static func run() -> int:
 		"FlaskLabel": Label,
 		"DrawButton": Button,
 		"StopButton": Button,
-		"FlaskButton": Button,
 		"HandoffLabel": Label,
 		"PlacementsList": ItemList,
 		"DrawStage": Node2D,
 		"DrawStage/BagPlaceholder": TextureRect,
 		"DrawStage/CauldronPlaceholder": TextureRect,
 		"DrawStage/ChipFlight": TextureRect,
+		"FlaskDrag": TextureRect,
 		"ExplosionRiskBar": ProgressBar,
-		"RewardsBar": RichTextLabel,
+		"RewardsStrip": Control,
 		"ProgressTrack": Control,
 		"TokenHistory": Control,
 		"BonusDieModal": Control,
@@ -79,12 +79,9 @@ static func run() -> int:
 			),
 			"stop button wired"
 		)
-		failures += AssertUtil.truthy(
-			board.get_node("FlaskButton").pressed.is_connected(
-				Callable(board, "_on_flask_pressed")
-			),
-			"flask button wired"
-		)
+	failures += AssertUtil.eq(
+		board.get_node("FlaskButton").visible, false, "flask button stays hidden"
+	)
 
 	failures += AssertUtil.truthy(
 		board.has_method("_update_explosion_risk"),
@@ -124,6 +121,11 @@ static func run() -> int:
 	controller.state.players[0].bag.add(Chip.make(Chip.ChipColor.WHITE, 1))
 	controller.state.players[0].bag.add(Chip.make(Chip.ChipColor.WHITE, 1))
 	root.add_child(board)
+	var rewards_strip := board.get_node("RewardsStrip")
+	failures += AssertUtil.truthy(
+		rewards_strip.get_node("ScrollContainer/Tiles").get_child_count() >= 1,
+		"rewards strip shows a current reward tile"
+	)
 	board.get_node("PlacementsList").add_item("stale placement")
 	controller.draw_active()
 	failures += AssertUtil.eq(
