@@ -3,10 +3,45 @@ extends RefCounted
 
 static func run() -> int:
 	var failures := 0
+	failures += _test_reward_label()
 	failures += _test_eligible_leaders()
 	failures += _test_apply_faces()
 	failures += _test_droplet_does_not_change_round_scoring()
 	failures += _test_all_exploded_empty_queue_to_evaluation()
+	return failures
+
+static func _test_reward_label() -> int:
+	var failures := 0
+	failures += AssertUtil.eq(
+		BonusDieModal.reward_label(BonusDie.Face.VP1, false),
+		"+1 Victory Point",
+		"VP1 label"
+	)
+	failures += AssertUtil.eq(
+		BonusDieModal.reward_label(BonusDie.Face.VP2, false),
+		"+2 Victory Points",
+		"VP2 label"
+	)
+	failures += AssertUtil.eq(
+		BonusDieModal.reward_label(BonusDie.Face.RUBY, true),
+		"Ruby",
+		"ruby granted label"
+	)
+	failures += AssertUtil.eq(
+		BonusDieModal.reward_label(BonusDie.Face.RUBY, false),
+		"No rubies left",
+		"empty ruby pool label"
+	)
+	failures += AssertUtil.eq(
+		BonusDieModal.reward_label(BonusDie.Face.DROPLET, false),
+		"Droplet +1",
+		"droplet label"
+	)
+	failures += AssertUtil.eq(
+		BonusDieModal.reward_label(BonusDie.Face.ORANGE, false),
+		"Pumpkin (Orange 1)",
+		"orange label"
+	)
 	return failures
 
 static func _test_eligible_leaders() -> int:

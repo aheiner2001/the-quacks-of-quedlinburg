@@ -3,6 +3,21 @@ extends Control
 
 const DIE_TEX_DIR := "res://assets/ui/board/"
 
+static func reward_label(face: int, ruby_granted: bool) -> String:
+	match face:
+		BonusDie.Face.VP1:
+			return "+1 Victory Point"
+		BonusDie.Face.VP2:
+			return "+2 Victory Points"
+		BonusDie.Face.RUBY:
+			return "Ruby" if ruby_granted else "No rubies left"
+		BonusDie.Face.DROPLET:
+			return "Droplet +1"
+		BonusDie.Face.ORANGE:
+			return "Pumpkin (Orange 1)"
+		_:
+			return ""
+
 func _ready() -> void:
 	visible = false
 	if not $RollButton.pressed.is_connected(_on_roll_pressed):
@@ -34,6 +49,8 @@ func _refresh_current() -> void:
 	$PlayerLabel.text = "Player %d rolls the bonus die" % (player_index + 1)
 	$FaceTexture.texture = null
 	$FaceTexture.visible = false
+	$RewardLabel.text = ""
+	$RewardLabel.visible = false
 	$RollButton.disabled = false
 	$NextButton.disabled = true
 
@@ -41,11 +58,15 @@ func _on_roll_pressed() -> void:
 	var pc := _controller()
 	if pc == null:
 		return
+	var rubies_before := pc.state.rubies_remaining
 	var face := pc.roll_bonus_die_active()
 	if face < 0:
 		return
 	$FaceTexture.texture = _face_texture(face)
 	$FaceTexture.visible = true
+	var ruby_granted := face != BonusDie.Face.RUBY or rubies_before > 0
+	$RewardLabel.text = reward_label(face, ruby_granted)
+	$RewardLabel.visible = true
 	$RollButton.disabled = true
 	var is_last: bool = pc.state.bonus_die_index >= pc.state.bonus_die_queue.size()
 	$NextButton.text = "Finish" if is_last else "Next"

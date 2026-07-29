@@ -30,6 +30,7 @@ static func run() -> int:
 		"BonusDieModal": Control,
 		"BonusDieModal/PlayerLabel": Label,
 		"BonusDieModal/FaceTexture": TextureRect,
+		"BonusDieModal/RewardLabel": Label,
 		"BonusDieModal/RollButton": Button,
 		"BonusDieModal/NextButton": Button,
 		"CrowSkullModal": Control,
@@ -225,6 +226,9 @@ static func _test_bonus_die_modal_rolls_and_finishes() -> int:
 	failures += AssertUtil.eq(
 		modal.get_node("FaceTexture").visible, false, "face hidden before rolling"
 	)
+	failures += AssertUtil.eq(
+		modal.get_node("RewardLabel").visible, false, "reward hidden before rolling"
+	)
 	modal.get_node("RollButton").pressed.emit()
 	failures += AssertUtil.eq(
 		controller.state.bonus_die_index, 1, "rolling advances bonus die queue index"
@@ -235,6 +239,9 @@ static func _test_bonus_die_modal_rolls_and_finishes() -> int:
 	failures += AssertUtil.truthy(
 		modal.get_node("FaceTexture").texture != null, "face texture resolves a die image"
 	)
+	var reward_label: Label = modal.get_node("RewardLabel")
+	failures += AssertUtil.truthy(reward_label.visible, "reward shown after rolling")
+	failures += AssertUtil.truthy(reward_label.text != "", "reward label has face text after rolling")
 	modal.get_node("NextButton").pressed.emit()
 	failures += AssertUtil.eq(
 		controller.state.phase,

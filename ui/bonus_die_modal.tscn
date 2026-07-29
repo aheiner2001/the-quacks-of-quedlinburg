@@ -33,6 +33,17 @@ offset_bottom = 132.0
 expand_mode = 1
 stretch_mode = 5
 
+[node name="RewardLabel" type="Label" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 16.0
+offset_top = 132.0
+offset_right = 244.0
+offset_bottom = 152.0
+theme_override_font_sizes/font_size = 16
+text = ""
+horizontal_alignment = 1
+
 [node name="RollButton" type="Button" parent="."]
 layout_mode = 0
 offset_left = 40.0
