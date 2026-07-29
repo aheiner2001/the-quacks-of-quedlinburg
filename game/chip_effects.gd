@@ -8,6 +8,43 @@ static func toadstool_bonus(orange_count: int) -> int:
 		return 1
 	return 2
 
+static func spider_ruby_count(pot: Pot) -> int:
+	var count := 0
+	var size := pot.placements.size()
+	for offset in [1, 2]:
+		var index: int = size - offset
+		if index < 0:
+			break
+		if int(pot.placements[index]["chip"]["color"]) == Chip.ChipColor.GREEN:
+			count += 1
+	return count
+
+static func moth_reward(mine: int, left: int, right: int, player_count: int) -> Dictionary:
+	if player_count < 2:
+		return {"droplet": 0, "ruby": 0}
+	if player_count <= 2:
+		if mine > left:
+			return {"droplet": 1, "ruby": 1}
+		if mine == left:
+			return {"droplet": 1, "ruby": 0}
+		return {"droplet": 0, "ruby": 0}
+	var beats_left := mine > left
+	var beats_right := mine > right
+	if beats_left and beats_right:
+		return {"droplet": 1, "ruby": 1}
+	if beats_left or beats_right:
+		return {"droplet": 1, "ruby": 0}
+	return {"droplet": 0, "ruby": 0}
+
+static func ghost_best_tier(purple_count: int) -> Dictionary:
+	if purple_count >= 3:
+		return {"vp": 2, "ruby": 0, "droplet": 1}
+	if purple_count == 2:
+		return {"vp": 1, "ruby": 1, "droplet": 0}
+	if purple_count == 1:
+		return {"vp": 1, "ruby": 0, "droplet": 0}
+	return {"vp": 0, "ruby": 0, "droplet": 0}
+
 static func begin_crow_skull(player: PlayerState, value: int, rng: RandomNumberGenerator) -> void:
 	player.pending_crow_draws.clear()
 	for _i in value:

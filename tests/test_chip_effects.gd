@@ -19,6 +19,67 @@ static func run() -> int:
 	# droplet 0 + orange1 → idx1; +orange1 → idx2; red1 + bonus1 → idx4
 	f += AssertUtil.eq(int(result["index"]), 4, "toadstool lands with orange bonus")
 	f += _test_crow_skull_and_mandrake()
+	f += _test_evaluation_b_helpers()
+	return f
+
+static func _test_evaluation_b_helpers() -> int:
+	var f := 0
+	var pot := Pot.new()
+	pot.place(Chip.make(Chip.ChipColor.GREEN, 1))
+	f += AssertUtil.eq(ChipEffects.spider_ruby_count(pot), 1, "spider sees last green")
+	pot.place(Chip.make(Chip.ChipColor.GREEN, 1))
+	f += AssertUtil.eq(ChipEffects.spider_ruby_count(pot), 2, "spider sees last two greens")
+	pot.place(Chip.make(Chip.ChipColor.ORANGE, 1))
+	f += AssertUtil.eq(ChipEffects.spider_ruby_count(pot), 1, "spider ignores earlier green")
+	pot.place(Chip.make(Chip.ChipColor.ORANGE, 1))
+	f += AssertUtil.eq(ChipEffects.spider_ruby_count(pot), 0, "spider requires green at end")
+
+	f += AssertUtil.eq(
+		ChipEffects.moth_reward(2, 2, 2, 2),
+		{"droplet": 1, "ruby": 0},
+		"two-player equal moths gain droplet"
+	)
+	f += AssertUtil.eq(
+		ChipEffects.moth_reward(0, 0, 0, 1),
+		{"droplet": 0, "ruby": 0},
+		"solo game has no moth comparison"
+	)
+	f += AssertUtil.eq(
+		ChipEffects.moth_reward(2, 1, 1, 2),
+		{"droplet": 1, "ruby": 1},
+		"two-player leading moths gain ruby"
+	)
+	f += AssertUtil.eq(
+		ChipEffects.moth_reward(2, 1, 2, 3),
+		{"droplet": 1, "ruby": 0},
+		"moth beating one neighbor gains droplet"
+	)
+	f += AssertUtil.eq(
+		ChipEffects.moth_reward(2, 1, 1, 3),
+		{"droplet": 1, "ruby": 1},
+		"moth beating both neighbors gains ruby"
+	)
+
+	f += AssertUtil.eq(
+		ChipEffects.ghost_best_tier(0),
+		{"vp": 0, "ruby": 0, "droplet": 0},
+		"no ghosts gain no reward"
+	)
+	f += AssertUtil.eq(
+		ChipEffects.ghost_best_tier(1),
+		{"vp": 1, "ruby": 0, "droplet": 0},
+		"one ghost gains vp"
+	)
+	f += AssertUtil.eq(
+		ChipEffects.ghost_best_tier(2),
+		{"vp": 1, "ruby": 1, "droplet": 0},
+		"two ghosts gain vp and ruby"
+	)
+	f += AssertUtil.eq(
+		ChipEffects.ghost_best_tier(3),
+		{"vp": 2, "ruby": 0, "droplet": 1},
+		"three ghosts gain best tier"
+	)
 	return f
 
 static func _test_crow_skull_and_mandrake() -> int:

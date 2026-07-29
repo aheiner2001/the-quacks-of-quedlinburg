@@ -181,9 +181,36 @@ func apply_bonus_die(player_index: int, face: int) -> void:
 func finish_bonus_die() -> void:
 	begin_evaluation()
 
+func resolve_chip_actions() -> void:
+	var player_count := players.size()
+	if player_count == 0:
+		return
+	for i in player_count:
+		var index := (start_player + i) % player_count
+		var player := players[index]
+		var pot := player.pot
+		player.rubies += ChipEffects.spider_ruby_count(pot)
+
+		var left_index := (index - 1 + player_count) % player_count
+		var right_index := (index + 1) % player_count
+		var moth := ChipEffects.moth_reward(
+			pot.count_color(Chip.ChipColor.BLACK),
+			players[left_index].pot.count_color(Chip.ChipColor.BLACK),
+			players[right_index].pot.count_color(Chip.ChipColor.BLACK),
+			player_count
+		)
+		player.pot.droplet += int(moth["droplet"])
+		player.rubies += int(moth["ruby"])
+
+		var ghost := ChipEffects.ghost_best_tier(pot.count_color(Chip.ChipColor.PURPLE))
+		player.vp += int(ghost["vp"])
+		player.rubies += int(ghost["ruby"])
+		player.pot.droplet += int(ghost["droplet"])
+
 func begin_evaluation() -> void:
 	phase = "evaluation"
 	eval_player = 0
+	resolve_chip_actions()
 	for player in players:
 		var space := player.pot.scoring_space()
 		player.coins = PotTrack.coins_for_space(space)

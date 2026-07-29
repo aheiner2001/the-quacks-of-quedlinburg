@@ -9,6 +9,7 @@ static func run() -> int:
 	f += _test_turn_nine_and_winners()
 	f += _test_potion_helpers_and_end_turn()
 	f += _test_pending_potion_choices_block_stop_and_flask()
+	f += _test_evaluation_b_chip_actions()
 	return f
 
 static func _test_new_game_and_round_reset() -> int:
@@ -242,3 +243,45 @@ static func _test_pending_potion_choices_block_stop_and_flask() -> int:
 			"%s blocks stopping" % pending_choice
 		)
 	return failures
+
+static func _test_evaluation_b_chip_actions() -> int:
+	var f := 0
+	var gs := GameState.new_game(3, 12)
+	gs.begin_round()
+	gs.start_player = 1
+	gs.players[0].pot.place(Chip.make(Chip.ChipColor.BLACK, 1))
+	gs.players[0].pot.place(Chip.make(Chip.ChipColor.BLACK, 1))
+	gs.players[1].pot.place(Chip.make(Chip.ChipColor.GREEN, 1))
+	gs.players[1].pot.place(Chip.make(Chip.ChipColor.GREEN, 1))
+	gs.players[2].pot.place(Chip.make(Chip.ChipColor.ORANGE, 1))
+	gs.players[2].pot.place(Chip.make(Chip.ChipColor.PURPLE, 1))
+	gs.players[2].pot.place(Chip.make(Chip.ChipColor.PURPLE, 1))
+	gs.players[2].pot.place(Chip.make(Chip.ChipColor.PURPLE, 1))
+	gs.begin_evaluation()
+	f += AssertUtil.eq(gs.players[0].pot.droplet, 1, "moth reward applies immediately")
+	f += AssertUtil.eq(gs.players[0].rubies, 1, "moth beating both neighbors gains ruby")
+	f += AssertUtil.eq(gs.players[1].rubies, 2, "spider gains one ruby per final green")
+	f += AssertUtil.eq(gs.players[2].vp, 2, "ghosts use only their best tier")
+	f += AssertUtil.eq(gs.players[2].pot.droplet, 1, "ghost best tier applies droplet immediately")
+	f += AssertUtil.eq(
+		gs.players[2].pending_droplet_bonus,
+		0,
+		"chip action droplets are not deferred"
+	)
+
+	var two_player := GameState.new_game(2, 13)
+	two_player.begin_round()
+	two_player.players[0].pot.place(Chip.make(Chip.ChipColor.BLACK, 1))
+	two_player.players[1].pot.place(Chip.make(Chip.ChipColor.BLACK, 1))
+	two_player.begin_evaluation()
+	f += AssertUtil.eq(
+		two_player.players[0].pot.droplet,
+		1,
+		"equal two-player moth counts gain droplets"
+	)
+	f += AssertUtil.eq(
+		two_player.players[1].pot.droplet,
+		1,
+		"two-player moth reward applies to all players"
+	)
+	return f
