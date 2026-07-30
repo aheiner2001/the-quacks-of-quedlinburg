@@ -59,6 +59,11 @@ static func _test_evaluation_fork_and_shop() -> int:
 	f += AssertUtil.truthy(gs.go_to_shop(0), "non-exploded also shops")
 	f += AssertUtil.truthy(gs.go_to_shop(1), "exploded chooses shop")
 	f += AssertUtil.eq(gs.take_vp(1), false, "exploded cannot take vp after shop")
+	f += AssertUtil.eq(gs.phase, "evaluation", "go_to_shop stays on evaluation until continue")
+	f += AssertUtil.truthy(gs.continue_to_shop(0), "continue opens shop for eval player 0")
+	f += AssertUtil.eq(gs.phase, "shop", "continue_to_shop enters shop phase")
+	# Player 1 also chose shop but eval_player is still 0; continue for 1 while phase shop:
+	f += AssertUtil.eq(gs.continue_to_shop(1), false, "continue_to_shop only from evaluation phase")
 
 	gs.players[0].coins = 30
 	f += AssertUtil.truthy(gs.can_buy(0, "pumpkin_1"), "can_buy allows valid purchase")
@@ -88,6 +93,7 @@ static func _test_evaluation_fork_and_shop() -> int:
 	g3.players[0].stopped = true
 	g3.begin_evaluation()
 	f += AssertUtil.truthy(g3.go_to_shop(0), "shop can be finished without buying")
+	f += AssertUtil.truthy(g3.continue_to_shop(0), "continue enters shop before finish")
 	f += AssertUtil.eq(g3.take_vp(0), false, "automatic vp is not awarded twice")
 	# Flask refills move to the ruby-based refill_flask API in Task 4.
 	g3.finish_shop(0)
@@ -112,6 +118,9 @@ static func _test_ruby_grant_and_flask_refill() -> int:
 
 	gs.players[0].flask_full = false
 	gs.players[0].rubies = 2
+	f += AssertUtil.eq(gs.refill_flask(0), false, "flask refill blocked on eval-entry")
+	gs.players[0].chose_shop = true
+	f += AssertUtil.truthy(gs.continue_to_shop(0), "continue into shop before flask refill")
 	f += AssertUtil.truthy(gs.refill_flask(0), "two rubies refill an empty flask")
 	f += AssertUtil.eq(gs.players[0].rubies, 0, "flask refill spends two rubies")
 	f += AssertUtil.truthy(gs.players[0].flask_full, "refilled flask is full")
@@ -130,6 +139,13 @@ static func _test_ruby_grant_and_flask_refill() -> int:
 	)
 	controller.stop_active()
 	controller.finish_bonus_die_phase()
+	f += AssertUtil.eq(
+		controller.refill_flask_active(),
+		false,
+		"flask cannot be refilled on eval-entry"
+	)
+	controller.go_shop_active()
+	controller.continue_to_shop_active()
 	f += AssertUtil.truthy(controller.refill_flask_active(), "controller refills active flask")
 	controller.free()
 	return f

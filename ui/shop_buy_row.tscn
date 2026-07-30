@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://ui/shop_buy_row.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://ui/shop_buy_option.tscn" id="2_option"]
+
+[node name="BuyRow" type="HBoxContainer"]
+custom_minimum_size = Vector2(640, 52)
+offset_right = 640.0
+offset_bottom = 52.0
+theme_override_constants/separation = 12
+script = ExtResource("1_script")
+
+[node name="Option1" parent="." instance=ExtResource("2_option")]
+layout_mode = 2
+
+[node name="Option2" parent="." instance=ExtResource("2_option")]
+layout_mode = 2
+
+[node name="Option3" parent="." instance=ExtResource("2_option")]
+layout_mode = 2
+
+[node name="Option4" parent="." instance=ExtResource("2_option")]
+layout_mode = 2
