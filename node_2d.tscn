@@ -436,10 +436,10 @@ theme_override_styles/panel = SubResource("StyleBoxTexture_kq1c5")
 
 [node name="StatusLabel" type="Label" parent="EvaluationPanel" unique_id=456359456]
 layout_mode = 0
-offset_left = 16.0
-offset_top = 12.0
-offset_right = 374.0
-offset_bottom = 58.0
+offset_left = 28.0
+offset_top = 183.0
+offset_right = 386.0
+offset_bottom = 229.0
 text = "Evaluation"
 autowrap_mode = 2
 
@@ -479,10 +479,10 @@ text = "2 Rubies → 1 VP"
 
 [node name="WhiteShop" type="ItemList" parent="EvaluationPanel" unique_id=1934903243]
 layout_mode = 0
-offset_left = -92.0
-offset_top = 24.0
-offset_right = 464.0
-offset_bottom = 534.0
+offset_left = -721.0
+offset_top = 182.0
+offset_right = -165.0
+offset_bottom = 692.0
 theme_override_colors/font_color = Color(0.65, 0.65, 0.65, 1)
 theme_override_colors/font_hovered_selected_color = Color(1, 1, 1, 1)
 theme_override_styles/panel = SubResource("StyleBoxTexture_3662s")
