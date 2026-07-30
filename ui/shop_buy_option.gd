@@ -27,9 +27,9 @@ func bind(p_sku: String, value: int, cost: int, can_buy: bool) -> void:
 		_value_label.text = str(value)
 	if _cost_label:
 		_cost_label.text = str(cost)
-	# Keep a readable caption on the button itself (labels stay art-directable).
-	text = "%d for %d coins" % [value, cost]
-	tooltip_text = text
+	# Labels own the visible caption so they stay art-directable in the editor.
+	text = ""
+	tooltip_text = "%d for %d coins" % [value, cost]
 
 
 func clear_option() -> void:
