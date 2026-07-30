@@ -33,7 +33,6 @@
 [ext_resource type="Texture2D" uid="uid://cab7fhj15y2lk" path="res://scary gary/Untitled - July 25, 2026 at 20.21.27 (2).png" id="31_mryly"]
 [ext_resource type="Texture2D" uid="uid://cgv2cfek68bvi" path="res://scary gary/Untitled - July 25, 2026 at 21.56.47 (1).png" id="32_mryly"]
 [ext_resource type="Texture2D" uid="uid://bm5bv8nm035ta" path="res://TODO/new images/btn_take_vp.png" id="33_6ip5v"]
-[ext_resource type="Texture2D" uid="uid://dl0gvp8etrj8s" path="res://assets/settingicon.png" id="33_kq1c5"]
 [ext_resource type="Texture2D" uid="uid://ippeibptlbix" path="res://TODO/new images/btn_go_shop.png" id="34_q5dlx"]
 [ext_resource type="Texture2D" uid="uid://o2gr7nw15urf" path="res://TODO/new images/btn_done.png" id="36_7plk7"]
 [ext_resource type="PackedScene" path="res://ui/shop_buy_row.tscn" id="buy_row"]
@@ -307,10 +306,10 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="BuyRow" parent="shroom" unique_id=533694845 instance=ExtResource("buy_row")]
-offset_left = -320.0
-offset_top = 230.0
-offset_right = 320.0
-offset_bottom = 280.0
+offset_left = -460.30344
+offset_top = 217.24442
+offset_right = 179.69656
+offset_bottom = 269.24442
 
 [node name="spider" type="Sprite2D" parent="." unique_id=637875817]
 visible = false
@@ -330,10 +329,10 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="BuyRow" parent="spider" unique_id=1105876398 instance=ExtResource("buy_row")]
-offset_left = -320.0
-offset_top = 230.0
-offset_right = 320.0
-offset_bottom = 280.0
+offset_left = -502.9894
+offset_top = 284.64594
+offset_right = 137.01059
+offset_bottom = 336.64594
 
 [node name="Poots" type="Sprite2D" parent="." unique_id=1966690903]
 visible = false
@@ -353,10 +352,10 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="BuyRow" parent="Poots" unique_id=258940985 instance=ExtResource("buy_row")]
-offset_left = -320.0
-offset_top = 230.0
-offset_right = 320.0
-offset_bottom = 280.0
+offset_left = -378.37622
+offset_top = 282.17584
+offset_right = 261.62378
+offset_bottom = 334.17584
 
 [node name="Mandrake" type="Sprite2D" parent="." unique_id=1783510682]
 visible = false
@@ -376,10 +375,10 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="BuyRow" parent="Mandrake" unique_id=1303850363 instance=ExtResource("buy_row")]
-offset_left = -320.0
-offset_top = 230.0
-offset_right = 320.0
-offset_bottom = 280.0
+offset_left = -448.56946
+offset_top = 217.13756
+offset_right = 191.43054
+offset_bottom = 269.13757
 
 [node name="Moth" type="Sprite2D" parent="." unique_id=1130623288]
 visible = false
@@ -399,12 +398,13 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="BuyRow" parent="Moth" unique_id=573474260 instance=ExtResource("buy_row")]
-offset_left = -320.0
-offset_top = 230.0
-offset_right = 320.0
-offset_bottom = 280.0
+offset_left = -375.70813
+offset_top = 288.12494
+offset_right = 264.29187
+offset_bottom = 340.12494
 
 [node name="Flame" type="AnimatedSprite2D" parent="." unique_id=1233013784]
+visible = false
 position = Vector2(1124, 398)
 scale = Vector2(0.114257544, 0.10449205)
 sprite_frames = SubResource("SpriteFrames_xrivr")
@@ -491,17 +491,12 @@ theme_override_styles/normal = SubResource("StyleBoxTexture_25bs2")
 [node name="EvalEntryScreen" parent="." unique_id=515738209 instance=ExtResource("eval_entry")]
 
 [node name="FlaskConfirmDialog" type="ConfirmationDialog" parent="." unique_id=242328722]
+oversampling_override = 1.0
 title = "Refill Flask"
+position = Vector2i(0, 36)
+size = Vector2i(278, 100)
 ok_button_text = "Refill"
 dialog_text = "Spend 2 rubies to refill your flask?"
-
-[node name="Settingicon" type="TextureButton" parent="." unique_id=635803236]
-offset_left = 1063.0
-offset_top = 545.0
-offset_right = 1063.0
-offset_bottom = 545.0
-scale = Vector2(0.4765625, 0.4609375)
-texture_normal = ExtResource("33_kq1c5")
 
 [connection signal="pressed" from="GaryInfo" to="." method="_on_reveal_button_pressed"]
 [connection signal="pressed" from="TextureButton" to="." method="_on_flask_pressed"]
@@ -525,4 +520,3 @@ texture_normal = ExtResource("33_kq1c5")
 [connection signal="pressed" from="EvaluationPanel/ConvertRubiesButton" to="." method="_on_convert_rubies_pressed"]
 [connection signal="pressed" from="EvaluationPanel/DoneButton" to="." method="_on_done_pressed"]
 [connection signal="confirmed" from="FlaskConfirmDialog" to="." method="_on_flask_confirmed"]
-[connection signal="pressed" from="Settingicon" to="." method="_on_settingicon_pressed"]
