@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://btaqoc1jijga4"]
 
 [ext_resource type="Script" uid="uid://bi36sxsahatk" path="res://node_2d.gd" id="1_epypp"]
+[ext_resource type="PackedScene" path="res://ui/shop_buy_row.tscn" id="buy_row"]
+[ext_resource type="PackedScene" path="res://ui/eval_entry_screen.tscn" id="eval_entry"]
 [ext_resource type="Texture2D" uid="uid://b84rawi5du406" path="res://shelf.png" id="2_epypp"]
 [ext_resource type="Texture2D" uid="uid://brq7rvpyke0uo" path="res://scary gary/Untitled - July 25, 2026 at 20.04.20.png" id="3_rj586"]
 [ext_resource type="Texture2D" uid="uid://byeavwlhy2ps0" path="res://refill.png" id="4_0hol4"]
@@ -259,12 +261,11 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="BuyRow" type="HBoxContainer" parent="Pumpkin" unique_id=850908115]
+[node name="BuyRow" parent="Pumpkin" unique_id=850908115 instance=ExtResource("buy_row")]
 offset_left = -320.0
 offset_top = 230.0
 offset_right = 320.0
 offset_bottom = 280.0
-theme_override_constants/separation = 12
 
 [node name="Gary" type="Sprite2D" parent="." unique_id=796930385]
 visible = false
@@ -283,12 +284,11 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="BuyRow" type="HBoxContainer" parent="Gary" unique_id=69155155]
+[node name="BuyRow" parent="Gary" unique_id=69155155 instance=ExtResource("buy_row")]
 offset_left = -320.0
 offset_top = 230.0
 offset_right = 320.0
 offset_bottom = 280.0
-theme_override_constants/separation = 12
 
 [node name="shroom" type="Sprite2D" parent="." unique_id=158915857]
 visible = false
@@ -307,12 +307,11 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="BuyRow" type="HBoxContainer" parent="shroom" unique_id=533694845]
+[node name="BuyRow" parent="shroom" unique_id=533694845 instance=ExtResource("buy_row")]
 offset_left = -320.0
 offset_top = 230.0
 offset_right = 320.0
 offset_bottom = 280.0
-theme_override_constants/separation = 12
 
 [node name="spider" type="Sprite2D" parent="." unique_id=637875817]
 visible = false
@@ -331,12 +330,11 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="BuyRow" type="HBoxContainer" parent="spider" unique_id=1105876398]
+[node name="BuyRow" parent="spider" unique_id=1105876398 instance=ExtResource("buy_row")]
 offset_left = -320.0
 offset_top = 230.0
 offset_right = 320.0
 offset_bottom = 280.0
-theme_override_constants/separation = 12
 
 [node name="Poots" type="Sprite2D" parent="." unique_id=1966690903]
 visible = false
@@ -355,12 +353,11 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="BuyRow" type="HBoxContainer" parent="Poots" unique_id=258940985]
+[node name="BuyRow" parent="Poots" unique_id=258940985 instance=ExtResource("buy_row")]
 offset_left = -320.0
 offset_top = 230.0
 offset_right = 320.0
 offset_bottom = 280.0
-theme_override_constants/separation = 12
 
 [node name="Mandrake" type="Sprite2D" parent="." unique_id=1783510682]
 visible = false
@@ -379,12 +376,11 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="BuyRow" type="HBoxContainer" parent="Mandrake" unique_id=1303850363]
+[node name="BuyRow" parent="Mandrake" unique_id=1303850363 instance=ExtResource("buy_row")]
 offset_left = -320.0
 offset_top = 230.0
 offset_right = 320.0
 offset_bottom = 280.0
-theme_override_constants/separation = 12
 
 [node name="Moth" type="Sprite2D" parent="." unique_id=1130623288]
 visible = false
@@ -403,12 +399,11 @@ texture_hover = ExtResource("9_0h7mo")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="BuyRow" type="HBoxContainer" parent="Moth" unique_id=573474260]
+[node name="BuyRow" parent="Moth" unique_id=573474260 instance=ExtResource("buy_row")]
 offset_left = -320.0
 offset_top = 230.0
 offset_right = 320.0
 offset_bottom = 280.0
-theme_override_constants/separation = 12
 
 [node name="Flame" type="AnimatedSprite2D" parent="." unique_id=1233013784]
 position = Vector2(1124, 398)
@@ -477,16 +472,12 @@ offset_right = 374.0
 offset_bottom = 102.0
 text = "2 Rubies → 1 VP"
 
-[node name="WhiteShop" type="ItemList" parent="EvaluationPanel" unique_id=1934903243]
+[node name="WhiteShop" parent="EvaluationPanel" unique_id=1934903243 instance=ExtResource("buy_row")]
 layout_mode = 0
 offset_left = -92.0
 offset_top = 24.0
 offset_right = 464.0
-offset_bottom = 534.0
-theme_override_colors/font_color = Color(0.65, 0.65, 0.65, 1)
-theme_override_colors/font_hovered_selected_color = Color(1, 1, 1, 1)
-theme_override_styles/panel = SubResource("StyleBoxTexture_3662s")
-allow_reselect = true
+offset_bottom = 120.0
 
 [node name="DoneButton" type="Button" parent="EvaluationPanel" unique_id=53722011]
 layout_mode = 0
@@ -495,6 +486,9 @@ offset_top = 212.0
 offset_right = 357.0
 offset_bottom = 311.0
 theme_override_styles/normal = SubResource("StyleBoxTexture_25bs2")
+
+[node name="EvalEntryScreen" parent="." instance=ExtResource("eval_entry")]
+visible = false
 
 [node name="FlaskConfirmDialog" type="ConfirmationDialog" parent="." unique_id=242328722]
 title = "Refill Flask"
@@ -529,7 +523,6 @@ texture_normal = ExtResource("33_kq1c5")
 [connection signal="pressed" from="EvaluationPanel/GoShopButton" to="." method="_on_go_shop_pressed"]
 [connection signal="pressed" from="EvaluationPanel/ConvertCoinsButton" to="." method="_on_convert_coins_pressed"]
 [connection signal="pressed" from="EvaluationPanel/ConvertRubiesButton" to="." method="_on_convert_rubies_pressed"]
-[connection signal="item_clicked" from="EvaluationPanel/WhiteShop" to="." method="_on_white_shop_item_clicked"]
 [connection signal="pressed" from="EvaluationPanel/DoneButton" to="." method="_on_done_pressed"]
 [connection signal="confirmed" from="FlaskConfirmDialog" to="." method="_on_flask_confirmed"]
 [connection signal="pressed" from="Settingicon" to="." method="_on_settingicon_pressed"]

@@ -74,7 +74,10 @@ func take_vp_active() -> bool:
 	return state.take_vp(state.eval_player)
 
 func go_shop_active() -> bool:
-	var changed := state.go_to_shop(state.eval_player)
+	return state.go_to_shop(state.eval_player)
+
+func continue_to_shop_active() -> bool:
+	var changed := state.continue_to_shop(state.eval_player)
 	if changed:
 		phase_changed.emit(state.phase)
 	return changed

@@ -12,13 +12,13 @@ static func run() -> int:
 	failures += AssertUtil.truthy(shop.get_script() != null, "shop script compiles")
 	var expected_nodes := {
 		"Button": Button,
-		"EvaluationPanel/TakeVPButton": Button,
-		"EvaluationPanel/GoShopButton": Button,
-		"EvaluationPanel/ConvertCoinsButton": Button,
-		"EvaluationPanel/ConvertRubiesButton": Button,
+		"EvalEntryScreen": EvalEntryScreen,
+		"EvalEntryScreen/TakeVPButton": Button,
+		"EvalEntryScreen/GoShopButton": Button,
+		"EvalEntryScreen/ContinueButton": Button,
 		"EvaluationPanel/DoneButton": Button,
 		"EvaluationPanel/StatusLabel": Label,
-		"EvaluationPanel/WhiteShop": ItemList,
+		"EvaluationPanel/WhiteShop": ShopBuyRow,
 		"FlaskConfirmDialog": AcceptDialog,
 	}
 	for node_path: String in expected_nodes:
@@ -37,9 +37,15 @@ static func run() -> int:
 	controller.stop_active()
 	controller.finish_bonus_die_phase()
 	root.add_child(shop)
+	failures += AssertUtil.eq(controller.state.phase, "evaluation", "post-brew phase is evaluation")
 	failures += AssertUtil.truthy(
+		shop.get_node("EvalEntryScreen").visible,
+		"eval entry screen visible during evaluation"
+	)
+	failures += AssertUtil.eq(
 		shop.get_node("EvaluationPanel").visible,
-		"evaluation panel visible during evaluation"
+		false,
+		"shop panel hidden until continue into shop"
 	)
 	var pumpkin_shelf := shop.get_node("PumpkinShelf") as BaseButton
 	failures += AssertUtil.eq(
@@ -53,11 +59,6 @@ static func run() -> int:
 		"pumpkin shelf is disabled before entering the shop"
 	)
 	failures += AssertUtil.eq(
-		shop.get_node("EvaluationPanel/WhiteShop").item_count,
-		20,
-		"shop catalog retains all chip entries"
-	)
-	failures += AssertUtil.eq(
 		shop.get_node("EvaluationPanel/WhiteShop").visible,
 		false,
 		"white shop is hidden before entering the shop"
@@ -67,37 +68,66 @@ static func run() -> int:
 		"non-exploded evaluation cannot skip automatic vp"
 	)
 	failures += AssertUtil.eq(
-		shop.get_node("EvaluationPanel/DoneButton").disabled,
-		false,
-		"done is available after mandatory vp is granted"
-	)
-	failures += AssertUtil.eq(
-		shop.get_node("Button").disabled,
-		false,
-		"continue matches done availability after mandatory vp"
+		shop.get_node("EvalEntryScreen/ContinueButton").disabled,
+		true,
+		"eval continue stays gated until go-shop is chosen"
 	)
 	var player: PlayerState = controller.state.players[0]
+	failures += AssertUtil.eq(
+		shop.get_node("TextureButton").visible,
+		false,
+		"flask control hidden on eval-entry screen"
+	)
+	failures += AssertUtil.eq(
+		shop.get_node("backgorund").visible,
+		false,
+		"shop background hidden on eval-entry screen"
+	)
+
+	controller.go_shop_active()
+	shop.call("_refresh_evaluation")
+	failures += AssertUtil.eq(controller.state.phase, "evaluation", "go shop stays on eval entry")
+	failures += AssertUtil.eq(
+		pumpkin_shelf.visible,
+		false,
+		"shelves stay hidden until continue"
+	)
+	failures += AssertUtil.eq(
+		shop.get_node("EvalEntryScreen/ContinueButton").disabled,
+		false,
+		"eval continue enabled after choosing shop"
+	)
+	controller.continue_to_shop_active()
+	shop.call("_refresh_evaluation")
+	failures += AssertUtil.eq(controller.state.phase, "shop", "continue enters shop phase")
+	failures += AssertUtil.eq(
+		shop.get_node("EvalEntryScreen").visible,
+		false,
+		"eval entry hides in shop phase"
+	)
+	failures += AssertUtil.eq(
+		shop.get_node("backgorund").visible,
+		true,
+		"shop background appears after continue"
+	)
 	player.flask_full = false
 	player.rubies = 2
 	shop.call("_refresh_evaluation")
 	failures += AssertUtil.eq(
 		shop.get_node("TextureButton").disabled,
 		false,
-		"flask refill is enabled during evaluation"
+		"flask refill is enabled in shop phase"
 	)
 	shop.get_node("TextureButton").pressed.emit()
 	var flask_dialog := shop.get_node_or_null("FlaskConfirmDialog")
 	failures += AssertUtil.truthy(
 		flask_dialog != null and flask_dialog.visible,
-		"evaluation flask refill opens ruby confirmation"
+		"shop flask refill opens ruby confirmation"
 	)
 	if flask_dialog:
 		flask_dialog.confirmed.emit()
-	failures += AssertUtil.truthy(player.flask_full, "evaluation refill fills flask")
-	failures += AssertUtil.eq(player.rubies, 0, "evaluation refill spends two rubies")
-
-	controller.go_shop_active()
-	shop.call("_refresh_evaluation")
+	failures += AssertUtil.truthy(player.flask_full, "shop refill fills flask")
+	failures += AssertUtil.eq(player.rubies, 0, "shop refill spends two rubies")
 	failures += AssertUtil.eq(
 		pumpkin_shelf.visible,
 		true,
@@ -117,6 +147,11 @@ static func run() -> int:
 		shop.get_node("EvaluationPanel/WhiteShop").visible,
 		true,
 		"white shop is visible after choosing shop"
+	)
+	failures += AssertUtil.eq(
+		shop.get_node("EvaluationPanel/WhiteShop").option_count(),
+		MarketCatalog.skus_for_shelf("WhiteShop").size(),
+		"white shop lists white chip buy options"
 	)
 	failures += AssertUtil.eq(
 		shop.get_node("EvaluationPanel/DoneButton").disabled,
@@ -140,16 +175,12 @@ static func run() -> int:
 		controller.state.market[sku] = entry
 	player.coins = 1
 	shop.call("_refresh_evaluation")
-	var white_shop := shop.get_node("EvaluationPanel/WhiteShop") as ItemList
-	var white_index := -1
-	for index in white_shop.item_count:
-		if white_shop.get_item_metadata(index) == "white_1":
-			white_index = index
-			break
-	failures += AssertUtil.truthy(white_index >= 0, "white shop offers white 1")
-	if white_index >= 0:
+	var white_shop := shop.get_node("EvaluationPanel/WhiteShop") as ShopBuyRow
+	var white_option := white_shop.find_option("white_1")
+	failures += AssertUtil.truthy(white_option != null, "white shop offers white 1")
+	if white_option:
 		failures += AssertUtil.eq(
-			white_shop.is_item_disabled(white_index),
+			white_option.disabled,
 			false,
 			"white-only affordable purchase remains reachable"
 		)
@@ -163,7 +194,7 @@ static func run() -> int:
 			true,
 			"continue remains gated while white-only purchase is affordable"
 		)
-		shop.call("_on_white_shop_item_clicked", white_index, Vector2.ZERO, MOUSE_BUTTON_LEFT)
+		white_option.pressed.emit()
 		failures += AssertUtil.eq(
 			player.purchases,
 			["white_1"],
@@ -180,11 +211,10 @@ static func run() -> int:
 		"browsing a shelf does not purchase"
 	)
 	var pumpkin_skus: Array[String] = []
-	var pumpkin_buy_row := shop.get_node_or_null("Pumpkin/BuyRow")
+	var pumpkin_buy_row := shop.get_node_or_null("Pumpkin/BuyRow") as ShopBuyRow
 	failures += AssertUtil.truthy(pumpkin_buy_row != null, "pumpkin panel has buy row")
 	if pumpkin_buy_row:
-		for button: Button in pumpkin_buy_row.get_children():
-			pumpkin_skus.append(str(button.get_meta("sku")))
+		pumpkin_skus = pumpkin_buy_row.skus()
 	failures += AssertUtil.truthy(
 		"pumpkin_1" in pumpkin_skus,
 		"pumpkin panel offers pumpkin 1"
@@ -194,7 +224,7 @@ static func run() -> int:
 		"pumpkin panel offers pumpkin 6"
 	)
 	if pumpkin_buy_row:
-		var pumpkin_button: Button = pumpkin_buy_row.get_child(0)
+		var pumpkin_button := pumpkin_buy_row.option_at(0)
 		pumpkin_button.pressed.emit()
 		failures += AssertUtil.eq(
 			player.purchases,
@@ -212,15 +242,15 @@ static func run() -> int:
 			"continue stays disabled after one purchase with an affordable buy remaining"
 		)
 		failures += AssertUtil.eq(
-			pumpkin_buy_row.get_child_count(),
+			pumpkin_buy_row.option_count(),
 			2,
-			"pumpkin buy row rebuilds after its button emits"
+			"pumpkin buy row keeps fixed slots after purchase"
 		)
 	shop.get_node("GaryInfo").pressed.emit()
-	var gary_buy_row := shop.get_node_or_null("Gary/BuyRow")
+	var gary_buy_row := shop.get_node_or_null("Gary/BuyRow") as ShopBuyRow
 	failures += AssertUtil.truthy(gary_buy_row != null, "gary panel has buy row")
 	if gary_buy_row:
-		var gary_button: Button = gary_buy_row.get_child(0)
+		var gary_button := gary_buy_row.option_at(0)
 		gary_button.pressed.emit()
 		failures += AssertUtil.eq(
 			controller.state.players[0].purchases,
@@ -266,6 +296,7 @@ static func run() -> int:
 	shop.call("_on_done_pressed")
 	controller.state.begin_evaluation()
 	controller.go_shop_active()
+	controller.continue_to_shop_active()
 	shop.call("_refresh_evaluation")
 	player.coins = 3
 	shop.call("_on_done_pressed")
@@ -289,8 +320,12 @@ static func run() -> int:
 	shop.call("_refresh_evaluation")
 	failures += AssertUtil.eq(shop.get_node("PumpkinShelf").visible, false, "shop hidden round 9")
 	failures += AssertUtil.truthy(
-		shop.get_node("EvaluationPanel/ConvertCoinsButton").visible,
-		"coin conversion shown round 9"
+		shop.get_node("EvalEntryScreen").visible,
+		"eval entry shown round 9"
+	)
+	failures += AssertUtil.truthy(
+		shop.get_node("EvalEntryScreen/ConvertCoinsButton").visible,
+		"coin conversion shown round 9 on eval entry"
 	)
 	root.remove_child(shop)
 	shop.free()
@@ -318,7 +353,12 @@ static func _test_shop_overlay_done_stays_on_board() -> int:
 		board.free()
 		return failures
 	var shop: Node = overlay.get_child(0)
+	failures += AssertUtil.truthy(
+		shop.get_node("EvalEntryScreen").visible,
+		"eval entry shown on overlay during evaluation"
+	)
 	controller.go_shop_active()
+	controller.continue_to_shop_active()
 	shop.call("_refresh_evaluation")
 	controller.state.players[0].coins = 0
 	shop.call("_on_done_pressed")

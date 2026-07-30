@@ -245,6 +245,19 @@ func go_to_shop(player_index: int) -> bool:
 	if player.chose_shop or (player.exploded and player.chose_vp):
 		return false
 	player.chose_shop = true
+	# Stay on evaluation until continue_to_shop() — keeps eval entry distinct from shop.
+	return true
+
+
+## Advances from the evaluation entry screen into the shopping UI.
+func continue_to_shop(player_index: int) -> bool:
+	if round == 9 or not _valid_player(player_index):
+		return false
+	if phase != "evaluation":
+		return false
+	var player := players[player_index]
+	if not player.chose_shop:
+		return false
 	phase = "shop"
 	return true
 
@@ -291,7 +304,7 @@ func buy(player_index: int, sku_id: String) -> bool:
 func refill_flask(player_index: int) -> bool:
 	if not _valid_player(player_index):
 		return false
-	if phase != "evaluation" and phase != "shop":
+	if phase != "shop":
 		return false
 	var player := players[player_index]
 	if player.flask_full or player.rubies < 2:
@@ -321,6 +334,8 @@ func finish_eval_player() -> bool:
 		var candidate := (eval_player + offset) % players.size()
 		if not players[candidate].evaluation_done:
 			eval_player = candidate
+			# Next player always starts on the eval-entry screen, not mid-shop.
+			phase = "evaluation"
 			return false
 	return true
 

@@ -33,6 +33,8 @@ func _ready() -> void:
 		setup_bottle_mask(get_node_or_null(button_path) as TextureButton)
 	$Flame.play("flame")
 	_wire_shop_buttons()
+	_wire_buy_rows()
+	_wire_eval_entry()
 	var pc := _controller()
 	if pc == null or pc.state == null:
 		$EvaluationPanel.visible = true
@@ -51,25 +53,65 @@ func setup_bottle_mask(btn: TextureButton) -> void:
 func _wire_shop_buttons() -> void:
 	get_node(FLASK_BUY_BUTTON).visible = true
 
+func _wire_eval_entry() -> void:
+	var entry := _eval_entry()
+	if entry == null:
+		return
+	if not entry.take_vp_pressed.is_connected(_on_take_vp_pressed):
+		entry.take_vp_pressed.connect(_on_take_vp_pressed)
+	if not entry.go_shop_pressed.is_connected(_on_go_shop_pressed):
+		entry.go_shop_pressed.connect(_on_go_shop_pressed)
+	if not entry.convert_coins_pressed.is_connected(_on_convert_coins_pressed):
+		entry.convert_coins_pressed.connect(_on_convert_coins_pressed)
+	if not entry.convert_rubies_pressed.is_connected(_on_convert_rubies_pressed):
+		entry.convert_rubies_pressed.connect(_on_convert_rubies_pressed)
+	if not entry.continue_pressed.is_connected(_on_eval_continue_pressed):
+		entry.continue_pressed.connect(_on_eval_continue_pressed)
+
+func _eval_entry() -> EvalEntryScreen:
+	return get_node_or_null("EvalEntryScreen") as EvalEntryScreen
+
+func _wire_buy_rows() -> void:
+	for popup_name: String in SHELF_POPUPS.values():
+		var row := get_node_or_null("%s/BuyRow" % popup_name)
+		if row and row.has_signal("buy_pressed") and not row.buy_pressed.is_connected(_on_shop_item_pressed):
+			row.buy_pressed.connect(_on_shop_item_pressed)
+	var white := get_node_or_null("EvaluationPanel/WhiteShop")
+	if white and white.has_signal("buy_pressed") and not white.buy_pressed.is_connected(_on_shop_item_pressed):
+		white.buy_pressed.connect(_on_shop_item_pressed)
+
 func _populate_white_shop() -> void:
-	$EvaluationPanel/WhiteShop.clear()
-	for sku: String in _controller().state.market:
-		var entry: Dictionary = _controller().state.market[sku]
-		$EvaluationPanel/WhiteShop.add_item(
-			"%s — %d coins" % [entry["label"], entry["cost"]]
-		)
-		var index: int = $EvaluationPanel/WhiteShop.item_count - 1
-		$EvaluationPanel/WhiteShop.set_item_metadata(index, sku)
+	var white := get_node_or_null("EvaluationPanel/WhiteShop") as ShopBuyRow
+	if white == null:
+		return
+	var market: Dictionary = _controller().state.market
+	var skus: Array = MarketCatalog.skus_for_shelf("WhiteShop")
+	white.bind_skus(skus, market, _can_buy)
 
 func _refresh_evaluation(message: String = "") -> void:
 	var pc := _controller()
 	if pc == null or pc.state == null:
 		$EvaluationPanel.visible = false
+		var entry_missing := _eval_entry()
+		if entry_missing:
+			entry_missing.visible = false
+		_set_shop_chrome_visible(false)
 		return
 	var state := pc.state
-	$EvaluationPanel.visible = state.phase in ["evaluation", "shop", "game_over"]
-	if state.phase == "game_over":
+	var entry := _eval_entry()
+	if entry:
+		entry.refresh(state, message)
+
+	var in_shop := state.phase == "shop"
+	var game_over := state.phase == "game_over"
+	# Shop art/controls only after Continue leaves the eval-entry screen.
+	_set_shop_chrome_visible(in_shop or game_over)
+	$EvaluationPanel.visible = in_shop or game_over
+	if game_over:
 		_show_winners()
+		return
+	if not in_shop:
+		_refresh_shop_controls(state.players[state.eval_player])
 		return
 	var player: PlayerState = state.players[state.eval_player]
 	var status := "Round %d · Player %d · VP %d · Coins %d · Rubies %d" % [
@@ -82,21 +124,11 @@ func _refresh_evaluation(message: String = "") -> void:
 	if not message.is_empty():
 		status += "\n" + message
 	$EvaluationPanel/StatusLabel.text = status
-	$EvaluationPanel/TakeVPButton.disabled = (
-		player.chose_vp or (player.exploded and player.chose_shop)
-	)
-	$EvaluationPanel/GoShopButton.visible = state.round != 9
-	$EvaluationPanel/GoShopButton.disabled = (
-		player.chose_shop or (player.exploded and player.chose_vp)
-	)
-	$EvaluationPanel/ConvertCoinsButton.visible = state.round == 9
-	$EvaluationPanel/ConvertRubiesButton.visible = state.round == 9
-	$EvaluationPanel/ConvertCoinsButton.disabled = (
-		player.coins < 5 or (player.exploded and player.chose_vp)
-	)
-	$EvaluationPanel/ConvertRubiesButton.disabled = (
-		player.rubies < 2 or (player.exploded and player.chose_vp)
-	)
+	# Choice controls live on EvalEntryScreen — keep duplicates hidden on the shop panel.
+	$EvaluationPanel/TakeVPButton.visible = false
+	$EvaluationPanel/GoShopButton.visible = false
+	$EvaluationPanel/ConvertCoinsButton.visible = false
+	$EvaluationPanel/ConvertRubiesButton.visible = false
 	if state.round != 9 and player.chose_shop:
 		_update_done_buttons(
 			player.purchases.size() >= 2
@@ -106,6 +138,25 @@ func _refresh_evaluation(message: String = "") -> void:
 		_update_done_buttons(player.chose_vp or player.chose_shop)
 	_refresh_shop_controls(player)
 
+
+## Hides the real shop scene chrome while phase == "evaluation" (eval-entry only).
+func _set_shop_chrome_visible(show_shop: bool) -> void:
+	for node_name: String in [
+		"backgorund",
+		"Shopsign",
+		"Flame",
+		"Button",
+		"Settingicon",
+		FLASK_BUY_BUTTON,
+	]:
+		var node := get_node_or_null(node_name)
+		if node:
+			node.visible = show_shop
+	for node_name: String in INFO_SHELVES:
+		var shelf := get_node_or_null(node_name)
+		if shelf and not show_shop:
+			shelf.visible = false
+
 func _update_done_buttons(ready: bool) -> void:
 	for button: BaseButton in [$EvaluationPanel/DoneButton, $Button]:
 		button.visible = true
@@ -113,7 +164,11 @@ func _update_done_buttons(ready: bool) -> void:
 
 func _refresh_shop_controls(player: PlayerState) -> void:
 	var state := _controller().state
-	var shop_open := state.round != 9 and player.chose_shop
+	var shop_open := (
+		state.phase == "shop"
+		and state.round != 9
+		and player.chose_shop
+	)
 	for node_name: String in INFO_SHELVES:
 		var button := get_node(node_name) as BaseButton
 		button.visible = shop_open
@@ -125,19 +180,16 @@ func _refresh_shop_controls(player: PlayerState) -> void:
 			if buy_row:
 				buy_row.visible = false
 	var flask_button := get_node(FLASK_BUY_BUTTON) as BaseButton
-	flask_button.visible = state.round != 9
+	flask_button.visible = shop_open
 	flask_button.disabled = (
-		not _can_refill_flask()
+		not shop_open
+		or not _can_refill_flask()
 		or player.flask_full
 		or player.rubies < 2
 	)
 	$EvaluationPanel/WhiteShop.visible = shop_open
-	for index in $EvaluationPanel/WhiteShop.item_count:
-		var sku: String = $EvaluationPanel/WhiteShop.get_item_metadata(index)
-		$EvaluationPanel/WhiteShop.set_item_disabled(
-			index,
-			not state.can_buy(state.eval_player, sku)
-		)
+	if shop_open:
+		_populate_white_shop()
 
 func _on_shop_item_pressed(sku: String) -> void:
 	var bought := _controller().buy_active(sku)
@@ -145,7 +197,9 @@ func _on_shop_item_pressed(sku: String) -> void:
 	for shelf_node: String in SHELF_POPUPS:
 		var popup := get_node(SHELF_POPUPS[shelf_node])
 		if popup.visible:
-			_rebuild_buy_buttons(shelf_node, popup)
+			_refresh_buy_row(shelf_node, popup)
+	if $EvaluationPanel/WhiteShop.visible:
+		_populate_white_shop()
 
 func _is_shopping() -> bool:
 	var pc := _controller()
@@ -169,7 +223,8 @@ func _can_refill_flask() -> bool:
 	if pc == null or pc.state == null:
 		return false
 	var state := pc.state
-	if state.phase != "evaluation" and state.phase != "shop":
+	# Flask refill belongs to the shop screen, not the eval-entry placeholder.
+	if state.phase != "shop":
 		return false
 	var player: PlayerState = state.players[state.eval_player]
 	return not player.evaluation_done and not player.flask_full and player.rubies >= 2
@@ -179,32 +234,17 @@ func _open_ingredient(shelf_node: String, popup: Node) -> void:
 		popup.visible = false
 		return
 	popup.visible = true
-	_rebuild_buy_buttons(shelf_node, popup)
+	_refresh_buy_row(shelf_node, popup)
 
-func _rebuild_buy_buttons(shelf_node: String, popup: Node) -> void:
-	var row := popup.get_node("BuyRow") as HBoxContainer
+func _refresh_buy_row(shelf_node: String, popup: Node) -> void:
+	var row := popup.get_node_or_null("BuyRow") as ShopBuyRow
+	if row == null:
+		return
 	row.visible = _is_shopping()
 	if not row.visible:
 		return
-	for child in row.get_children():
-		row.remove_child(child)
-		child.queue_free()
-	for sku: String in MarketCatalog.skus_for_shelf(shelf_node):
-		var entry: Dictionary = _controller().state.market[sku]
-		var button := Button.new()
-		button.text = "%d — %d coins" % [int(entry["value"]), int(entry["cost"])]
-		button.disabled = not _can_buy(sku)
-		button.set_meta("sku", sku)
-		button.pressed.connect(_on_shop_item_pressed.bind(sku))
-		row.add_child(button)
-
-func _on_white_shop_item_clicked(
-	index: int,
-	_at_position: Vector2,
-	_mouse_button_index: int
-) -> void:
-	var sku: String = $EvaluationPanel/WhiteShop.get_item_metadata(index)
-	_on_shop_item_pressed(sku)
+	var market: Dictionary = _controller().state.market
+	row.bind_skus(MarketCatalog.skus_for_shelf(shelf_node), market, _can_buy)
 
 func _on_take_vp_pressed() -> void:
 	var success := _controller().take_vp_active()
@@ -214,7 +254,29 @@ func _on_go_shop_pressed() -> void:
 	var success := _controller().go_shop_active()
 	if success:
 		_unspent_coin_warning_player = -1
-	_refresh_evaluation("Shop opened." if success else "Shop choice unavailable.")
+	_refresh_evaluation("Shop selected — press Continue." if success else "Shop choice unavailable.")
+
+func _on_eval_continue_pressed() -> void:
+	var pc := _controller()
+	if pc == null or pc.state == null:
+		return
+	var player: PlayerState = pc.state.players[pc.state.eval_player]
+	if player.chose_shop and pc.state.round != 9:
+		if pc.continue_to_shop_active():
+			_refresh_evaluation("Shop opened.")
+		return
+	# VP-only (exploded) or round 9: finish this player / advance.
+	if pc.finish_eval_player():
+		_unspent_coin_warning_player = -1
+		pc.end_turn_and_continue()
+		if pc.state.phase == "game_over":
+			_show_winners()
+		elif get_tree().current_scene == self:
+			get_tree().change_scene_to_file("res://board.tscn")
+		else:
+			_refresh_evaluation()
+	else:
+		_refresh_evaluation("Pass to Player %d." % (pc.state.eval_player + 1))
 
 func _on_convert_coins_pressed() -> void:
 	var success := _controller().convert_coins_active()
@@ -267,8 +329,11 @@ func _show_winners() -> void:
 		"s" if labels.size() != 1 else "",
 		", ".join(labels),
 	]
+	var entry := _eval_entry()
+	if entry:
+		entry.visible = false
 	for child in $EvaluationPanel.get_children():
-		if child is BaseButton or child is ItemList:
+		if child is BaseButton or child is ItemList or child is ShopBuyRow:
 			child.visible = false
 	for node_name: String in INFO_SHELVES:
 		get_node(node_name).visible = false
