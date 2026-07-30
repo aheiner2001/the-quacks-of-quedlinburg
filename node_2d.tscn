@@ -243,7 +243,6 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="Pumpkin" type="Sprite2D" parent="." unique_id=853445973]
-visible = false
 position = Vector2(702, 344.00003)
 scale = Vector2(0.58439714, 0.5984042)
 texture = ExtResource("14_nr8wp")
@@ -260,11 +259,12 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="BuyRow" parent="Pumpkin" unique_id=850908115 instance=ExtResource("buy_row")]
+visible = false
 z_index = 130
-offset_left = -160.0
-offset_top = 210.0
-offset_right = 480.0
-offset_bottom = 270.0
+offset_left = -557.83984
+offset_top = 254.00885
+offset_right = 82.16016
+offset_bottom = 314.00885
 
 [node name="Gary" type="Sprite2D" parent="." unique_id=796930385]
 visible = false
@@ -284,6 +284,7 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="BuyRow" parent="Gary" unique_id=69155155 instance=ExtResource("buy_row")]
+visible = false
 z_index = 130
 offset_left = -160.0
 offset_top = 210.0

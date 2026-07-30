@@ -176,6 +176,7 @@ offset_right = 1131.0
 offset_bottom = 567.0
 
 [node name="ExplosionRiskBar" type="TextureProgressBar" parent="." unique_id=517596367]
+visible = false
 offset_left = 249.0
 offset_top = -103.0
 offset_right = 1017.0
@@ -185,10 +186,11 @@ texture_under = ExtResource("13_lxheh")
 texture_progress = ExtResource("14_r6t13")
 
 [node name="RewardsStrip" parent="." unique_id=1793024599 instance=ExtResource("12_rewards")]
-offset_left = 372.0
-offset_top = 130.0
-offset_right = 846.0
-offset_bottom = 250.0
+visible = false
+offset_left = 378.0
+offset_top = 132.0
+offset_right = 852.0
+offset_bottom = 252.0
 
 [node name="BonusDieModal" parent="." unique_id=1517094745 instance=ExtResource("9_bonus_die")]
 visible = false
