@@ -18,7 +18,6 @@ static func run() -> int:
 		"EvalEntryScreen/ContinueButton": Button,
 		"EvaluationPanel/DoneButton": Button,
 		"EvaluationPanel/StatusLabel": Label,
-		"EvaluationPanel/WhiteShop": ShopBuyRow,
 		"FlaskConfirmDialog": AcceptDialog,
 	}
 	for node_path: String in expected_nodes:
@@ -61,7 +60,7 @@ static func run() -> int:
 	failures += AssertUtil.eq(
 		shop.get_node("EvaluationPanel/WhiteShop").visible,
 		false,
-		"white shop is hidden before entering the shop"
+		"white shop stays hidden (no white token sales)"
 	)
 	failures += AssertUtil.truthy(
 		controller.state.players[0].chose_vp,
@@ -145,13 +144,8 @@ static func run() -> int:
 	)
 	failures += AssertUtil.eq(
 		shop.get_node("EvaluationPanel/WhiteShop").visible,
-		true,
-		"white shop is visible after choosing shop"
-	)
-	failures += AssertUtil.eq(
-		shop.get_node("EvaluationPanel/WhiteShop").option_count(),
-		MarketCatalog.skus_for_shelf("WhiteShop").size(),
-		"white shop lists white chip buy options"
+		false,
+		"white shop never opens in the shop"
 	)
 	failures += AssertUtil.eq(
 		shop.get_node("EvaluationPanel/DoneButton").disabled,
@@ -171,34 +165,40 @@ static func run() -> int:
 	var original_market: Dictionary = controller.state.market.duplicate(true)
 	for sku: String in controller.state.market:
 		var entry: Dictionary = controller.state.market[sku]
-		entry["cost"] = 1 if sku == "white_1" else 99
+		entry["cost"] = 1 if sku == "pumpkin_1" else 99
 		controller.state.market[sku] = entry
 	player.coins = 1
 	shop.call("_refresh_evaluation")
-	var white_shop := shop.get_node("EvaluationPanel/WhiteShop") as ShopBuyRow
-	var white_option := white_shop.find_option("white_1")
-	failures += AssertUtil.truthy(white_option != null, "white shop offers white 1")
-	if white_option:
-		failures += AssertUtil.eq(
-			white_option.disabled,
-			false,
-			"white-only affordable purchase remains reachable"
-		)
-		failures += AssertUtil.eq(
-			shop.get_node("EvaluationPanel/DoneButton").disabled,
-			true,
-			"done remains gated while white-only purchase is affordable"
-		)
-		failures += AssertUtil.eq(
-			shop.get_node("Button").disabled,
-			true,
-			"continue remains gated while white-only purchase is affordable"
-		)
-		white_option.pressed.emit()
+	failures += AssertUtil.eq(
+		controller.state.can_buy(0, "white_1"),
+		false,
+		"white tokens cannot be bought"
+	)
+	failures += AssertUtil.eq(
+		controller.state.can_buy(0, "pumpkin_1"),
+		true,
+		"shelf-only affordable purchase remains reachable"
+	)
+	failures += AssertUtil.eq(
+		shop.get_node("EvaluationPanel/DoneButton").disabled,
+		true,
+		"done remains gated while a shelf purchase is affordable"
+	)
+	failures += AssertUtil.eq(
+		shop.get_node("Button").disabled,
+		true,
+		"continue remains gated while a shelf purchase is affordable"
+	)
+	shop.get_node("PumpkinShelf").pressed.emit()
+	var afford_row := shop.get_node_or_null("Pumpkin/BuyRow") as ShopBuyRow
+	var pumpkin_option := afford_row.find_option("pumpkin_1") if afford_row else null
+	failures += AssertUtil.truthy(pumpkin_option != null, "pumpkin shelf offers pumpkin 1")
+	if pumpkin_option:
+		pumpkin_option.pressed.emit()
 		failures += AssertUtil.eq(
 			player.purchases,
-			["white_1"],
-			"white shop purchase buys an affordable white chip"
+			["pumpkin_1"],
+			"shelf buy purchases an affordable chip"
 		)
 	controller.state.market = original_market
 	player.purchases.clear()

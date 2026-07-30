@@ -273,6 +273,11 @@ func can_buy(player_index: int, sku_id: String) -> bool:
 	):
 		return false
 	var entry: Dictionary = market[sku_id]
+	# House rule: white boomberries are never sold; buy from ingredient shelves only.
+	if int(entry.get("color", -1)) == Chip.ChipColor.WHITE:
+		return false
+	if str(entry.get("shelf_node", "")) == "WhiteShop":
+		return false
 	if not MarketCatalog.is_unlocked(entry, round):
 		return false
 	if int(entry["stock"]) < 1 or int(entry["cost"]) > player.coins:

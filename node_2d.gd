@@ -35,12 +35,14 @@ func _ready() -> void:
 	_wire_shop_buttons()
 	_wire_buy_rows()
 	_wire_eval_entry()
+	var white_shop := get_node_or_null("EvaluationPanel/WhiteShop")
+	if white_shop:
+		white_shop.visible = false
 	var pc := _controller()
 	if pc == null or pc.state == null:
 		$EvaluationPanel.visible = true
 		$EvaluationPanel/StatusLabel.text = "Start a game from the main menu."
 		return
-	_populate_white_shop()
 	_refresh_evaluation()
 
 func setup_bottle_mask(btn: TextureButton) -> void:
@@ -76,17 +78,6 @@ func _wire_buy_rows() -> void:
 		var row := get_node_or_null("%s/BuyRow" % popup_name)
 		if row and row.has_signal("buy_pressed") and not row.buy_pressed.is_connected(_on_shop_item_pressed):
 			row.buy_pressed.connect(_on_shop_item_pressed)
-	var white := get_node_or_null("EvaluationPanel/WhiteShop")
-	if white and white.has_signal("buy_pressed") and not white.buy_pressed.is_connected(_on_shop_item_pressed):
-		white.buy_pressed.connect(_on_shop_item_pressed)
-
-func _populate_white_shop() -> void:
-	var white := get_node_or_null("EvaluationPanel/WhiteShop") as ShopBuyRow
-	if white == null:
-		return
-	var market: Dictionary = _controller().state.market
-	var skus: Array = MarketCatalog.skus_for_shelf("WhiteShop")
-	white.bind_skus(skus, market, _can_buy)
 
 func _refresh_evaluation(message: String = "") -> void:
 	var pc := _controller()
@@ -187,9 +178,10 @@ func _refresh_shop_controls(player: PlayerState) -> void:
 		or player.flask_full
 		or player.rubies < 2
 	)
-	$EvaluationPanel/WhiteShop.visible = shop_open
-	if shop_open:
-		_populate_white_shop()
+	# White boomberries are never sold — shelf ingredients only.
+	var white_shop := get_node_or_null("EvaluationPanel/WhiteShop")
+	if white_shop:
+		white_shop.visible = false
 
 func _on_shop_item_pressed(sku: String) -> void:
 	var bought := _controller().buy_active(sku)
@@ -198,8 +190,6 @@ func _on_shop_item_pressed(sku: String) -> void:
 		var popup := get_node(SHELF_POPUPS[shelf_node])
 		if popup.visible:
 			_refresh_buy_row(shelf_node, popup)
-	if $EvaluationPanel/WhiteShop.visible:
-		_populate_white_shop()
 
 func _is_shopping() -> bool:
 	var pc := _controller()
