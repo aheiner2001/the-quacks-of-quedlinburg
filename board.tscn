@@ -15,7 +15,9 @@
 [ext_resource type="PackedScene" path="res://ui/mandrake_modal.tscn" id="11_mandrake"]
 [ext_resource type="PackedScene" path="res://ui/rewards_strip.tscn" id="12_rewards"]
 [ext_resource type="Script" uid="uid://bfl13m273apvt" path="res://ui/flask_drag.gd" id="13_flask_drag"]
+[ext_resource type="Texture2D" uid="uid://cqqambi6tq61v" path="res://TODO/new images/risk_bar_bg.png" id="13_lxheh"]
 [ext_resource type="Texture2D" uid="uid://1eel2dpgk25h" path="res://TODO/new images/btn_flask_full.png" id="14_flask"]
+[ext_resource type="Texture2D" uid="uid://b0ijlmkikyuw8" path="res://TODO/new images/status_boom_berry.png" id="14_r6t13"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mgc1s"]
 texture = ExtResource("3_rq8yp")
@@ -160,10 +162,10 @@ cauldron_path = NodePath("DrawStage/CauldronPlaceholder")
 
 [node name="ProgressTrack" parent="." unique_id=1936312828 instance=ExtResource("7_track")]
 anchors_preset = 0
-offset_left = 756.0
-offset_top = 4.0
-offset_right = 956.0
-offset_bottom = 524.0
+offset_left = 799.0
+offset_top = 99.0
+offset_right = 999.0
+offset_bottom = 542.0
 
 [node name="TokenHistory" parent="." unique_id=1241667 instance=ExtResource("8_history")]
 visible = false
@@ -173,19 +175,20 @@ offset_top = 50.0
 offset_right = 1131.0
 offset_bottom = 567.0
 
-[node name="ExplosionRiskBar" type="ProgressBar" parent="." unique_id=1758947068]
-offset_left = 398.0
-offset_top = 68.0
-offset_right = 872.0
-offset_bottom = 96.0
+[node name="ExplosionRiskBar" type="TextureProgressBar" parent="." unique_id=517596367]
+offset_left = 249.0
+offset_top = -103.0
+offset_right = 1017.0
+offset_bottom = 409.0
 max_value = 8.0
-show_percentage = false
+texture_under = ExtResource("13_lxheh")
+texture_progress = ExtResource("14_r6t13")
 
 [node name="RewardsStrip" parent="." unique_id=1793024599 instance=ExtResource("12_rewards")]
-offset_left = 229.0
-offset_top = 77.0
-offset_right = 703.0
-offset_bottom = 197.0
+offset_left = 372.0
+offset_top = 130.0
+offset_right = 846.0
+offset_bottom = 250.0
 
 [node name="BonusDieModal" parent="." unique_id=1517094745 instance=ExtResource("9_bonus_die")]
 visible = false
