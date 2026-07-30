@@ -261,10 +261,11 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="BuyRow" parent="Pumpkin" unique_id=850908115 instance=ExtResource("buy_row")]
-offset_left = -622.8641
-offset_top = 248.99553
-offset_right = 17.135925
-offset_bottom = 300.99554
+z_index = 130
+offset_left = -160.0
+offset_top = 210.0
+offset_right = 480.0
+offset_bottom = 270.0
 
 [node name="Gary" type="Sprite2D" parent="." unique_id=796930385]
 visible = false
@@ -284,10 +285,11 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="BuyRow" parent="Gary" unique_id=69155155 instance=ExtResource("buy_row")]
-offset_left = -320.0
-offset_top = 230.0
-offset_right = 320.0
-offset_bottom = 280.0
+z_index = 130
+offset_left = -160.0
+offset_top = 210.0
+offset_right = 480.0
+offset_bottom = 270.0
 
 [node name="shroom" type="Sprite2D" parent="." unique_id=158915857]
 visible = false
@@ -307,10 +309,11 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="BuyRow" parent="shroom" unique_id=533694845 instance=ExtResource("buy_row")]
-offset_left = -320.0
-offset_top = 230.0
-offset_right = 320.0
-offset_bottom = 280.0
+z_index = 130
+offset_left = -160.0
+offset_top = 210.0
+offset_right = 480.0
+offset_bottom = 270.0
 
 [node name="spider" type="Sprite2D" parent="." unique_id=637875817]
 visible = false
@@ -330,10 +333,11 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="BuyRow" parent="spider" unique_id=1105876398 instance=ExtResource("buy_row")]
-offset_left = -320.0
-offset_top = 230.0
-offset_right = 320.0
-offset_bottom = 280.0
+z_index = 130
+offset_left = -160.0
+offset_top = 210.0
+offset_right = 480.0
+offset_bottom = 270.0
 
 [node name="Poots" type="Sprite2D" parent="." unique_id=1966690903]
 visible = false
@@ -353,10 +357,11 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="BuyRow" parent="Poots" unique_id=258940985 instance=ExtResource("buy_row")]
-offset_left = -320.0
-offset_top = 230.0
-offset_right = 320.0
-offset_bottom = 280.0
+z_index = 130
+offset_left = -160.0
+offset_top = 210.0
+offset_right = 480.0
+offset_bottom = 270.0
 
 [node name="Mandrake" type="Sprite2D" parent="." unique_id=1783510682]
 visible = false
@@ -376,10 +381,11 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="BuyRow" parent="Mandrake" unique_id=1303850363 instance=ExtResource("buy_row")]
-offset_left = -320.0
-offset_top = 230.0
-offset_right = 320.0
-offset_bottom = 280.0
+z_index = 130
+offset_left = -160.0
+offset_top = 210.0
+offset_right = 480.0
+offset_bottom = 270.0
 
 [node name="Moth" type="Sprite2D" parent="." unique_id=1130623288]
 visible = false
@@ -399,10 +405,11 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="BuyRow" parent="Moth" unique_id=573474260 instance=ExtResource("buy_row")]
-offset_left = -320.0
-offset_top = 230.0
-offset_right = 320.0
-offset_bottom = 280.0
+z_index = 130
+offset_left = -160.0
+offset_top = 210.0
+offset_right = 480.0
+offset_bottom = 270.0
 
 [node name="Flame" type="AnimatedSprite2D" parent="." unique_id=1233013784]
 position = Vector2(1124, 398)

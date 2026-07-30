@@ -159,6 +159,7 @@ func _refresh_shop_controls(player: PlayerState) -> void:
 		state.phase == "shop"
 		and state.round != 9
 		and player.chose_shop
+		and not player.evaluation_done
 	)
 	for node_name: String in INFO_SHELVES:
 		var button := get_node(node_name) as BaseButton
@@ -230,6 +231,10 @@ func _refresh_buy_row(shelf_node: String, popup: Node) -> void:
 	var row := popup.get_node_or_null("BuyRow") as ShopBuyRow
 	if row == null:
 		return
+	# Keep buy controls above EvaluationPanel so clicks aren't eaten by the HUD.
+	if popup is CanvasItem:
+		(popup as CanvasItem).z_index = 125
+	row.z_index = 130
 	row.visible = _is_shopping()
 	if not row.visible:
 		return
@@ -330,7 +335,15 @@ func _show_winners() -> void:
 	get_node(FLASK_BUY_BUTTON).visible = false
 
 func _controller() -> PhaseController:
-	var session := get_node_or_null("/root/GameSession")
+	# Prefer tree-root lookup; absolute "/root/..." fails if the node isn't in an active tree.
+	var session: Node = null
+	var tree := get_tree()
+	if tree:
+		session = tree.root.get_node_or_null("GameSession")
+	if session == null:
+		var main := Engine.get_main_loop()
+		if main and main.root:
+			session = main.root.get_node_or_null("GameSession")
 	if session == null:
 		return null
 	return session.get("controller") as PhaseController
