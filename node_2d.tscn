@@ -1,8 +1,6 @@
 [gd_scene format=3 uid="uid://btaqoc1jijga4"]
 
 [ext_resource type="Script" uid="uid://bi36sxsahatk" path="res://node_2d.gd" id="1_epypp"]
-[ext_resource type="PackedScene" path="res://ui/shop_buy_row.tscn" id="buy_row"]
-[ext_resource type="PackedScene" path="res://ui/eval_entry_screen.tscn" id="eval_entry"]
 [ext_resource type="Texture2D" uid="uid://b84rawi5du406" path="res://shelf.png" id="2_epypp"]
 [ext_resource type="Texture2D" uid="uid://brq7rvpyke0uo" path="res://scary gary/Untitled - July 25, 2026 at 20.04.20.png" id="3_rj586"]
 [ext_resource type="Texture2D" uid="uid://byeavwlhy2ps0" path="res://refill.png" id="4_0hol4"]
@@ -37,8 +35,9 @@
 [ext_resource type="Texture2D" uid="uid://bm5bv8nm035ta" path="res://TODO/new images/btn_take_vp.png" id="33_6ip5v"]
 [ext_resource type="Texture2D" uid="uid://dl0gvp8etrj8s" path="res://assets/settingicon.png" id="33_kq1c5"]
 [ext_resource type="Texture2D" uid="uid://ippeibptlbix" path="res://TODO/new images/btn_go_shop.png" id="34_q5dlx"]
-[ext_resource type="Texture2D" uid="uid://b4dl4v3b7b0ju" path="res://TODO/new images/stock_badge.png" id="35_c4wnb"]
 [ext_resource type="Texture2D" uid="uid://o2gr7nw15urf" path="res://TODO/new images/btn_done.png" id="36_7plk7"]
+[ext_resource type="PackedScene" path="res://ui/shop_buy_row.tscn" id="buy_row"]
+[ext_resource type="PackedScene" path="res://ui/eval_entry_screen.tscn" id="eval_entry"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kq1c5"]
 atlas = ExtResource("32_mryly")
@@ -122,15 +121,14 @@ animations = [{
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_kq1c5"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q5dlx"]
+bg_color = Color(0.004471574, 0.01725716, 0.020494621, 1)
+
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_xrivr"]
 texture = ExtResource("33_6ip5v")
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_13qdw"]
 texture = ExtResource("34_q5dlx")
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3662s"]
-texture = ExtResource("35_c4wnb")
-modulate_color = Color(0.5058824, 0.54509807, 0.33333334, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_25bs2"]
 texture = ExtResource("36_7plk7")
@@ -144,10 +142,10 @@ texture = ExtResource("2_epypp")
 centered = false
 
 [node name="GaryInfo" type="TextureButton" parent="." unique_id=1790616970]
-offset_left = 453.0
-offset_top = 174.00002
-offset_right = 502.69873
-offset_bottom = 305.4386
+offset_left = 512.0
+offset_top = 222.0
+offset_right = 547.9523
+offset_bottom = 305.79926
 scale = Vector2(1.891396, 1.7422581)
 texture_normal = ExtResource("3_rj586")
 texture_pressed = ExtResource("4_ir8iy")
@@ -170,10 +168,10 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="PumpkinShelf" type="TextureButton" parent="." unique_id=1653819952]
-offset_left = 323.00003
-offset_top = 232.0
-offset_right = 382.2155
-offset_bottom = 291.11874
+offset_left = 428.0
+offset_top = 255.00003
+offset_right = 463.42355
+offset_bottom = 294.0299
 scale = Vector2(1.891396, 1.7422581)
 texture_normal = ExtResource("13_nr8wp")
 texture_hover = ExtResource("14_d2bti")
@@ -181,10 +179,10 @@ ignore_texture_size = true
 stretch_mode = 0
 
 [node name="ShroomInfo" type="TextureButton" parent="." unique_id=1830602179]
-offset_left = 572.0
-offset_top = 245.0
-offset_right = 620.6413
-offset_bottom = 292.6394
+offset_left = 593.0
+offset_top = 262.00003
+offset_right = 633.182
+offset_bottom = 297.5861
 scale = Vector2(1.891396, 1.7422581)
 texture_normal = ExtResource("10_flf07")
 texture_hover = ExtResource("11_k73cj")
@@ -192,10 +190,10 @@ ignore_texture_size = true
 stretch_mode = 0
 
 [node name="SpiderShelf" type="TextureButton" parent="." unique_id=1594515852]
-offset_left = 676.0
-offset_top = 245.0
-offset_right = 740.5026
-offset_bottom = 300.101
+offset_left = 685.0
+offset_top = 270.0
+offset_right = 730.46906
+offset_bottom = 310.17786
 scale = Vector2(1.891396, 1.7422581)
 texture_normal = ExtResource("12_rjqkl")
 texture_hover = ExtResource("13_fs4d3")
@@ -203,10 +201,10 @@ ignore_texture_size = true
 stretch_mode = 0
 
 [node name="Pootsshelf" type="TextureButton" parent="." unique_id=1886532352]
-offset_left = 453.00003
-offset_top = 349.0
-offset_right = 510.62936
-offset_bottom = 400.6571
+offset_left = 700.0
+offset_top = 372.0
+offset_right = 734.36615
+offset_bottom = 406.43805
 scale = Vector2(1.891396, 1.7422581)
 texture_normal = ExtResource("14_e8dv2")
 texture_hover = ExtResource("15_2nhjh")
@@ -214,10 +212,10 @@ ignore_texture_size = true
 stretch_mode = 0
 
 [node name="MothShelf" type="TextureButton" parent="." unique_id=332072509]
-offset_left = 815.0
-offset_top = 245.0
-offset_right = 872.6294
-offset_bottom = 296.6571
+offset_left = 465.00006
+offset_top = 358.00003
+offset_right = 512.5839
+offset_bottom = 396.45587
 scale = Vector2(1.891396, 1.7422581)
 texture_normal = ExtResource("16_gt76g")
 texture_hover = ExtResource("17_1fr6y")
@@ -225,10 +223,10 @@ ignore_texture_size = true
 stretch_mode = 0
 
 [node name="MandrakeShelf" type="TextureButton" parent="." unique_id=309461198]
-offset_left = 618.0
-offset_top = 341.0
-offset_right = 676.6868
-offset_bottom = 404.71036
+offset_left = 563.0
+offset_top = 350.0
+offset_right = 609.5265
+offset_bottom = 393.04752
 scale = Vector2(1.891396, 1.7422581)
 texture_normal = ExtResource("18_2hxjc")
 texture_hover = ExtResource("19_ebxd8")
@@ -236,9 +234,10 @@ ignore_texture_size = true
 stretch_mode = 0
 
 [node name="Shopsign" type="TextureButton" parent="." unique_id=242233762]
-offset_left = 410.0
-offset_right = 1603.0
-offset_bottom = 403.0
+offset_left = -441.0
+offset_top = -291.0
+offset_right = 1686.0
+offset_bottom = 194.0
 texture_normal = ExtResource("30_24dk6")
 texture_hover = ExtResource("31_mryly")
 ignore_texture_size = true
@@ -262,10 +261,10 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="BuyRow" parent="Pumpkin" unique_id=850908115 instance=ExtResource("buy_row")]
-offset_left = -320.0
-offset_top = 230.0
-offset_right = 320.0
-offset_bottom = 280.0
+offset_left = -622.8641
+offset_top = 248.99553
+offset_right = 17.135925
+offset_bottom = 300.99554
 
 [node name="Gary" type="Sprite2D" parent="." unique_id=796930385]
 visible = false
@@ -431,10 +430,11 @@ theme_override_styles/panel = SubResource("StyleBoxTexture_kq1c5")
 
 [node name="StatusLabel" type="Label" parent="EvaluationPanel" unique_id=456359456]
 layout_mode = 0
-offset_left = 28.0
-offset_top = 183.0
-offset_right = 386.0
-offset_bottom = 229.0
+offset_left = -7.0
+offset_top = -280.0
+offset_right = 351.0
+offset_bottom = -234.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_q5dlx")
 text = "Evaluation"
 autowrap_mode = 2
 
@@ -482,14 +482,13 @@ offset_bottom = 534.0
 
 [node name="DoneButton" type="Button" parent="EvaluationPanel" unique_id=53722011]
 layout_mode = 0
-offset_left = 244.0
-offset_top = 212.0
-offset_right = 357.0
-offset_bottom = 311.0
+offset_left = 427.0
+offset_top = 176.0
+offset_right = 540.0
+offset_bottom = 275.0
 theme_override_styles/normal = SubResource("StyleBoxTexture_25bs2")
 
-[node name="EvalEntryScreen" parent="." instance=ExtResource("eval_entry")]
-visible = false
+[node name="EvalEntryScreen" parent="." unique_id=515738209 instance=ExtResource("eval_entry")]
 
 [node name="FlaskConfirmDialog" type="ConfirmationDialog" parent="." unique_id=242328722]
 title = "Refill Flask"
